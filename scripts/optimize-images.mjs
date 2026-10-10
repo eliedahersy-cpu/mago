@@ -33,9 +33,11 @@ const lifestyle = [
   'rainy-day-soup', 'lemon-office', 'lasagna', 'pantry-shelf',
 ];
 
-/** @type {{ src: string, out: string, width: number, crop?: { left: number, top: number, width: number, height: number }, format?: 'webp' | 'png' }[]} */
+/** @type {{ src: string, out: string, width: number, crop?: { left: number, top: number, width: number, height: number }, format?: 'webp' | 'png', trim?: boolean, recolorDark?: [number, number, number] }[]} */
 export const manifest = [
-  { src: 'logo.png', out: 'public/brand/logo.webp', width: 512 },
+  { src: 'logo.png', out: 'public/brand/logo.webp', width: 512, trim: true },
+  // Footer variant: forest-coloured lettering recoloured to cream, sun and transparency kept.
+  { src: 'logo.png', out: 'public/brand/logo-light.webp', width: 512, trim: true, recolorDark: [0xfb, 0xf3, 0xe4] },
   { src: 'logo.png', out: 'src/app/icon.png', width: 512, format: 'png' },
   { src: 'logo.png', out: 'src/app/apple-icon.png', width: 180, format: 'png' },
   { src: 'hero-landscape-1.png', out: 'public/images/hero-desktop.webp', width: 1799 },
@@ -56,6 +58,8 @@ async function build(entry) {
   }
   fs.mkdirSync(path.dirname(out), { recursive: true });
   let img = sharp(src);
+  if (entry.trim) img = sharp(await img.trim().toBuffer());
+  if (entry.recolorDark) img = await recolorDark(img, entry.recolorDark);
   if (entry.crop) {
     const { width = 0, height = 0 } = await img.metadata();
     img = img.extract({
@@ -69,6 +73,17 @@ async function build(entry) {
   img = entry.format === 'png' ? img.png({ compressionLevel: 9 }) : img.webp({ quality: 82 });
   await img.toFile(out);
   return 'built';
+}
+
+/** Replace near-black/forest pixels (all channels < 110) with `rgb`, preserving alpha. */
+async function recolorDark(img, [r, g, b]) {
+  const { data, info } = await img.ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] > 0 && data[i] < 110 && data[i + 1] < 110 && data[i + 2] < 110) {
+      data[i] = r; data[i + 1] = g; data[i + 2] = b;
+    }
+  }
+  return sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } });
 }
 
 const results = { built: 0, skip: 0 };
