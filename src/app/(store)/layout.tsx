@@ -1,3 +1,5 @@
+import { CartButton } from '@/components/cart/CartButton';
+import { CartDrawer } from '@/components/cart/CartDrawer';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
@@ -8,11 +10,12 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   return (
     <>
       <AnnouncementBar message={settings.announcementBar} />
-      <Header />
+      <Header cart={<CartButton />} />
       <main id="main" className="flex-1">
         {children}
       </main>
       <Footer settings={settings} />
+      <CartDrawer />
     </>
   );
 }
