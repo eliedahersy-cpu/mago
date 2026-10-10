@@ -10,7 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "e2e": "playwright test",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "test:int": "vitest run --config vitest.int.config.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

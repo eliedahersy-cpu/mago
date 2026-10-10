@@ -7,5 +7,6 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     include: ['src/**/*.test.ts', 'scripts/**/*.test.mjs'],
+    exclude: ['**/node_modules/**', '**/*.int.test.ts'],
   },
 });
