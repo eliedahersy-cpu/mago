@@ -1,0 +1,58 @@
+'use client';
+
+import { useId, useState, type ReactNode } from 'react';
+import { cn } from '@/lib/cn';
+
+export function ProductTabs({ tabs }: { tabs: { id: string; label: string; content: ReactNode }[] }) {
+  const [active, setActive] = useState(tabs[0]?.id);
+  const base = useId();
+
+  const onKeyDown = (e: React.KeyboardEvent, index: number) => {
+    const delta = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (!delta) return;
+    e.preventDefault();
+    const next = tabs[(index + delta + tabs.length) % tabs.length];
+    setActive(next.id);
+    document.getElementById(`${base}-tab-${next.id}`)?.focus();
+  };
+
+  return (
+    <div className="rounded-3xl bg-cream-light ring-1 ring-forest/5">
+      <div role="tablist" aria-label="Product information" className="scrollbar-none flex gap-1 overflow-x-auto border-b border-forest/10 px-3 md:justify-center md:gap-6">
+        {tabs.map((tab, i) => (
+          <button
+            key={tab.id}
+            id={`${base}-tab-${tab.id}`}
+            role="tab"
+            type="button"
+            aria-selected={active === tab.id}
+            aria-controls={`${base}-panel-${tab.id}`}
+            tabIndex={active === tab.id ? 0 : -1}
+            onClick={() => setActive(tab.id)}
+            onKeyDown={(e) => onKeyDown(e, i)}
+            className={cn(
+              'relative shrink-0 px-3 py-4 font-display text-sm font-semibold whitespace-nowrap uppercase transition-colors',
+              active === tab.id
+                ? 'text-forest after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-terracotta'
+                : 'text-ink/60 hover:text-forest',
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      {tabs.map((tab) => (
+        <div
+          key={tab.id}
+          id={`${base}-panel-${tab.id}`}
+          role="tabpanel"
+          aria-labelledby={`${base}-tab-${tab.id}`}
+          hidden={active !== tab.id}
+          className="p-5 md:p-8"
+        >
+          {tab.content}
+        </div>
+      ))}
+    </div>
+  );
+}
