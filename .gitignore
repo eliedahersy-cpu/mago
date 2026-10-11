@@ -46,3 +46,4 @@ design-assets/
 !.env.example
 test-results/
 playwright-report/
+supabase/.temp/
