@@ -27,7 +27,7 @@ export function Hero() {
         <picture>
           <source media="(min-width: 768px)" srcSet={desktop} />
           <source media="(max-width: 767px)" srcSet={mobile} />
-          {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text -- art-directed <picture>; alt="" is in rest */}
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- alt="" comes from getImageProps */}
           <img {...rest} className="block h-auto w-full" />
         </picture>
         <div className="absolute top-[40.9%] left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-[41.6%]">

@@ -35,6 +35,9 @@ import {
 } from '@/lib/data/cached';
 import { formatPrice } from '@/lib/format';
 
+// Unknown or draft slugs must return a real 404, so this segment may block instead of streaming a shell.
+export const instant = false;
+
 export async function generateStaticParams() {
   return (await getActiveProductSlugs()).map((slug) => ({ slug }));
 }
