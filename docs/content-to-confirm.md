@@ -21,6 +21,9 @@ admin (Plan 3) or the `settings` table, and products/stores in the database.
 - "Made in Lebanon".
 - Store locator retailers (Spinneys Hamra, Carrefour City Centre, Fahed Supermarket, Metro Market, Azzi Supermarket), their areas, opening hours and coordinates — sample data from the mockup.
 
+## Details printed on the packaging artwork (not used on the site)
+- The lasagna box back panel shows "Mago Foods s.a.l., Beirut, Lebanon", "magofoods.co", "@magofoods" and a +961 phone number, and claims "15g protein per serving", "100% natural ingredients", "bronze-cut" and "premium durum wheat" for the 400g boxes. These look like AI-generated placeholders; confirm before using any of them.
+
 ## Product data
 - Product descriptions, stories and key-ingredient chips were written from the packaging text; please proofread.
 - Nutrition shows only "30 g protein per serving" and "100 g pasta per cup"; add full nutrition facts if you want them online.

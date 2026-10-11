@@ -239,13 +239,16 @@ from (values
   ('conchigliette-in-brodo', '/products/conchigliette-in-brodo.webp', 'MAGO Conchigliette Cup In Brodo', 0, 'packshot'),
   ('conchigliette-in-brodo', '/products/conchigliette-in-brodo-2.webp', 'MAGO Conchigliette Cup', 1, 'packshot'),
   ('lasagna-melanzane-ricotta', '/products/lasagna-melanzane-ricotta.webp', 'MAGO Lasagna Cup Melanzane & Ricotta', 0, 'packshot'),
-  ('lasagna-melanzane-ricotta', '/images/lifestyle-lasagna.webp', 'A MAGO Lasagna Cup at home', 1, 'lifestyle'),
   ('mago-mix-box', '/products/mago-mix-box.webp', 'The MAGO Mix Box', 0, 'packshot'),
   ('mago-mix-box', '/products/mago-mix-box-open.webp', 'An open MAGO Mix Box with five cups', 1, 'packshot'),
   ('fusilli-400g', '/products/fusilli-400g.webp', 'MAGO Fusilli 400g box', 0, 'packshot'),
   ('tagliolini-400g', '/products/tagliolini-400g.webp', 'MAGO Tagliolini 400g box', 0, 'packshot'),
   ('conchiglie-400g', '/products/conchiglie-400g.webp', 'MAGO Conchiglie 400g box', 0, 'packshot'),
-  ('lasagna-400g', '/products/lasagna-400g.webp', 'MAGO Lasagna 400g box', 0, 'packshot')
+  ('lasagna-400g', '/products/lasagna-400g.webp', 'MAGO Lasagna 400g box', 0, 'packshot'),
+  ('fusilli-400g', '/products/fusilli-400g-back.webp', 'Back of the MAGO Fusilli 400g box', 1, 'packshot'),
+  ('tagliolini-400g', '/products/tagliolini-400g-back.webp', 'Back of the MAGO Tagliolini 400g box', 1, 'packshot'),
+  ('conchiglie-400g', '/products/conchiglie-400g-back.webp', 'Back of the MAGO Conchiglie 400g box', 1, 'packshot'),
+  ('lasagna-400g', '/products/lasagna-400g-back.webp', 'Back of the MAGO Lasagna 400g box', 1, 'packshot')
 ) as v (slug, url, alt, position, kind)
 join public.products p on p.slug = v.slug;
 

@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MAGO — storefront & admin
 
-## Getting Started
+Online store for **MAGO** Mediterranean pasta cups (Lebanon, cash on delivery), built with
+Next.js 16 (App Router, Cache Components), Tailwind CSS 4 and Supabase (Postgres + Auth + Storage).
 
-First, run the development server:
+- Design spec: [`docs/superpowers/specs/2026-10-10-mago-ecommerce-design.md`](docs/superpowers/specs/2026-10-10-mago-ecommerce-design.md)
+- Build plans: [`docs/superpowers/plans/`](docs/superpowers/plans/)
+- Copy and data still to confirm with MAGO: [`docs/content-to-confirm.md`](docs/content-to-confirm.md)
+
+## Status
+
+Plan 1 (foundation & catalog) is complete: home, shop, product pages, search, info pages,
+Our Story, persisted cart drawer, full database schema with row-level security, and catalog seed.
+Checkout, accounts, the admin dashboard, quiz, recipes, store locator and subscriptions follow
+in Plans 2–5.
+
+## Prerequisites
+
+- Node.js 24 and npm
+- A Supabase project (this one runs in `eu-central-1`)
+- For regenerating images only: the original Drive artwork in `design-assets/` (git-ignored)
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # then fill in the values below
+npm run dev                   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Where to find it |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase dashboard → Project Settings → API Keys (Project URL) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Same page, the `sb_publishable_…` key (safe to expose; RLS protects data) |
+| `NEXT_PUBLIC_SITE_URL` | The public site origin, e.g. `https://mago.example` (used for social-share URLs) |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app never needs the service-role / secret key. Staff permissions come from
+`profiles.role` and row-level security.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Database
 
-## Learn More
+SQL lives in `supabase/`:
 
-To learn more about Next.js, take a look at the following resources:
+1. `migrations/0001_schema.sql` → `0004_catalog_functions.sql` — apply in order.
+2. `seed/0001_catalog.sql` — catalog, recipes, stores, plans, settings. Safe to re-run; it never
+   overwrites prices, statuses or stock that staff have changed.
+3. `tests/*.test.sql` — run after migrations/seed; each ends with a single `… all passed` row and
+   raises `FAIL <reason>` otherwise. Fixtures are rolled back.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Apply them in the Supabase **SQL editor** (paste and Run) or with the Supabase CLI/MCP.
+The project has "automatically expose new tables" **off**, so every new table needs explicit
+`grant`s (see the end of `0002_rls.sql`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Promote the first owner
 
-## Deploy on Vercel
+Sign up on the site with the owner's email, then run in the SQL editor:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sql
+update public.profiles
+set role = 'owner'
+where id = (select id from auth.users where email = 'owner@example.com');
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server (webpack — see note below) |
+| `npm run build` / `npm start` | Production build (Turbopack) and server |
+| `npm test` | Unit tests (Vitest) |
+| `npm run test:int` | Integration tests against the Supabase project in `.env.local` |
+| `npm run e2e` | Playwright end-to-end tests (starts the dev server if needed) |
+| `npm run typecheck` | Regenerates route types, then `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm run images` | Rebuilds `public/` images from `design-assets/` (sharp) |
+
+Install the Playwright browser once with `npx playwright install chromium`.
+
+## Notes for developers
+
+- **Dev server uses webpack.** On this Windows setup, Turbopack's dev server did not pick up new
+  Tailwind classes added to existing files, so `npm run dev` runs `next dev --webpack`.
+  Production builds use Turbopack.
+- **Caching.** Pages read data through `src/lib/data/cached.ts` (`'use cache'` + `cacheLife('minutes')`
+  + tags `catalog`, `settings`, `recipes`, `reviews`, `discounts`). The plain query functions next to it
+  are what the tests call.
+- **Git on the F: drive** needs `git -c safe.directory=F:/DEV/Mago …` because the drive has no
+  ownership information.

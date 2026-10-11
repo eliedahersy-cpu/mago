@@ -26,11 +26,16 @@ const cups = {
   'tagliolini-400g': 'box-tagliolini-400g',
   'conchiglie-400g': 'box-conchiglie-400g',
   'lasagna-400g': 'box-lasagna-400g',
+  // Back panels of the retail boxes (the Drive file named lifestyle-lasagna is the lasagna box back).
+  'fusilli-400g-back': 'box-fusilli-back',
+  'tagliolini-400g-back': 'box-tagliolini-back',
+  'conchiglie-400g-back': 'box-conchiglie-back',
+  'lasagna-400g-back': 'lifestyle-lasagna',
 };
 
 const lifestyle = [
   'movie-night', 'kids-game-night', 'kitchen-portrait', 'post-workout',
-  'rainy-day-soup', 'lemon-office', 'lasagna', 'pantry-shelf',
+  'rainy-day-soup', 'lemon-office', 'pantry-shelf',
 ];
 
 /** @type {{ src: string, out: string, width: number, crop?: { left: number, top: number, width: number, height: number }, format?: 'webp' | 'png', trim?: boolean, recolorDark?: [number, number, number] }[]} */
