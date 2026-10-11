@@ -16,7 +16,7 @@ export function Logo({
       alt="MAGO — Made to nourish"
       width={512}
       height={278}
-      priority={priority}
+      loading={priority ? 'eager' : undefined}
       className={cn('h-auto w-28', className)}
     />
   );

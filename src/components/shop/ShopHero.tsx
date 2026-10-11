@@ -20,7 +20,8 @@ export function ShopHero() {
             src="/products/fusilli-spicy-muhammara.webp"
             alt="MAGO Fusilli Cup Spicy Muhammara"
             fill
-            priority
+            loading="eager"
+            fetchPriority="high"
             sizes="(min-width: 768px) 380px, 80vw"
             className="object-contain mix-blend-multiply"
           />

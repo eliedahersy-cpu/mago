@@ -43,7 +43,8 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
             src={current.url}
             alt={current.alt || name}
             fill
-            priority
+            loading="eager"
+            fetchPriority="high"
             sizes="(min-width: 1024px) 45vw, 100vw"
             className={cn(current.kind === 'packshot' ? 'object-contain p-6 mix-blend-multiply' : 'object-cover')}
           />
