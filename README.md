@@ -41,9 +41,12 @@ The app never needs the service-role / secret key. Staff permissions come from
 
 SQL lives in `supabase/`:
 
-1. `migrations/0001_schema.sql` → `0004_catalog_functions.sql` — apply in order.
-2. `seed/0001_catalog.sql` — catalog, recipes, stores, plans, settings. Safe to re-run; it never
-   overwrites prices, statuses or stock that staff have changed.
+1. `migrations/0001_schema.sql` → `0005_reviews_insert_policy.sql` — apply in order.
+2. `seed/0001_catalog.sql` — **bootstrap data for a new project** (catalog, recipes, stores, plans,
+   settings). It can be re-run during development, but it resets settings (delivery fee, free-delivery
+   threshold, announcement), collection visibility, product copy, featured/best-seller flags and
+   sort order, product images, subscription plan discounts and recipe status back to the seed values.
+   Only product prices, product status and stock are left alone. **Do not re-run it on a live store.**
 3. `tests/*.test.sql` — run after migrations/seed; each ends with a single `… all passed` row and
    raises `FAIL <reason>` otherwise. Fixtures are rolled back.
 

@@ -9,6 +9,8 @@ export default defineConfig({
   timeout: 45_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,
+  // One worker: parallel first hits on a cold webpack dev server abort navigations mid-compile.
+  workers: 1,
   retries: 0,
   reporter: [['list']],
   use: {

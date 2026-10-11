@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware';
 import { addLine, removeLine, sanitizePersistedCart, setLineQuantity, type CartLine, type CartProduct } from './lines';
 
 interface CartState {
@@ -13,6 +13,28 @@ interface CartState {
   clear: () => void;
   open: () => void;
   close: () => void;
+}
+
+/**
+ * localStorage when the browser allows it; otherwise (blocked site data, some
+ * webviews, the server) an in-memory store, so the cart still works for the visit
+ * instead of zustand dropping its persist API and crashing the storefront.
+ */
+function safeStorage(): StateStorage {
+  try {
+    const storage = window.localStorage;
+    const probe = '__mago_storage_probe__';
+    storage.setItem(probe, probe);
+    storage.removeItem(probe);
+    return storage;
+  } catch {
+    const memory = new Map<string, string>();
+    return {
+      getItem: (key) => memory.get(key) ?? null,
+      setItem: (key, value) => void memory.set(key, value),
+      removeItem: (key) => void memory.delete(key),
+    };
+  }
 }
 
 export const useCart = create<CartState>()(
@@ -31,7 +53,7 @@ export const useCart = create<CartState>()(
     {
       name: 'mago-cart',
       version: 1,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(safeStorage),
       partialize: (s) => ({ lines: s.lines }),
       migrate: (persisted) => sanitizePersistedCart(persisted),
       merge: (persisted, current) => ({ ...current, ...sanitizePersistedCart(persisted) }),
