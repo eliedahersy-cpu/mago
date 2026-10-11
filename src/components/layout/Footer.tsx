@@ -29,8 +29,8 @@ export function Footer({ settings }: { settings: StoreSettings }) {
   const socials = (Object.keys(socialIcons) as SocialNetwork[]).filter((n) => settings.socialLinks[n]);
   return (
     <footer className="mt-auto bg-forest text-cream-light">
-      <Container className="grid gap-10 py-12 md:grid-cols-[1.1fr_repeat(3,0.8fr)_1.6fr] md:py-14">
-        <div>
+      <Container className="grid grid-cols-3 gap-x-4 gap-y-8 py-12 md:grid-cols-[1.1fr_repeat(3,0.8fr)_1.6fr] md:gap-10 md:py-14">
+        <div className="col-span-3 flex justify-center md:col-span-1 md:block">
           <Link href="/" aria-label="MAGO home">
             <Logo variant="light" className="w-36" />
           </Link>
@@ -51,7 +51,7 @@ export function Footer({ settings }: { settings: StoreSettings }) {
           </nav>
         ))}
 
-        <div>
+        <div className="col-span-3 md:col-span-1">
           <h2 className="font-display text-sm font-semibold tracking-wide uppercase">Join the MAGO community</h2>
           <p className="mt-2 mb-4 text-sm text-cream-light/80">Get exclusive recipes, offers and new flavours.</p>
           <NewsletterForm />
