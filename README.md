@@ -64,12 +64,23 @@ set role = 'owner'
 where id = (select id from auth.users where email = 'owner@example.com');
 ```
 
+## Deploy (Vercel)
+
+`.env.local` is git-ignored, so a deploy only sees the variables set on the host. In the Vercel
+project open **Settings → Environment Variables**, add the three variables from the table above for
+the Production (and Preview) environments, then **redeploy**. Set `NEXT_PUBLIC_SITE_URL` to the
+deployed origin, e.g. `https://mago.vercel.app`.
+
+Pages prerender from Supabase during the build, so `npm run build` first runs
+`scripts/check-env.mjs` and stops with a clear message if the Supabase variables are missing.
+Without it, the build failed later with a masked `Failed to collect page data for /shop/[slug]`.
+
 ## Scripts
 
 | Command | What it does |
 |---|---|
 | `npm run dev` | Dev server (webpack — see note below) |
-| `npm run build` / `npm start` | Production build (Turbopack) and server |
+| `npm run build` / `npm start` | Checks the Supabase env vars, then production build (Turbopack) and server |
 | `npm test` | Unit tests (Vitest) |
 | `npm run test:int` | Integration tests against the Supabase project in `.env.local` |
 | `npm run e2e` | Playwright end-to-end tests (starts the dev server if needed) |
