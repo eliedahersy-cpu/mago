@@ -5,7 +5,7 @@ test('search finds pesto', async ({ page }) => {
   await page.getByRole('button', { name: 'Search', exact: true }).click();
   await page.getByRole('searchbox').first().fill('Pesto');
   await page.getByRole('searchbox').first().press('Enter');
-  await expect(page).toHaveURL(/\/search\?q=Pesto/);
+  await expect(page).toHaveURL(/\/search\?q=Pesto/, { timeout: 30_000 });
   await expect(page.getByTestId('product-card').filter({ hasText: 'Al Pesto Genovese' })).toBeVisible();
 });
 

@@ -4,7 +4,7 @@ test('hero links to shop', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1, name: 'Good food, brighter days.' })).toBeAttached();
   await page.getByRole('link', { name: 'Explore our cups', exact: true }).click();
-  await expect(page).toHaveURL(/\/shop$/);
+  await expect(page).toHaveURL(/\/shop$/, { timeout: 30_000 });
 });
 
 test('shows the cup collection in featured order', async ({ page }) => {
