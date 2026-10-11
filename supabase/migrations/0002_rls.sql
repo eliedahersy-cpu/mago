@@ -102,3 +102,18 @@ create policy newsletter_subscribers_public_insert on public.newsletter_subscrib
   for insert to anon, authenticated with check (true);
 
 grant execute on function public.is_staff() to anon, authenticated;
+
+-- Table privileges. The project does not auto-expose new tables to the Data API,
+-- so access is granted explicitly; RLS above still decides which rows are visible.
+-- Later migrations must grant their own new tables the same way.
+grant usage on schema public to anon, authenticated;
+
+grant select on
+  public.settings, public.collections, public.products, public.product_images,
+  public.collection_products, public.subscription_plans, public.recipes, public.stores,
+  public.store_products, public.reviews
+to anon;
+grant insert on public.newsletter_subscribers to anon;
+
+grant select, insert, update, delete on all tables in schema public to authenticated;
+grant usage, select on all sequences in schema public to authenticated;

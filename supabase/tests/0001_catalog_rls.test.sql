@@ -2,9 +2,11 @@
 -- Verifies anonymous visitors only see public catalog data and cannot write it.
 -- Run in the Supabase SQL editor (or execute_sql). All fixtures are rolled back.
 -- Success = a single row: "catalog rls: all passed". Any failure raises "FAIL <reason>".
+-- "Cannot read" is satisfied either by RLS hiding rows or by a missing table grant.
 
 begin;
 
+insert into public.settings (id) values (true) on conflict (id) do nothing;
 insert into public.products (id, slug, name, type, status, price)
 values ('00000000-0000-4000-8000-0000000000a1', 'rls-test-draft', 'RLS Draft', 'cup', 'draft', 1),
        ('00000000-0000-4000-8000-0000000000a2', 'rls-test-active', 'RLS Active', 'cup', 'active', 1);
@@ -23,6 +25,11 @@ do $$
 declare
   n int;
 begin
+  select count(*) into n from public.settings;
+  if n <> 1 then
+    raise exception 'FAIL anon cannot read settings';
+  end if;
+
   if exists (select 1 from public.products where slug = 'rls-test-draft') then
     raise exception 'FAIL anon sees draft product';
   end if;
@@ -48,12 +55,20 @@ begin
     raise exception 'FAIL anon cannot subscribe: %', sqlerrm;
   end;
 
-  select count(*) into n from public.newsletter_subscribers;
+  begin
+    select count(*) into n from public.newsletter_subscribers;
+  exception when insufficient_privilege then
+    n := 0;
+  end;
   if n <> 0 then
     raise exception 'FAIL anon can read subscribers';
   end if;
 
-  select count(*) into n from public.orders;
+  begin
+    select count(*) into n from public.orders;
+  exception when insufficient_privilege then
+    n := 0;
+  end;
   if n <> 0 then
     raise exception 'FAIL anon can read orders';
   end if;
@@ -66,7 +81,12 @@ begin
     null;
   end;
 
-  if exists (select 1 from public.discounts) then
+  begin
+    select count(*) into n from public.discounts;
+  exception when insufficient_privilege then
+    n := 0;
+  end;
+  if n <> 0 then
     raise exception 'FAIL anon can read discounts';
   end if;
 
