@@ -49,6 +49,11 @@ export async function getRelatedProducts(product: Product, limit = 5): Promise<P
   return relatedProducts(await getActiveProducts(), product, limit);
 }
 
+/** Active cups for the Mix Box builder, in shop order. */
+export async function getMixBoxCups(): Promise<Product[]> {
+  return (await getActiveProducts()).filter((p) => p.type === 'cup');
+}
+
 export async function getFeaturedProducts(limit = 5): Promise<Product[]> {
   return (await getActiveProducts())
     .filter((p) => p.type === 'cup' && p.isFeatured)

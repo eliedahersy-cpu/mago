@@ -63,6 +63,12 @@ export async function getRelatedProducts(product: Product, limit?: number) {
   return catalog.getRelatedProducts(product, limit);
 }
 
+export async function getMixBoxCups() {
+  'use cache';
+  tagged(CACHE_TAGS.catalog);
+  return catalog.getMixBoxCups();
+}
+
 export async function getFeaturedProducts(limit?: number) {
   'use cache';
   tagged(CACHE_TAGS.catalog);
