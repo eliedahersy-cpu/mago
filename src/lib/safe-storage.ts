@@ -25,7 +25,7 @@ export function safeStorage(): StateStorage {
 const sessionMemory = new Map<string, string>();
 
 /** sessionStorage when allowed, otherwise memory that lasts for this page's lifetime. */
-export function safeSessionStorage(): StateStorage & { removeItem(name: string): void } {
+export function safeSessionStorage(): { getItem(key: string): string | null; setItem(key: string, value: string): void; removeItem(key: string): void } {
   try {
     const storage = window.sessionStorage;
     const probe = '__mago_storage_probe__';
