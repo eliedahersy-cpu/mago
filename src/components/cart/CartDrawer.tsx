@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { QuantityStepper } from '@/components/product/QuantityStepper';
 import { ButtonLink } from '@/components/ui/Button';
-import { cartCount, cartSubtotal } from '@/lib/cart/lines';
+import { cartCount, cartSubtotal, lineUnitPrice } from '@/lib/cart/lines';
 import { useCart } from '@/lib/cart/store';
 import { formatPrice } from '@/lib/format';
 
@@ -68,7 +68,10 @@ export function CartDrawer() {
       ) : (
         <>
           <ul className="flex-1 divide-y divide-forest/10 overflow-y-auto px-5">
-            {lines.map((line) => (
+            {lines.map((line) => {
+              const flavour = line.kind === 'product' ? line.flavour : null;
+              const unitPrice = lineUnitPrice(line);
+              return (
               <li key={line.id} className="flex gap-4 py-4">
                 <Link href={`/shop/${line.slug}`} className="shrink-0 rounded-xl bg-cream p-1">
                   {line.image ? (
@@ -82,29 +85,30 @@ export function CartDrawer() {
                 <div className="flex min-w-0 flex-1 flex-col">
                   <Link href={`/shop/${line.slug}`} className="font-display leading-tight font-semibold text-forest">
                     {line.name}
-                    {line.flavour ? <span className="block text-sm font-medium text-ink/80">{line.flavour}</span> : null}
+                    {flavour ? <span className="block text-sm font-medium text-ink/80">{flavour}</span> : null}
                   </Link>
-                  <span className="mt-0.5 text-sm text-ink/70">{formatPrice(line.unitPrice)} each</span>
+                  <span className="mt-0.5 text-sm text-ink/70">{formatPrice(unitPrice)} each</span>
                   <div className="mt-auto flex items-center justify-between pt-2">
                     <QuantityStepper
                       size="sm"
-                      label={`Quantity of ${line.name} ${line.flavour ?? ''}`.trim()}
+                      label={`Quantity of ${line.name} ${flavour ?? ''}`.trim()}
                       value={line.quantity}
                       onChange={(n) => setQuantity(line.id, n)}
                     />
-                    <span className="font-semibold text-forest tabular-nums">{formatPrice(line.unitPrice * line.quantity)}</span>
+                    <span className="font-semibold text-forest tabular-nums">{formatPrice(unitPrice * line.quantity)}</span>
                   </div>
                 </div>
                 <button
                   type="button"
-                  aria-label={`Remove ${line.name} ${line.flavour ?? ''}`.trim()}
+                  aria-label={`Remove ${line.name} ${flavour ?? ''}`.trim()}
                   onClick={() => remove(line.id)}
                   className="self-start rounded-full p-1.5 text-ink/50 hover:bg-forest/10 hover:text-terracotta"
                 >
                   <Trash2 size={18} aria-hidden />
                 </button>
               </li>
-            ))}
+              );
+            })}
           </ul>
           <div className="border-t border-forest/10 px-5 py-5">
             <div className="flex items-center justify-between font-display text-lg font-semibold text-forest">
