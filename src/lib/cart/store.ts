@@ -21,7 +21,8 @@ interface CartState {
   /** True once localStorage has been read; render counts only after this to avoid hydration mismatches. */
   hydrated: boolean;
   add: (product: CartProduct, qty?: number) => void;
-  addBox: (box: NewBox) => void;
+  /** Adds a Mix Box; opens the drawer unless `open` is false (e.g. when heading straight to checkout). */
+  addBox: (box: NewBox, options?: { open?: boolean }) => void;
   setQuantity: (lineId: string, qty: number) => void;
   remove: (lineId: string) => void;
   setOrderNotes: (patch: Partial<OrderNotes>) => void;
@@ -38,7 +39,8 @@ export const useCart = create<CartState>()(
       isOpen: false,
       hydrated: false,
       add: (product, qty = 1) => set((s) => ({ lines: addLine(s.lines, product, qty), isOpen: true })),
-      addBox: (box) => set((s) => ({ lines: addBox(s.lines, box, crypto.randomUUID()), isOpen: true })),
+      addBox: (box, { open = true } = {}) =>
+        set((s) => ({ lines: addBox(s.lines, box, crypto.randomUUID()), isOpen: open || s.isOpen })),
       setQuantity: (lineId, qty) => set((s) => ({ lines: setLineQuantity(s.lines, lineId, qty) })),
       remove: (lineId) => set((s) => ({ lines: removeLine(s.lines, lineId) })),
       setOrderNotes: (patch) => set((s) => ({ orderNotes: { ...s.orderNotes, ...patch } })),
