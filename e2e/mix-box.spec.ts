@@ -60,4 +60,9 @@ test('reviews the box, blocks an incomplete box and adds it to the cart', async 
   await page.getByRole('button', { name: 'Open cart, 1 item' }).click();
   const drawer = page.getByRole('dialog', { name: /Your cart/ });
   await expect(drawer.getByText('The MAGO Mix Box')).toBeVisible();
+  const boxRow = drawer.getByTestId('cart-box');
+  await expect(boxRow.getByRole('listitem')).toHaveCount(4);
+  await expect(boxRow).toContainText('2 ×');
+  await expect(drawer.getByTestId('cart-subtotal')).toHaveText('$22.50');
+  await expect(drawer.getByText('Gift note added')).toBeVisible();
 });

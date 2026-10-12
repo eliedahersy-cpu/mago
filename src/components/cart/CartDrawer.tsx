@@ -1,19 +1,17 @@
 'use client';
 
-import { ArrowRight, ShoppingBag, Trash2, X } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { ArrowRight, Gift, ShoppingBag, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import { QuantityStepper } from '@/components/product/QuantityStepper';
 import { ButtonLink } from '@/components/ui/Button';
-import { cartCount, cartSubtotal, lineUnitPrice } from '@/lib/cart/lines';
+import { cartCount, cartSubtotal } from '@/lib/cart/lines';
 import { useCart } from '@/lib/cart/store';
 import { formatPrice } from '@/lib/format';
+import { CartLineRow } from './CartLineRow';
 
 export function CartDrawer() {
   const dialog = useRef<HTMLDialogElement>(null);
-  const { lines, isOpen, close, setQuantity, remove } = useCart();
+  const { lines, orderNotes, isOpen, close, setQuantity, remove } = useCart();
   const pathname = usePathname();
 
   // Read the persisted cart once on the client.
@@ -68,52 +66,21 @@ export function CartDrawer() {
       ) : (
         <>
           <ul className="flex-1 divide-y divide-forest/10 overflow-y-auto px-5">
-            {lines.map((line) => {
-              const flavour = line.kind === 'product' ? line.flavour : null;
-              const unitPrice = lineUnitPrice(line);
-              return (
-              <li key={line.id} className="flex gap-4 py-4">
-                <Link href={`/shop/${line.slug}`} className="shrink-0 rounded-xl bg-cream p-1">
-                  {line.image ? (
-                    <Image src={line.image} alt="" width={72} height={90} className="h-[90px] w-[72px] object-contain mix-blend-multiply" />
-                  ) : (
-                    <span className="flex h-[90px] w-[72px] items-center justify-center text-forest/40">
-                      <ShoppingBag size={24} aria-hidden />
-                    </span>
-                  )}
-                </Link>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <Link href={`/shop/${line.slug}`} className="font-display leading-tight font-semibold text-forest">
-                    {line.name}
-                    {flavour ? <span className="block text-sm font-medium text-ink/80">{flavour}</span> : null}
-                  </Link>
-                  <span className="mt-0.5 text-sm text-ink/70">{formatPrice(unitPrice)} each</span>
-                  <div className="mt-auto flex items-center justify-between pt-2">
-                    <QuantityStepper
-                      size="sm"
-                      label={`Quantity of ${line.name} ${flavour ?? ''}`.trim()}
-                      value={line.quantity}
-                      onChange={(n) => setQuantity(line.id, n)}
-                    />
-                    <span className="font-semibold text-forest tabular-nums">{formatPrice(unitPrice * line.quantity)}</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  aria-label={`Remove ${line.name} ${flavour ?? ''}`.trim()}
-                  onClick={() => remove(line.id)}
-                  className="self-start rounded-full p-1.5 text-ink/50 hover:bg-forest/10 hover:text-terracotta"
-                >
-                  <Trash2 size={18} aria-hidden />
-                </button>
-              </li>
-              );
-            })}
+            {lines.map((line) => (
+              <CartLineRow key={line.id} line={line} onQuantity={(n) => setQuantity(line.id, n)} onRemove={() => remove(line.id)} />
+            ))}
           </ul>
           <div className="border-t border-forest/10 px-5 py-5">
+            {orderNotes.isGift || orderNotes.giftNote ? (
+              <p className="mb-3 flex items-center gap-2 text-sm font-medium text-leaf">
+                <Gift size={16} aria-hidden /> Gift note added
+              </p>
+            ) : null}
             <div className="flex items-center justify-between font-display text-lg font-semibold text-forest">
               <span>Subtotal</span>
-              <span className="tabular-nums">{formatPrice(cartSubtotal(lines))}</span>
+              <span data-testid="cart-subtotal" className="tabular-nums">
+                {formatPrice(cartSubtotal(lines))}
+              </span>
             </div>
             <p className="mt-1 text-sm text-ink/70">Delivery and discounts are calculated at checkout.</p>
             <ButtonLink href="/checkout" size="lg" className="mt-4 w-full">
