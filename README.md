@@ -41,7 +41,8 @@ The app never needs the service-role / secret key. Staff permissions come from
 
 SQL lives in `supabase/`:
 
-1. `migrations/0001_schema.sql` → `0005_reviews_insert_policy.sql` — apply in order.
+1. `migrations/0001_schema.sql` → `0006_commerce_functions.sql` — apply in order. 0006 adds the
+   checkout functions `quote_cart`, `place_order` and `get_order_by_token`.
 2. `seed/0001_catalog.sql` — **bootstrap data for a new project** (catalog, recipes, stores, plans,
    settings). It can be re-run during development, but it resets settings (delivery fee, free-delivery
    threshold, announcement), collection visibility, product copy, featured/best-seller flags and
@@ -49,6 +50,8 @@ SQL lives in `supabase/`:
    Only product prices, product status and stock are left alone. **Do not re-run it on a live store.**
 3. `tests/*.test.sql` — run after migrations/seed; each ends with a single `… all passed` row and
    raises `FAIL <reason>` otherwise. Fixtures are rolled back.
+4. `cleanup/e2e-orders.sql` — removes orders placed by the Playwright checkout tests (emails
+   `e2e-…@example.com`), restores their stock and drops those test customers. Run it after `npm run e2e`.
 
 Apply them in the Supabase **SQL editor** (paste and Run) or with the Supabase CLI/MCP.
 The project has "automatically expose new tables" **off**, so every new table needs explicit
