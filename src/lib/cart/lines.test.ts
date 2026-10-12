@@ -6,6 +6,7 @@ import {
   clampQuantity,
   EMPTY_ORDER_NOTES,
   lineUnitPrice,
+  mergeOrderNotes,
   sanitizePersistedCart,
   setLineQuantity,
   type BoxCup,
@@ -112,6 +113,22 @@ test('upgrades v1 product lines that have no kind', () => {
     orderNotes: EMPTY_ORDER_NOTES,
     discountCode: '',
   });
+});
+
+test('merging notes from a second box keeps what the customer already wrote', () => {
+  const existing = { instructions: 'Ring twice', isGift: true, giftNote: 'Happy birthday!' };
+  expect(mergeOrderNotes(existing, EMPTY_ORDER_NOTES)).toEqual(existing);
+  expect(mergeOrderNotes(existing, { instructions: '', isGift: false, giftNote: 'For Maya' })).toEqual({
+    instructions: 'Ring twice',
+    isGift: true,
+    giftNote: 'For Maya',
+  });
+  expect(mergeOrderNotes(EMPTY_ORDER_NOTES, { instructions: ' Leave at door ', isGift: false, giftNote: '' })).toEqual({
+    instructions: 'Leave at door',
+    isGift: false,
+    giftNote: '',
+  });
+  expect(mergeOrderNotes(EMPTY_ORDER_NOTES, { instructions: '', isGift: false, giftNote: 'Hi' }).isGift).toBe(true);
 });
 
 test('drops malformed boxes and bad notes', () => {

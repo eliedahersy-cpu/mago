@@ -79,3 +79,32 @@ test('an unknown order link is a 404', async ({ page }) => {
   const response = await page.goto('/order/00000000-0000-4000-8000-000000000000');
   expect(response?.status()).toBe(404);
 });
+
+test('a lost response after the order is placed can be retried without a second order', async ({ page }) => {
+  await page.goto('/shop/fusilli-spicy-muhammara');
+  await page.getByTestId('product-purchase').getByRole('button', { name: 'Add to cart' }).click();
+  await page.goto('/checkout');
+  await expect(page.getByTestId('checkout-total')).toHaveText('$7.50');
+  await fillCheckout(page);
+
+  // Let the first place-order request reach the server, then drop its response.
+  let firstToken: string | null = null;
+  await page.route('**/checkout', async (route) => {
+    const request = route.request();
+    if (firstToken === null && request.method() === 'POST' && (request.postData() ?? '').includes('idempotencyKey')) {
+      const response = await route.fetch();
+      firstToken = (await response.text()).match(/"token":"([0-9a-f-]{36})"/)?.[1] ?? 'missing';
+      await route.abort('internetdisconnected');
+      return;
+    }
+    await route.continue();
+  });
+
+  await page.getByRole('button', { name: 'Place order' }).click();
+  await expect(page.getByText(/couldn.t confirm your order/i)).toBeVisible();
+  await expect(page.locator('#checkout-form').getByLabel('Full name')).toHaveValue('E2E Tester');
+  expect(firstToken).toMatch(/^[0-9a-f-]{36}$/);
+
+  await page.getByRole('button', { name: 'Place order' }).click();
+  await expect(page).toHaveURL(new RegExp(`/order/${firstToken}$`), { timeout: 30_000 });
+});

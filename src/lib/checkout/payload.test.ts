@@ -48,9 +48,10 @@ test('the order payload matches place_order', () => {
     acceptsMarketing: false,
     code: 'freeship',
   });
-  const payload = toOrderPayload(form, [{ product_id: 'a', quantity: 1 }], 'key-1');
+  const payload = toOrderPayload(form, [{ product_id: 'a', quantity: 1 }], 'key-1', 7.5);
   expect(payload).toEqual({
     idempotency_key: 'key-1',
+    expected_total: 7.5,
     items: [{ product_id: 'a', quantity: 1 }],
     code: 'freeship',
     accepts_marketing: false,

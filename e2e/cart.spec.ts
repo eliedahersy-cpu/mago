@@ -30,3 +30,20 @@ test('an empty cart page points back to the shop', async ({ page }) => {
   await page.goto('/cart');
   await expect(page.getByRole('main').getByText('Your cart is empty')).toBeVisible();
 });
+
+test('a failed price check says so in plain words and can be retried', async ({ page }) => {
+  await page.goto('/shop/fusilli-spicy-muhammara');
+  await page.getByTestId('product-purchase').getByRole('button', { name: 'Add to cart' }).click();
+
+  let failing = true;
+  await page.route('**/cart', async (route) => {
+    if (failing && route.request().method() === 'POST') return route.abort('internetdisconnected');
+    return route.continue();
+  });
+  await page.goto('/cart');
+  await expect(page.getByText('We could not price your cart. Please try again.')).toBeVisible();
+
+  failing = false;
+  await page.getByRole('button', { name: 'Try again' }).click();
+  await expect(page.getByTestId('cart-total')).toHaveText('$7.50');
+});

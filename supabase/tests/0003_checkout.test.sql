@@ -130,7 +130,7 @@ declare
   r3 jsonb;
 begin
   r1 := public.place_order(base || jsonb_build_object(
-    'idempotency_key', '00000000-0000-4000-8000-0000000000f1',
+    'idempotency_key', '00000000-0000-4000-8000-0000000000f1', 'expected_total', 12.00,
     'items', jsonb_build_array(jsonb_build_object('product_id', a, 'quantity', 2))));
   r2 := public.place_order(base || jsonb_build_object(
     'idempotency_key', '00000000-0000-4000-8000-0000000000f1',
@@ -171,6 +171,16 @@ begin
     raise exception 'FAIL undeliverable area accepted';
   exception when sqlstate 'P0001' then
     null;
+  end;
+
+  -- The customer saw a different total: refuse and say what it is now.
+  begin
+    perform public.place_order(base || jsonb_build_object(
+      'idempotency_key', '00000000-0000-4000-8000-0000000000f7', 'expected_total', 1.00,
+      'items', jsonb_build_array(jsonb_build_object('product_id', a, 'quantity', 1))));
+    raise exception 'FAIL changed total accepted';
+  exception when sqlstate 'P0001' then
+    if sqlerrm not like '%total has changed to $7.50%' then raise exception 'FAIL changed total message: %', sqlerrm; end if;
   end;
 
   begin
