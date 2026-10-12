@@ -29,10 +29,14 @@ export function toItemsPayload(lines: CartLine[]): ItemsPayload {
   );
 }
 
-/** The place_order payload (see supabase/migrations/0006_commerce_functions.sql). */
-export function toOrderPayload(form: CheckoutData, items: ItemsPayload, idempotencyKey: string) {
+/**
+ * The place_order payload (see supabase/migrations/0006_commerce_functions.sql). `expectedTotal`
+ * is the total the customer is looking at; place_order refuses if the real total differs.
+ */
+export function toOrderPayload(form: CheckoutData, items: ItemsPayload, idempotencyKey: string, expectedTotal: number) {
   return {
     idempotency_key: idempotencyKey,
+    expected_total: expectedTotal,
     items,
     code: form.code,
     accepts_marketing: form.acceptsMarketing,

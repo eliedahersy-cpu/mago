@@ -2,16 +2,18 @@
 
 import { ArrowRight, Banknote, Gift, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useRef, useState, useTransition, type FormEvent, type ReactNode } from 'react';
-import { placeOrder } from '@/app/actions/checkout';
+import { useState, useTransition, type FormEvent, type ReactNode } from 'react';
+import { placeOrder, type PlaceOrderResult } from '@/app/actions/checkout';
 import { Button } from '@/components/ui/Button';
 import { useCart } from '@/lib/cart/store';
+import { forgetOrderKey, orderKeyFor } from '@/lib/checkout/order-key';
 import { blockingIssues } from '@/lib/checkout/quote';
 import { checkoutSchema, fieldErrors, type CheckoutInput } from '@/lib/checkout/schema';
 import { cn } from '@/lib/cn';
 import { formatPrice } from '@/lib/format';
+import { safeSessionStorage } from '@/lib/safe-storage';
 import { OrderLines } from './OrderLines';
-import { DiscountCodeField, EmptyCart, QuoteIssues, QuoteTotals } from './QuoteParts';
+import { DiscountCodeField, EmptyCart, QuoteError, QuoteIssues, QuoteTotals } from './QuoteParts';
 import { useCartQuote } from './use-cart-quote';
 
 const inputClass =
@@ -52,9 +54,6 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
   const [formError, setFormError] = useState<string | null>(null);
   const [placed, setPlaced] = useState(false);
   const [placing, startPlacing] = useTransition();
-  // One key per visit, made on the first submit: a double click or a retry after a lost
-  // response returns the same order.
-  const idempotencyKey = useRef<string | null>(null);
 
   if (!hydrated) return <p className="py-16 text-center text-ink/70">Loading your cart…</p>;
   if (placed) return <p className="py-16 text-center font-display text-xl text-forest">Placing your order…</p>;
@@ -94,11 +93,22 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
     }
     setErrors({});
     setFormError(null);
-    idempotencyKey.current ??= crypto.randomUUID();
-    const key = idempotencyKey.current;
+    if (!quote) return;
+    // The same cart keeps its key across retries and reloads, so a lost response never
+    // becomes a second order.
+    const storage = safeSessionStorage();
+    const key = orderKeyFor(JSON.stringify(items), storage, () => crypto.randomUUID());
+    const expectedTotal = quote.total;
     startPlacing(async () => {
-      const result = await placeOrder({ form, items, idempotencyKey: key });
+      let result: PlaceOrderResult;
+      try {
+        result = await placeOrder({ form, items, idempotencyKey: key, expectedTotal });
+      } catch {
+        setFormError("We couldn't confirm your order. Please check your connection and try again. Trying again won't create a second order.");
+        return;
+      }
       if (result.ok) {
+        forgetOrderKey(storage);
         setPlaced(true);
         useCart.getState().clear();
         router.replace(`/order/${result.token}`);
@@ -242,10 +252,11 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
           />
         ) : (
           <p className="py-6 text-center text-sm text-ink/60" role="status">
-            {quoteError ?? 'Calculating your total…'}
+            {quoteError ? '' : 'Calculating your total…'}
           </p>
         )}
 
+        {quoteError ? <QuoteError message={quoteError} onRetry={refresh} /> : null}
         <QuoteIssues issues={blocking} />
 
         <DiscountCodeField code={code} message={codeMessage} onApply={applyCode} onRemove={removeCode} />

@@ -21,3 +21,22 @@ export function safeStorage(): StateStorage {
     };
   }
 }
+
+const sessionMemory = new Map<string, string>();
+
+/** sessionStorage when allowed, otherwise memory that lasts for this page's lifetime. */
+export function safeSessionStorage(): StateStorage & { removeItem(name: string): void } {
+  try {
+    const storage = window.sessionStorage;
+    const probe = '__mago_storage_probe__';
+    storage.setItem(probe, probe);
+    storage.removeItem(probe);
+    return storage;
+  } catch {
+    return {
+      getItem: (key) => sessionMemory.get(key) ?? null,
+      setItem: (key, value) => void sessionMemory.set(key, value),
+      removeItem: (key) => void sessionMemory.delete(key),
+    };
+  }
+}

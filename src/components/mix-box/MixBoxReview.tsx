@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { QuantityStepper } from '@/components/product/QuantityStepper';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { StarRating } from '@/components/ui/StarRating';
+import { mergeOrderNotes } from '@/lib/cart/lines';
 import { useCart } from '@/lib/cart/store';
 import { formatPrice } from '@/lib/format';
 import { boxCount, boxSubtotal, remainingSlots } from '@/lib/mix-box/box';
@@ -85,7 +86,8 @@ export function MixBoxReview({ size, bundle, cupInfo, discount, shippingFlatFee,
   function commit(): boolean {
     if (!ready || !bundle) return false;
     addBox({ ...bundle, cups }, { open: false });
-    setOrderNotes({ instructions: instructions.trim(), isGift: isGift || giftNote.trim() !== '', giftNote: giftNote.trim() });
+    // Add to notes from earlier boxes instead of wiping them.
+    setOrderNotes(mergeOrderNotes(useCart.getState().orderNotes, { instructions, isGift, giftNote }));
     clearBox();
     return true;
   }

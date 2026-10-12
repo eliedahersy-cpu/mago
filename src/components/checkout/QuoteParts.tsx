@@ -92,6 +92,17 @@ export function QuoteIssues({ issues }: { issues: QuoteIssue[] }) {
   );
 }
 
+export function QuoteError({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div role="alert" className="rounded-2xl bg-terracotta/10 p-4 text-sm text-terracotta">
+      <p>{message}</p>
+      <Button variant="outline" size="sm" className="mt-2" onClick={onRetry}>
+        Try again
+      </Button>
+    </div>
+  );
+}
+
 export function EmptyCart() {
   return (
     <div className="mx-auto max-w-md py-16 text-center">

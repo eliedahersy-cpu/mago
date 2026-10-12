@@ -257,7 +257,7 @@ grant execute on function public.quote_cart(jsonb, text) to anon, authenticated;
 
 
 -- place_order ---------------------------------------------------------------
--- payload: { idempotency_key, items, code, accepts_marketing,
+-- payload: { idempotency_key, expected_total, items, code, accepts_marketing,
 --            contact: { full_name, email, phone },
 --            address: { governorate, area, street, building, floor, notes },
 --            special_instructions, is_gift, gift_note }
@@ -348,6 +348,15 @@ begin
   select string_agg(e ->> 'message', ' ') into msg from jsonb_array_elements(q -> 'errors') e;
   if msg is not null then
     raise exception using errcode = 'P0001', message = msg;
+  end if;
+
+  -- The customer confirmed the total on screen. If a price or discount moved since, say so
+  -- rather than take an order at a total they never saw (spec section 11).
+  if (payload ->> 'expected_total') ~ '^[0-9]{1,8}([.][0-9]+)?$'
+     and round((payload ->> 'expected_total')::numeric, 2) <> (q ->> 'total')::numeric then
+    raise exception using errcode = 'P0001',
+      message = 'Your total has changed to $' || to_char((q ->> 'total')::numeric, 'FM9999990.00')
+                || '. Please check your order and place it again.';
   end if;
 
   -- Guest and registered customers share one row per email. A guest checkout

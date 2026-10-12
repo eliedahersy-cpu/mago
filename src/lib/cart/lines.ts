@@ -49,6 +49,20 @@ export interface OrderNotes {
 
 export const EMPTY_ORDER_NOTES: OrderNotes = { instructions: '', isGift: false, giftNote: '' };
 
+/**
+ * Notes entered for one more box, added to what the cart already holds: empty fields never
+ * wipe earlier notes, and a gift note marks the order as a gift.
+ */
+export function mergeOrderNotes(current: OrderNotes, entered: OrderNotes): OrderNotes {
+  const instructions = entered.instructions.trim();
+  const giftNote = entered.giftNote.trim();
+  return {
+    instructions: instructions || current.instructions,
+    giftNote: giftNote || current.giftNote,
+    isGift: current.isGift || entered.isGift || giftNote !== '',
+  };
+}
+
 export const MAX_LINE_QTY = 99;
 
 export function clampQuantity(n: number): number {

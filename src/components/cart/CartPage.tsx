@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { DiscountCodeField, EmptyCart, QuoteIssues, QuoteTotals } from '@/components/checkout/QuoteParts';
+import { DiscountCodeField, EmptyCart, QuoteError, QuoteIssues, QuoteTotals } from '@/components/checkout/QuoteParts';
 import { useCartQuote } from '@/components/checkout/use-cart-quote';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { useCart } from '@/lib/cart/store';
@@ -10,7 +10,7 @@ import { blockingIssues } from '@/lib/checkout/quote';
 import { CartLineRow } from './CartLineRow';
 
 export function CartPage() {
-  const { hydrated, lines, quote, quoteError, code, codeMessage, applyCode, removeCode } = useCartQuote();
+  const { hydrated, lines, quote, quoteError, code, codeMessage, applyCode, removeCode, refresh } = useCartQuote();
   const setQuantity = useCart((s) => s.setQuantity);
   const remove = useCart((s) => s.remove);
 
@@ -38,11 +38,12 @@ export function CartPage() {
         <h2 className="font-display text-2xl leading-none font-bold text-forest">Order summary</h2>
         <QuoteIssues issues={blocking} />
         <DiscountCodeField code={code} message={codeMessage} onApply={applyCode} onRemove={removeCode} />
+        {quoteError ? <QuoteError message={quoteError} onRetry={refresh} /> : null}
         {quote ? (
           <QuoteTotals quote={quote} totalTestId="cart-total" />
-        ) : (
+        ) : quoteError ? null : (
           <p className="py-4 text-center text-sm text-ink/60" role="status">
-            {quoteError ?? 'Calculating your total…'}
+            Calculating your total…
           </p>
         )}
         {blocking.length > 0 ? (

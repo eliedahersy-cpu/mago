@@ -6,10 +6,12 @@ import { useCart } from '@/lib/cart/store';
 import { toItemsPayload } from '@/lib/checkout/payload';
 import { codeIssue, type Quote } from '@/lib/checkout/quote';
 
+const PRICE_ERROR = 'We could not price your cart. Please try again.';
+
 /**
  * Server-truth totals for the current cart (quote_cart), shared by the cart page and checkout.
  * Re-quotes shortly after the cart or the applied code changes; a code that stops applying is
- * dropped with its reason.
+ * dropped with its reason. Failures (including a lost connection) leave a message and `refresh`.
  */
 export function useCartQuote() {
   const hydrated = useCart((s) => s.hydrated);
@@ -27,19 +29,23 @@ export function useCartQuote() {
     let cancelled = false;
     const timer = setTimeout(() => {
       quoteCart(items, code)
-        .then((q) => {
+        .then((result) => {
           if (cancelled) return;
-          const issue = code ? codeIssue(q) : null;
+          if (!result.ok) {
+            setQuoteError(result.error);
+            return;
+          }
+          const issue = code ? codeIssue(result.quote) : null;
           if (issue) {
             setCode('');
             setCodeMessage(issue.message);
             return;
           }
-          setQuote(q);
+          setQuote(result.quote);
           setQuoteError(null);
         })
-        .catch((e: unknown) => {
-          if (!cancelled) setQuoteError(e instanceof Error ? e.message : 'We could not price your cart.');
+        .catch(() => {
+          if (!cancelled) setQuoteError(PRICE_ERROR);
         });
     }, 150);
     return () => {
@@ -54,17 +60,21 @@ export function useCartQuote() {
       setCodeMessage(null);
       if (!next) return false;
       try {
-        const q = await quoteCart(items, next);
-        const issue = codeIssue(q);
+        const result = await quoteCart(items, next);
+        if (!result.ok) {
+          setCodeMessage(result.error);
+          return false;
+        }
+        const issue = codeIssue(result.quote);
         if (issue) {
           setCodeMessage(issue.message);
           return false;
         }
-        setQuote(q);
+        setQuote(result.quote);
         setCode(next);
         return true;
-      } catch (e) {
-        setCodeMessage(e instanceof Error ? e.message : 'We could not check that code.');
+      } catch {
+        setCodeMessage('We could not check that code. Please try again.');
         return false;
       }
     },
@@ -76,7 +86,10 @@ export function useCartQuote() {
     setCodeMessage(null);
   }, [setCode]);
 
-  const refresh = useCallback(() => setVersion((v) => v + 1), []);
+  const refresh = useCallback(() => {
+    setQuoteError(null);
+    setVersion((v) => v + 1);
+  }, []);
 
   return { hydrated, lines, items, quote: items.length > 0 ? quote : null, quoteError, code, codeMessage, applyCode, removeCode, refresh };
 }
