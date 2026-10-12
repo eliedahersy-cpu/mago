@@ -17,6 +17,8 @@ import {
 interface CartState {
   lines: CartLine[];
   orderNotes: OrderNotes;
+  /** The discount code accepted on the cart or checkout page, carried between them. */
+  discountCode: string;
   isOpen: boolean;
   /** True once localStorage has been read; render counts only after this to avoid hydration mismatches. */
   hydrated: boolean;
@@ -26,6 +28,7 @@ interface CartState {
   setQuantity: (lineId: string, qty: number) => void;
   remove: (lineId: string) => void;
   setOrderNotes: (patch: Partial<OrderNotes>) => void;
+  setDiscountCode: (code: string) => void;
   clear: () => void;
   open: () => void;
   close: () => void;
@@ -36,6 +39,7 @@ export const useCart = create<CartState>()(
     (set) => ({
       lines: [],
       orderNotes: EMPTY_ORDER_NOTES,
+      discountCode: '',
       isOpen: false,
       hydrated: false,
       add: (product, qty = 1) => set((s) => ({ lines: addLine(s.lines, product, qty), isOpen: true })),
@@ -44,7 +48,8 @@ export const useCart = create<CartState>()(
       setQuantity: (lineId, qty) => set((s) => ({ lines: setLineQuantity(s.lines, lineId, qty) })),
       remove: (lineId) => set((s) => ({ lines: removeLine(s.lines, lineId) })),
       setOrderNotes: (patch) => set((s) => ({ orderNotes: { ...s.orderNotes, ...patch } })),
-      clear: () => set({ lines: [], orderNotes: EMPTY_ORDER_NOTES }),
+      setDiscountCode: (discountCode) => set({ discountCode }),
+      clear: () => set({ lines: [], orderNotes: EMPTY_ORDER_NOTES, discountCode: '' }),
       open: () => set({ isOpen: true }),
       close: () => set({ isOpen: false }),
     }),
@@ -53,7 +58,7 @@ export const useCart = create<CartState>()(
       // v2 adds Mix Box lines and order notes; v1 product lines are upgraded on read.
       version: 2,
       storage: createJSONStorage(safeStorage),
-      partialize: (s) => ({ lines: s.lines, orderNotes: s.orderNotes }),
+      partialize: (s) => ({ lines: s.lines, orderNotes: s.orderNotes, discountCode: s.discountCode }),
       migrate: (persisted) => sanitizePersistedCart(persisted),
       merge: (persisted, current) => ({ ...current, ...sanitizePersistedCart(persisted) }),
       // Hydrate explicitly from CartDrawer's mount effect so server and first client render match.

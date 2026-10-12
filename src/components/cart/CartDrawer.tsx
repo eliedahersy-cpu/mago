@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Gift, ShoppingBag, X } from 'lucide-react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { ButtonLink } from '@/components/ui/Button';
@@ -86,9 +87,14 @@ export function CartDrawer() {
             <ButtonLink href="/checkout" size="lg" className="mt-4 w-full">
               Checkout <ArrowRight size={18} aria-hidden />
             </ButtonLink>
-            <button type="button" onClick={close} className="mt-3 w-full text-center text-sm font-medium text-forest underline-offset-4 hover:underline">
-              Continue shopping
-            </button>
+            <div className="mt-3 flex items-center justify-between text-sm font-medium text-forest">
+              <Link href="/cart" className="underline-offset-4 hover:underline">
+                View cart
+              </Link>
+              <button type="button" onClick={close} className="underline-offset-4 hover:underline">
+                Continue shopping
+              </button>
+            </div>
           </div>
         </>
       )}

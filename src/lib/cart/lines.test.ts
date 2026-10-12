@@ -92,13 +92,17 @@ test('box quantity can be changed and removed like any line', () => {
 });
 
 test('sanitizePersistedCart returns an empty cart for unknown shapes', () => {
-  const empty = { lines: [], orderNotes: EMPTY_ORDER_NOTES };
+  const empty = { lines: [], orderNotes: EMPTY_ORDER_NOTES, discountCode: '' };
   expect(sanitizePersistedCart(null)).toEqual(empty);
   expect(sanitizePersistedCart({ lines: 'oops' })).toEqual(empty);
   expect(sanitizePersistedCart({ lines: [{ id: 'p:a' }] })).toEqual(empty);
   const good = addBox(addLine([], cup), fullBox, 'x');
   const notes = { instructions: 'Ring twice', isGift: true, giftNote: 'Enjoy!' };
-  expect(sanitizePersistedCart({ lines: good, orderNotes: notes })).toEqual({ lines: good, orderNotes: notes });
+  expect(sanitizePersistedCart({ lines: good, orderNotes: notes, discountCode: 'SPRING' })).toEqual({
+    lines: good,
+    orderNotes: notes,
+    discountCode: 'SPRING',
+  });
 });
 
 test('upgrades v1 product lines that have no kind', () => {
@@ -106,6 +110,7 @@ test('upgrades v1 product lines that have no kind', () => {
   expect(sanitizePersistedCart({ lines: [v1] })).toEqual({
     lines: [{ ...v1, kind: 'product' }],
     orderNotes: EMPTY_ORDER_NOTES,
+    discountCode: '',
   });
 });
 
@@ -115,4 +120,6 @@ test('drops malformed boxes and bad notes', () => {
   const zeroCup = { ...line, cups: [{ ...line.kind === 'box' ? line.cups[0] : {}, quantity: 0 }] };
   expect(sanitizePersistedCart({ lines: [emptyBox, zeroCup] }).lines).toEqual([]);
   expect(sanitizePersistedCart({ lines: [], orderNotes: { isGift: 'yes' } }).orderNotes).toEqual(EMPTY_ORDER_NOTES);
+  expect(sanitizePersistedCart({ lines: [], discountCode: 42 }).discountCode).toBe('');
+  expect(sanitizePersistedCart({ lines: [], discountCode: 'x'.repeat(41) }).discountCode).toBe('');
 });

@@ -1,17 +1,18 @@
 'use client';
 
-import { ArrowRight, Banknote, Gift, Lock, ShoppingBag, X } from 'lucide-react';
+import { ArrowRight, Banknote, Gift, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState, useTransition, type FormEvent, type ReactNode } from 'react';
-import { placeOrder, quoteCart } from '@/app/actions/checkout';
-import { Button, ButtonLink } from '@/components/ui/Button';
+import { useRef, useState, useTransition, type FormEvent, type ReactNode } from 'react';
+import { placeOrder } from '@/app/actions/checkout';
+import { Button } from '@/components/ui/Button';
 import { useCart } from '@/lib/cart/store';
-import { toItemsPayload } from '@/lib/checkout/payload';
-import { blockingIssues, codeIssue, type Quote } from '@/lib/checkout/quote';
+import { blockingIssues } from '@/lib/checkout/quote';
 import { checkoutSchema, fieldErrors, type CheckoutInput } from '@/lib/checkout/schema';
 import { cn } from '@/lib/cn';
 import { formatPrice } from '@/lib/format';
-import { OrderLines, TotalsList } from './OrderLines';
+import { OrderLines } from './OrderLines';
+import { DiscountCodeField, EmptyCart, QuoteIssues, QuoteTotals } from './QuoteParts';
+import { useCartQuote } from './use-cart-quote';
 
 const inputClass =
   'mt-1.5 w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink focus:border-forest focus:outline-none aria-[invalid=true]:border-terracotta';
@@ -44,17 +45,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
   const router = useRouter();
-  const hydrated = useCart((s) => s.hydrated);
-  const lines = useCart((s) => s.lines);
+  const { hydrated, lines, items, quote, quoteError, code, codeMessage, applyCode, removeCode, refresh } = useCartQuote();
   const orderNotes = useCart((s) => s.orderNotes);
   const openCart = useCart((s) => s.open);
-  const items = useMemo(() => toItemsPayload(lines), [lines]);
-
-  const [code, setCode] = useState('');
-  const [codeInput, setCodeInput] = useState('');
-  const [codeMessage, setCodeMessage] = useState<string | null>(null);
-  const [quote, setQuote] = useState<Quote | null>(null);
-  const [quoteError, setQuoteError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [placed, setPlaced] = useState(false);
@@ -63,71 +56,13 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
   // response returns the same order.
   const idempotencyKey = useRef<string | null>(null);
 
-  // Server-truth totals, refreshed whenever the cart or the applied code changes.
-  useEffect(() => {
-    if (!hydrated || items.length === 0) return;
-    let cancelled = false;
-    quoteCart(items, code)
-      .then((q) => {
-        if (cancelled) return;
-        const issue = code ? codeIssue(q) : null;
-        if (issue) {
-          // The code stopped applying (e.g. the cart changed): drop it and say why.
-          setCode('');
-          setCodeMessage(issue.message);
-          return;
-        }
-        setQuote(q);
-        setQuoteError(null);
-      })
-      .catch((e: unknown) => {
-        if (!cancelled) setQuoteError(e instanceof Error ? e.message : 'We could not price your cart.');
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [hydrated, items, code]);
-
   if (!hydrated) return <p className="py-16 text-center text-ink/70">Loading your cart…</p>;
   if (placed) return <p className="py-16 text-center font-display text-xl text-forest">Placing your order…</p>;
 
-  if (lines.length === 0) {
-    return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <ShoppingBag size={40} className="mx-auto text-forest/40" aria-hidden />
-        <p className="mt-4 font-display text-2xl font-bold text-forest">Your cart is empty</p>
-        <p className="mt-2 text-ink/70">Add some cups or build a Mix Box to check out.</p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <ButtonLink href="/shop">Shop cups</ButtonLink>
-          <ButtonLink href="/mix-box" variant="outline">
-            Build a Mix Box
-          </ButtonLink>
-        </div>
-      </div>
-    );
-  }
+  if (lines.length === 0) return <EmptyCart />;
 
   const blocking = quote ? blockingIssues(quote) : [];
   const canPlace = quote !== null && blocking.length === 0 && !placing;
-
-  async function applyCode() {
-    const next = codeInput.trim();
-    setCodeMessage(null);
-    if (!next) return;
-    try {
-      const q = await quoteCart(items, next);
-      const issue = codeIssue(q);
-      if (issue) {
-        setCodeMessage(issue.message);
-        return;
-      }
-      setQuote(q);
-      setCode(next);
-      setCodeInput('');
-    } catch (e) {
-      setCodeMessage(e instanceof Error ? e.message : 'We could not check that code.');
-    }
-  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -172,7 +107,7 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
       setErrors(result.fieldErrors ?? {});
       setFormError(result.error);
       // Stock may have changed: show the latest availability.
-      quoteCart(items, code).then(setQuote, () => undefined);
+      refresh();
     });
   }
 
@@ -311,68 +246,11 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
           </p>
         )}
 
-        {blocking.length > 0 ? (
-          <div role="alert" className="rounded-2xl bg-terracotta/10 p-4 text-sm text-terracotta">
-            <p className="font-semibold">Please update your cart:</p>
-            <ul className="mt-1 list-disc pl-5">
-              {blocking.map((issue, i) => (
-                <li key={i}>{issue.message}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
+        <QuoteIssues issues={blocking} />
 
-        <div>
-          <label htmlFor="discount-code" className="text-sm font-semibold text-forest">
-            Discount code
-          </label>
-          {code ? (
-            <p className="mt-1.5 flex items-center justify-between rounded-2xl bg-leaf/10 px-4 py-2 text-sm font-semibold text-leaf">
-              {code.toUpperCase()} applied
-              <button type="button" aria-label="Remove discount code" onClick={() => setCode('')} className="rounded-full p-1 hover:bg-leaf/20">
-                <X size={16} aria-hidden />
-              </button>
-            </p>
-          ) : (
-            <div className="mt-1.5 flex gap-2">
-              <input
-                id="discount-code"
-                value={codeInput}
-                onChange={(e) => setCodeInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    void applyCode();
-                  }
-                }}
-                className="w-full rounded-full border border-forest/15 bg-white px-4 py-2 text-sm uppercase focus:border-forest focus:outline-none"
-              />
-              <Button variant="outline" size="sm" className="h-10" onClick={() => void applyCode()}>
-                Apply
-              </Button>
-            </div>
-          )}
-          {codeMessage ? (
-            <p className="mt-1 text-sm text-terracotta" role="status">
-              {codeMessage}
-            </p>
-          ) : null}
-        </div>
+        <DiscountCodeField code={code} message={codeMessage} onApply={applyCode} onRemove={removeCode} />
 
-        {quote ? (
-          <TotalsList
-            subtotal={quote.subtotal}
-            discounts={[
-              ...(quote.automaticDiscount ? [{ label: quote.automaticDiscount.title, amount: quote.automaticDiscount.amount }] : []),
-              ...(quote.codeDiscount && quote.codeDiscount.amount > 0
-                ? [{ label: `${quote.codeDiscount.title} (${quote.codeDiscount.code})`, amount: quote.codeDiscount.amount }]
-                : []),
-            ]}
-            shipping={quote.shippingTotal}
-            total={quote.total}
-            totalTestId="checkout-total"
-          />
-        ) : null}
+        {quote ? <QuoteTotals quote={quote} totalTestId="checkout-total" /> : null}
 
         {formError ? (
           <p role="alert" className="rounded-2xl bg-terracotta/10 px-4 py-3 text-sm text-terracotta">

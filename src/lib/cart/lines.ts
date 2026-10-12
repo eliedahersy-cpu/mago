@@ -149,16 +149,20 @@ function upgradeLine(line: unknown): unknown {
   return line;
 }
 
+const discountCodeSchema = z.string().trim().max(40);
+
 /** Validate whatever was stored in localStorage; drop anything malformed instead of crashing. */
-export function sanitizePersistedCart(persisted: unknown): { lines: CartLine[]; orderNotes: OrderNotes } {
-  const state = persisted && typeof persisted === 'object' ? (persisted as { lines?: unknown; orderNotes?: unknown }) : {};
+export function sanitizePersistedCart(persisted: unknown): { lines: CartLine[]; orderNotes: OrderNotes; discountCode: string } {
+  const state =
+    persisted && typeof persisted === 'object' ? (persisted as { lines?: unknown; orderNotes?: unknown; discountCode?: unknown }) : {};
   const rawLines = Array.isArray(state.lines) ? state.lines : [];
   const lines = rawLines.flatMap((l) => {
     const parsed = cartLineSchema.safeParse(upgradeLine(l));
     return parsed.success ? [parsed.data] : [];
   });
   const notes = orderNotesSchema.safeParse(state.orderNotes);
-  return { lines, orderNotes: notes.success ? notes.data : EMPTY_ORDER_NOTES };
+  const code = discountCodeSchema.safeParse(state.discountCode);
+  return { lines, orderNotes: notes.success ? notes.data : EMPTY_ORDER_NOTES, discountCode: code.success ? code.data : '' };
 }
 
 export function toCartProduct(p: Product): CartProduct {
