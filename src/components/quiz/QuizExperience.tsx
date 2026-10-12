@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Check, ChevronRight, Heart, Leaf, RotateCcw, ShoppingBag, Sparkles, Sun, Utensils, Flame, Clock3, Gift } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ChevronRight, Heart, Leaf, RotateCcw, ShoppingBag, Utensils, Gift } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';

@@ -1,8 +1,7 @@
-import { ArrowRight, User } from 'lucide-react';
+import { Search, User } from 'lucide-react';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Logo } from '@/components/brand/Logo';
-import { ButtonLink } from '@/components/ui/Button';
 import { HeaderSearch } from './HeaderSearch';
 import { MobileNav } from './MobileNav';
 import { NavLinks } from './NavLinks';
@@ -29,13 +28,11 @@ export function Header({ cart }: { cart?: ReactNode }) {
 
         <div className="flex flex-1 items-center justify-end gap-1 lg:flex-none">
           <HeaderSearch className="hidden lg:block" />
-          <Link href="/account" aria-label="Account" className={`${iconButton} hidden sm:flex`}>
+          <Link href="/search" aria-label="Search" className={`${iconButton} lg:hidden`}><Search size={21} aria-hidden /></Link>
+          <Link href="/account" aria-label="Account" className={iconButton}>
             <User size={21} aria-hidden />
           </Link>
           {cart}
-          <ButtonLink href="/shop" size="sm" className="ml-2 hidden lg:inline-flex">
-            Order now <ArrowRight size={16} aria-hidden />
-          </ButtonLink>
         </div>
       </div>
     </header>

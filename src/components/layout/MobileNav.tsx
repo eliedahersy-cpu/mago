@@ -25,7 +25,7 @@ export function MobileNav() {
         type="button"
         aria-label="Open menu"
         onClick={() => dialog.current?.showModal()}
-        className="flex size-10 items-center justify-center rounded-full text-forest hover:bg-forest/10 lg:hidden"
+        className="flex size-10 items-center justify-center rounded-full text-forest hover:bg-forest/10"
       >
         <Menu size={24} aria-hidden />
       </button>

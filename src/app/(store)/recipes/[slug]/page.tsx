@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Check, Clock3, Lightbulb, ShoppingBag, Users } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Clock3, Lightbulb, Users } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,6 +8,8 @@ import { SunMark } from '@/components/brand/Decor';
 import { toCartProduct } from '@/lib/cart/lines';
 import { getActiveProducts } from '@/lib/data/catalog';
 import { createPublicClient } from '@/lib/supabase/public';
+
+export const instant = false;
 
 type RecipeRow = {
   title:string;subtitle:string|null;hero_image:string|null;minutes:number;difficulty:string|null;servings:string|null;
