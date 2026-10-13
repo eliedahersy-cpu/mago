@@ -1,12 +1,14 @@
 'use client';
 
 import { ArrowRight, Banknote, Gift, Lock } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition, type FormEvent, type ReactNode } from 'react';
 import { placeOrder, type PlaceOrderResult } from '@/app/actions/checkout';
 import { Button } from '@/components/ui/Button';
 import { Field, inputClass } from '@/components/ui/Field';
 import { useCart } from '@/lib/cart/store';
+import { checkoutDefaults, type CheckoutAccount } from '@/lib/checkout/account';
 import { forgetOrderKey, orderKeyFor } from '@/lib/checkout/order-key';
 import { blockingIssues } from '@/lib/checkout/quote';
 import { checkoutSchema, fieldErrors, type CheckoutInput } from '@/lib/checkout/schema';
@@ -26,8 +28,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
+export function CheckoutForm({ deliveryAreas, account = null }: { deliveryAreas: string[]; account?: CheckoutAccount | null }) {
   const router = useRouter();
+  const defaults = checkoutDefaults(account);
   const { hydrated, lines, items, quote, quoteError, code, codeMessage, applyCode, removeCode, refresh } = useCartQuote();
   const orderNotes = useCart((s) => s.orderNotes);
   const openCart = useCart((s) => s.open);
@@ -80,10 +83,11 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
     const storage = safeSessionStorage();
     const key = orderKeyFor(JSON.stringify(items), storage, () => crypto.randomUUID());
     const expectedTotal = quote.total;
+    const saveAddress = fd.get('saveAddress') === 'on';
     startPlacing(async () => {
       let result: PlaceOrderResult;
       try {
-        result = await placeOrder({ form, items, idempotencyKey: key, expectedTotal });
+        result = await placeOrder({ form, items, idempotencyKey: key, expectedTotal, saveAddress });
       } catch {
         setFormError("We couldn't confirm your order. Please check your connection and try again. Trying again won't create a second order.");
         return;
@@ -109,15 +113,34 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
     <div className="grid gap-6 lg:grid-cols-[1fr_420px] lg:items-start">
       <form id="checkout-form" noValidate onSubmit={onSubmit} className="space-y-6">
         <Section title="Contact">
+          {account ? null : (
+            <p className="text-sm text-ink/75 sm:col-span-2">
+              Have an account?{' '}
+              <Link href="/account/login?next=%2Fcheckout" className="font-semibold text-forest underline underline-offset-4">
+                Sign in
+              </Link>{' '}
+              to use your saved details.
+            </p>
+          )}
           <Field id="fullName" label="Full name" error={err('fullName')}>
-            <input id="fullName" name="fullName" autoComplete="name" required className={inputClass} {...aria('fullName')} />
+            <input id="fullName" name="fullName" autoComplete="name" defaultValue={defaults.fullName} required className={inputClass} {...aria('fullName')} />
           </Field>
           <Field id="phone" label="Phone" error={err('phone')}>
-            <input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+961 70 123 456" required className={inputClass} {...aria('phone')} />
+            <input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+961 70 123 456" defaultValue={defaults.phone} required className={inputClass} {...aria('phone')} />
           </Field>
           <div className="sm:col-span-2">
-            <Field id="email" label="Email" error={err('email')}>
-              <input id="email" name="email" type="email" autoComplete="email" required className={inputClass} {...aria('email')} />
+            <Field id="email" label="Email" error={err('email')} hint={account ? 'Signed in: this order will appear in your account.' : undefined}>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                defaultValue={defaults.email}
+                readOnly={account !== null}
+                required
+                className={cn(inputClass, account && 'bg-cream text-ink/70')}
+                {...aria('email')}
+              />
             </Field>
           </div>
         </Section>
@@ -125,7 +148,7 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
         <Section title="Delivery address">
           <Field id="governorate" label="Governorate" error={err('governorate')}>
             {deliveryAreas.length > 0 ? (
-              <select id="governorate" name="governorate" defaultValue="" required className={inputClass} {...aria('governorate')}>
+              <select id="governorate" name="governorate" defaultValue={deliveryAreas.includes(defaults.governorate) ? defaults.governorate : ''} required className={inputClass} {...aria('governorate')}>
                 <option value="" disabled>
                   Choose…
                 </option>
@@ -136,28 +159,34 @@ export function CheckoutForm({ deliveryAreas }: { deliveryAreas: string[] }) {
                 ))}
               </select>
             ) : (
-              <input id="governorate" name="governorate" required className={inputClass} {...aria('governorate')} />
+              <input id="governorate" name="governorate" defaultValue={defaults.governorate} required className={inputClass} {...aria('governorate')} />
             )}
           </Field>
           <Field id="area" label="Area" error={err('area')}>
-            <input id="area" name="area" autoComplete="address-level2" placeholder="e.g. Hamra" required className={inputClass} {...aria('area')} />
+            <input id="area" name="area" autoComplete="address-level2" placeholder="e.g. Hamra" defaultValue={defaults.area} required className={inputClass} {...aria('area')} />
           </Field>
           <div className="sm:col-span-2">
             <Field id="street" label="Street" error={err('street')}>
-              <input id="street" name="street" autoComplete="address-line1" required className={inputClass} {...aria('street')} />
+              <input id="street" name="street" autoComplete="address-line1" defaultValue={defaults.street} required className={inputClass} {...aria('street')} />
             </Field>
           </div>
           <Field id="building" label="Building" optional error={err('building')}>
-            <input id="building" name="building" className={inputClass} {...aria('building')} />
+            <input id="building" name="building" defaultValue={defaults.building} className={inputClass} {...aria('building')} />
           </Field>
           <Field id="floor" label="Floor" optional error={err('floor')}>
-            <input id="floor" name="floor" className={inputClass} {...aria('floor')} />
+            <input id="floor" name="floor" defaultValue={defaults.floor} className={inputClass} {...aria('floor')} />
           </Field>
           <div className="sm:col-span-2">
             <Field id="addressNotes" label="Address notes" optional error={err('addressNotes')}>
-              <input id="addressNotes" name="addressNotes" placeholder="Landmark, entrance, etc." className={inputClass} {...aria('addressNotes')} />
+              <input id="addressNotes" name="addressNotes" placeholder="Landmark, entrance, etc." defaultValue={defaults.addressNotes} className={inputClass} {...aria('addressNotes')} />
             </Field>
           </div>
+          {account ? (
+            <label className="flex items-center gap-2 text-sm text-ink/80 sm:col-span-2">
+              <input type="checkbox" name="saveAddress" defaultChecked={account.address === null} className="size-4 accent-forest" />
+              Save this address to my account
+            </label>
+          ) : null}
         </Section>
 
         <Section title="Notes">

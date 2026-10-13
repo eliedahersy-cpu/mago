@@ -100,3 +100,45 @@ export async function getMyAddresses(): Promise<Address[]> {
     isDefault: a.is_default,
   }));
 }
+
+/** Saves a checkout address to the signed-in customer's address book (skipping exact repeats). */
+export async function addAddressFromCheckout(a: {
+  fullName: string;
+  phone: string;
+  governorate: string;
+  area: string;
+  street: string;
+  building: string;
+  floor: string;
+  addressNotes: string;
+}): Promise<void> {
+  const customerId = await ensureCustomer();
+  if (!customerId) return;
+  const supabase = await createClient();
+  const { data: existing } = await supabase
+    .from('addresses')
+    .select('governorate, area, street, building, floor')
+    .eq('customer_id', customerId);
+  const same = (existing ?? []).some(
+    (e) =>
+      e.governorate === a.governorate &&
+      e.area === a.area &&
+      e.street === a.street &&
+      (e.building ?? '') === a.building &&
+      (e.floor ?? '') === a.floor,
+  );
+  if (same) return;
+  const { error } = await supabase.from('addresses').insert({
+    customer_id: customerId,
+    full_name: a.fullName,
+    phone: a.phone,
+    governorate: a.governorate,
+    area: a.area,
+    street: a.street,
+    building: a.building || null,
+    floor: a.floor || null,
+    notes: a.addressNotes || null,
+    is_default: (existing ?? []).length === 0,
+  });
+  if (error) console.error('addAddressFromCheckout failed', error);
+}

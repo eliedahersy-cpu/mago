@@ -1,10 +1,14 @@
 'use server';
 
 import { z } from 'zod';
+import { getUser } from '@/lib/auth/dal';
+import { withAccountEmail } from '@/lib/checkout/account';
 import { itemsPayloadSchema, toOrderPayload, type ItemsPayload } from '@/lib/checkout/payload';
 import { toQuote, type Quote } from '@/lib/checkout/quote';
 import { checkoutSchema, fieldErrors, type CheckoutInput } from '@/lib/checkout/schema';
+import { addAddressFromCheckout } from '@/lib/data/account';
 import { createPublicClient } from '@/lib/supabase/public';
+import { createClient } from '@/lib/supabase/server';
 
 const codeSchema = z.string().trim().max(40);
 
@@ -44,6 +48,8 @@ export async function placeOrder(input: {
   idempotencyKey: string;
   /** The total shown to the customer; the order is refused if the real total differs. */
   expectedTotal: number;
+  /** Signed-in customers can keep the delivery address for next time. */
+  saveAddress?: boolean;
 }): Promise<PlaceOrderResult> {
   const form = checkoutSchema.safeParse(input.form);
   if (!form.success) return { ok: false, error: 'Please check the highlighted fields.', fieldErrors: fieldErrors(form.error) };
@@ -54,8 +60,15 @@ export async function placeOrder(input: {
     return { ok: false, error: 'Your cart could not be read. Please refresh the page and try again.' };
   }
 
-  const { data, error } = await createPublicClient().rpc('place_order', {
-    payload: toOrderPayload(form.data, items.data, key.data, expectedTotal.data),
+  // Signed in: the order goes to the account email (whatever the form says) and through the
+  // session, after linking the account to its customer record.
+  const user = await getUser();
+  const order = withAccountEmail(form.data, user?.email ?? null);
+  const supabase = user ? await createClient() : createPublicClient();
+  if (user) await supabase.rpc('claim_customer');
+
+  const { data, error } = await supabase.rpc('place_order', {
+    payload: toOrderPayload(order, items.data, key.data, expectedTotal.data),
   });
   if (error) {
     // P0001 messages are written for customers in place_order; anything else is ours to log.
@@ -64,5 +77,6 @@ export async function placeOrder(input: {
     return { ok: false, error: 'We could not place your order. Please try again in a moment.' };
   }
   const result = data as { number: number; access_token: string };
+  if (user && input.saveAddress) await addAddressFromCheckout(order);
   return { ok: true, token: result.access_token, number: result.number };
 }
