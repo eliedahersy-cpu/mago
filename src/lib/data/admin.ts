@@ -666,3 +666,44 @@ export async function countPendingReviews(): Promise<number> {
   const { count } = await supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('status', 'pending');
   return count ?? 0;
 }
+
+// ---------------------------------------------------------------------------- recipes
+
+export interface AdminRecipeRow {
+  id: string;
+  title: string;
+  status: string;
+  heroImage: string | null;
+  minutes: number;
+  sortOrder: number;
+  product: string | null;
+}
+
+export async function listAdminRecipes(): Promise<AdminRecipeRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('recipes')
+    .select('id, title, status, hero_image, minutes, sort_order, product:products (name, flavour)')
+    .order('sort_order')
+    .order('title');
+  if (error) fail('recipes', error);
+  return (data as Raw[]).map((r) => {
+    const p = r.product as Raw | null;
+    return {
+      id: String(r.id),
+      title: String(r.title),
+      status: String(r.status),
+      heroImage: (r.hero_image as string | null) ?? null,
+      minutes: toNum(r.minutes),
+      sortOrder: toNum(r.sort_order),
+      product: p ? [p.name, p.flavour].filter(Boolean).join(' ') : null,
+    };
+  });
+}
+
+export async function getAdminRecipe(id: string): Promise<Raw | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('recipes').select('*').eq('id', id).maybeSingle();
+  if (error) fail('recipe', error);
+  return (data as Raw | null) ?? null;
+}

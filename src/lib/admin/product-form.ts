@@ -104,7 +104,8 @@ export function parseProductForm(fd: FormData): FormResult<ProductInput> {
   return parseWith(productSchema, {
     name,
     flavour,
-    slug: text(fd, 'slug') || slugify([name, flavour].filter(Boolean).join(' ')),
+    // No name: only the name is reported, not a slug made from nothing.
+    slug: text(fd, 'slug') || (name ? slugify([name, flavour].filter(Boolean).join(' ')) : 'untitled'),
     type: text(fd, 'type'),
     status: text(fd, 'status'),
     sauce: optionalText(fd, 'sauce'),
