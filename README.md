@@ -68,6 +68,21 @@ set role = 'owner'
 where id = (select id from auth.users where email = 'owner@example.com');
 ```
 
+## Accounts (Supabase Auth)
+
+Customers register with email + password (email confirmation on) or sign in with an emailed link.
+In the Supabase dashboard, **Authentication → URL Configuration** must have:
+
+- Site URL: `https://mago-rose.vercel.app`
+- Redirect URLs: `https://mago-rose.vercel.app/**` and `http://localhost:3000/**`
+
+Emailed links land on `/auth/callback`, which signs the person in and runs `claim_customer()` so
+guest orders placed with the same (verified) email appear in the account. `src/proxy.ts` keeps the
+session fresh on `/account`, `/auth` and `/checkout` and sends signed-out visitors to sign in.
+
+Supabase's built-in email service sends only a few emails per hour; connect a real SMTP provider
+(Authentication → Emails → SMTP) before launch. Manual test steps: `docs/qa/accounts-checklist.md`.
+
 ## Deploy (Vercel)
 
 `.env.local` is git-ignored, so a deploy only sees the variables set on the host. In the Vercel
