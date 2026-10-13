@@ -64,7 +64,7 @@ export function MixBoxBanner({ variant }: { variant: 'home' | 'shop' }) {
             alt="The MAGO Mix Box: 5 cups, your mix"
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-cover rounded-[1.5rem] drop-shadow-xl
+            className="object-cover rounded-[1.5rem] drop-shadow-xl"
           />
         </div>
       </Container>
