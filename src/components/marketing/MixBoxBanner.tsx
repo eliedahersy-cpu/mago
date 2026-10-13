@@ -1,14 +1,10 @@
-import { ArrowRight, Gift, Layers, Sparkles } from 'lucide-react';
-import Image from 'next/image';
-import { ArchDecor, LeafSprig } from '@/components/brand/Decor';
+import { ArrowRight } from 'lucide-react';
+import Image, { getImageProps } from 'next/image';
+import Link from 'next/link';
+import { LeafSprig } from '@/components/brand/Decor';
 import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-
-const perks = [
-  { icon: Layers, label: 'Mix your favourites' },
-  { icon: Sparkles, label: 'More flavours to explore' },
-  { icon: Gift, label: 'The perfect gift' },
-];
+import { cn } from '@/lib/cn';
 
 export function MixBoxBanner({ variant }: { variant: 'home' | 'shop' }) {
   if (variant === 'shop') {
@@ -36,37 +32,43 @@ export function MixBoxBanner({ variant }: { variant: 'home' | 'shop' }) {
     );
   }
 
+  return <HomeMixBoxBanner />;
+}
+
+const BANNER_ALT =
+  'Build your MAGO Mix Box. Pick 5 cups. Your way. Mix your favourites, more flavours to explore, the perfect gift. An open MAGO Mix Box with five pasta cups.';
+
+/**
+ * The approved Mix Box artwork (tall for phones, wide from 768px). The whole banner links to the builder,
+ * and a real "Start mixing" button sits exactly over the one drawn in the artwork.
+ */
+function HomeMixBoxBanner() {
+  const common = { alt: BANNER_ALT, sizes: '(min-width: 1600px) 1600px, 100vw' };
+  const {
+    props: { srcSet: wide },
+  } = getImageProps({ ...common, width: 1600, height: 900, src: '/images/mix-box-banner-wide.webp' });
+  const {
+    props: { srcSet: tall, ...img },
+  } = getImageProps({ ...common, width: 900, height: 1600, src: '/images/mix-box-banner-tall.webp' });
+
   return (
-    <section className="relative overflow-hidden bg-cream-dark/50">
-      <ArchDecor tone="saffron" className="pointer-events-none absolute -bottom-10 -left-8 w-28 opacity-40" />
-      <Container className="grid items-center gap-8 py-12 md:grid-cols-2 md:py-16">
-        <div>
-          <h2 className="font-display leading-none font-bold text-forest uppercase">
-            <span className="block text-2xl md:text-3xl">Build your</span>
-            <span className="block text-4xl md:text-6xl">MAGO Mix Box</span>
-          </h2>
-          <p className="mt-3 text-lg text-ink/80">Pick 5 cups. Your way.</p>
-          <ul className="mt-6 flex flex-wrap gap-6">
-            {perks.map(({ icon: Icon, label }) => (
-              <li key={label} className="flex items-center gap-2 text-sm font-medium text-forest">
-                <Icon size={22} aria-hidden /> {label}
-              </li>
-            ))}
-          </ul>
-          <ButtonLink href="/mix-box" className="mt-7">
-            Start mixing <ArrowRight size={18} aria-hidden />
-          </ButtonLink>
-        </div>
-        <div className="relative aspect-[4/3] w-full">
-          <Image
-            src="/products/mago-mix-box.webp"
-            alt="The MAGO Mix Box: 5 cups, your mix"
-            fill
-            sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-contain drop-shadow-xl"
-          />
-        </div>
-      </Container>
+    <section aria-label="Build your MAGO Mix Box" className="bg-[#f4e3c8]">
+      <Link href="/mix-box" className="group relative mx-auto block max-w-[1600px] focus-visible:outline-none">
+        <picture>
+          <source media="(min-width: 768px)" srcSet={wide} width={1600} height={900} />
+          <img {...img} srcSet={tall} alt={BANNER_ALT} loading="lazy" className="block h-auto w-full" />
+        </picture>
+        <span
+          className={cn(
+            'absolute flex items-center justify-center gap-2 rounded-full bg-[#013226] font-display font-semibold tracking-wide text-cream-light uppercase transition',
+            'group-hover:bg-forest-light group-focus-visible:outline-3 group-focus-visible:outline-offset-2 group-focus-visible:outline-saffron',
+            'top-[88.7%] left-[20.2%] h-[6%] w-[60.1%] text-[clamp(0.85rem,4.6vw,1.6rem)]',
+            'md:top-[60.1%] md:left-[4.5%] md:h-[7.6%] md:w-[22.3%] md:text-[clamp(0.8rem,1.55vw,1.6rem)]',
+          )}
+        >
+          Start mixing <ArrowRight className="size-[1.1em]" aria-hidden />
+        </span>
+      </Link>
     </section>
   );
 }
