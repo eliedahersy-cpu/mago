@@ -3,7 +3,7 @@
 import { MailCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { register, requestPasswordReset, sendSignInLink, signIn, updatePassword, type AuthState } from '@/app/actions/auth';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { Field, fieldAria, inputClass } from '@/components/ui/Field';
@@ -32,12 +32,20 @@ function Sent({ message, children }: { message: string; children?: React.ReactNo
 
 const linkClass = 'font-semibold text-forest underline underline-offset-4 hover:text-terracotta';
 
+/** After signing in, load the next page in full so the header, cart and wishlist see the session. */
+function useGoWhenSignedIn(state: AuthState) {
+  useEffect(() => {
+    if (state.status === 'signed-in') window.location.assign(safeNextPath(state.next));
+  }, [state]);
+}
+
 export function LoginForm() {
   const params = useSearchParams();
   const next = safeNextPath(params.get('next'));
   const [state, passwordAction, signingIn] = useActionState(signIn, idle);
   const [linkState, linkAction, sendingLink] = useActionState(sendSignInLink, idle);
-  const busy = signingIn || sendingLink;
+  useGoWhenSignedIn(state);
+  const busy = signingIn || sendingLink || state.status === 'signed-in';
   const emailError = state.fieldErrors?.email ?? linkState.fieldErrors?.email;
   const passwordError = state.fieldErrors?.password;
 
@@ -62,7 +70,7 @@ export function LoginForm() {
         </Link>
       </div>
       <Button type="submit" size="lg" className="w-full" disabled={busy}>
-        {signingIn ? 'Signing in…' : 'Sign in'}
+        {signingIn || state.status === 'signed-in' ? 'Signing in…' : 'Sign in'}
       </Button>
       <div className="flex items-center gap-3 text-xs text-ink/50 uppercase" aria-hidden>
         <span className="h-px flex-1 bg-forest/15" /> or <span className="h-px flex-1 bg-forest/15" />
@@ -84,6 +92,7 @@ export function RegisterForm() {
   const params = useSearchParams();
   const next = safeNextPath(params.get('next'));
   const [state, action, pending] = useActionState(register, idle);
+  useGoWhenSignedIn(state);
   const errors = state.fieldErrors ?? {};
 
   if (state.status === 'sent') {

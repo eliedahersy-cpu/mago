@@ -4,10 +4,11 @@ import { useEffect } from 'react';
 import { create } from 'zustand';
 import { syncWishlist } from '@/app/actions/wishlist';
 import { createClient } from '@/lib/supabase/browser';
+import { idsToUpload } from './ids';
 import { useWishlist } from './store';
 
-/** Whether someone is signed in, from the session cookie. For UI only: the server re-checks. */
-export const useAuthStatus = create<{ signedIn: boolean }>(() => ({ signedIn: false }));
+/** Who is signed in, from the session cookie. For UI only: the server re-checks. */
+export const useAuthStatus = create<{ signedIn: boolean; userId: string | null }>(() => ({ signedIn: false, userId: null }));
 
 export const WISHLIST_SYNCED_KEY = 'mago-wishlist-synced';
 
@@ -20,45 +21,64 @@ export function useHydratedWishlist(): boolean {
   return hydrated;
 }
 
-/** Merges this browser's wishlist into the account and keeps the merged list locally. */
-export async function mergeWishlistIntoAccount(): Promise<boolean> {
-  const ids = await syncWishlist(useWishlist.getState().ids);
-  if (!ids) return false;
-  useWishlist.getState().replace(ids);
+/**
+ * Brings this browser's wishlist in line with the account: a guest's list is added to the
+ * account once; after that the account's list (from the server) replaces the local copy.
+ */
+export async function syncWithAccount(userId: string): Promise<boolean> {
+  const { owner, ids } = useWishlist.getState();
+  const serverIds = await syncWishlist(idsToUpload(owner, userId, ids));
+  if (!serverIds) return false;
+  useWishlist.getState().adopt(userId, serverIds);
   return true;
 }
 
+/** Signing out leaves no trace of the account's wishlist or sign-in state in this browser. */
+export function forgetAccountData(): void {
+  useWishlist.getState().forget();
+  useAuthStatus.setState({ signedIn: false, userId: null });
+  try {
+    window.sessionStorage.removeItem(WISHLIST_SYNCED_KEY);
+  } catch {
+    // ignore
+  }
+}
+
 /**
- * Mounted once in the store layout: tracks the sign-in state and, once per browser session
- * after signing in, merges the guest wishlist into the account.
+ * Mounted once in the store layout: tracks who is signed in and syncs the wishlist with the
+ * account once per browser session (and whenever the stored list belongs to someone else).
  */
 export function useWishlistSync(): void {
   const hydrated = useHydratedWishlist();
-  const signedIn = useAuthStatus((s) => s.signedIn);
+  const userId = useAuthStatus((s) => s.userId);
+  const owner = useWishlist((s) => s.owner);
 
   useEffect(() => {
     const supabase = createClient();
-    void supabase.auth.getSession().then(({ data }) => useAuthStatus.setState({ signedIn: Boolean(data.session) }));
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => useAuthStatus.setState({ signedIn: Boolean(session) }));
+    const apply = (id: string | null) => useAuthStatus.setState({ signedIn: id !== null, userId: id });
+    void supabase.auth.getSession().then(({ data }) => apply(data.session?.user.id ?? null));
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => apply(session?.user.id ?? null));
     return () => data.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
-    if (!hydrated || !signedIn) return;
+    if (!hydrated || !userId) return;
+    let synced = false;
     try {
-      if (window.sessionStorage.getItem(WISHLIST_SYNCED_KEY)) return;
+      synced = window.sessionStorage.getItem(WISHLIST_SYNCED_KEY) === userId;
     } catch {
-      // Storage blocked: merge on every page load instead.
+      // Storage blocked: sync on every page load instead.
     }
-    void mergeWishlistIntoAccount()
+    if (synced && owner === userId) return;
+    void syncWithAccount(userId)
       .then((ok) => {
         if (!ok) return;
         try {
-          window.sessionStorage.setItem(WISHLIST_SYNCED_KEY, '1');
+          window.sessionStorage.setItem(WISHLIST_SYNCED_KEY, userId);
         } catch {
           // ignore
         }
       })
       .catch(() => undefined);
-  }, [hydrated, signedIn]);
+  }, [hydrated, userId, owner]);
 }

@@ -5,18 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/app/actions/auth';
 import { cn } from '@/lib/cn';
-import { useWishlist } from '@/lib/wishlist/store';
-import { WISHLIST_SYNCED_KEY } from '@/lib/wishlist/use-wishlist';
-
-/** Signing out leaves no trace of the account's wishlist in this browser. */
-function forgetAccountData() {
-  useWishlist.getState().clear();
-  try {
-    window.sessionStorage.removeItem(WISHLIST_SYNCED_KEY);
-  } catch {
-    // ignore
-  }
-}
+import { forgetAccountData } from '@/lib/wishlist/use-wishlist';
 
 const links = [
   { href: '/account', label: 'Overview', icon: LayoutDashboard },

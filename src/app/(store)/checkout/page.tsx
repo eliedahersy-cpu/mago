@@ -32,13 +32,19 @@ async function CheckoutForAccount({ deliveryAreas }: { deliveryAreas: string[] }
   const user = await getUser();
   let account: CheckoutAccount | null = null;
   if (user) {
-    const [profile, addresses] = await Promise.all([getMyProfile(user.id), getMyAddresses()]);
-    account = {
-      email: user.email,
-      fullName: profile.fullName ?? user.fullName,
-      phone: profile.phone,
-      address: addresses.find((a) => a.isDefault) ?? addresses[0] ?? null,
-    };
+    account = { email: user.email, fullName: user.fullName, phone: null, address: null };
+    // Pre-filling is a convenience: if it fails, checkout still works with the account email.
+    try {
+      const [profile, addresses] = await Promise.all([getMyProfile(user.id), getMyAddresses()]);
+      account = {
+        ...account,
+        fullName: profile.fullName ?? user.fullName,
+        phone: profile.phone,
+        address: addresses.find((a) => a.isDefault) ?? addresses[0] ?? null,
+      };
+    } catch (e) {
+      console.error('checkout prefill failed', e);
+    }
   }
   return <CheckoutForm deliveryAreas={deliveryAreas} account={account} />;
 }

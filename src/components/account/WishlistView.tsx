@@ -6,10 +6,10 @@ import { ProductGrid } from '@/components/product/ProductCard';
 import { ButtonLink } from '@/components/ui/Button';
 import type { Product } from '@/lib/types';
 import { useWishlist } from '@/lib/wishlist/store';
-import { mergeWishlistIntoAccount, useHydratedWishlist } from '@/lib/wishlist/use-wishlist';
+import { syncWithAccount, useHydratedWishlist } from '@/lib/wishlist/use-wishlist';
 
-/** The account wishlist: merges this browser's hearts into the account, then lists the products. */
-export function WishlistView({ products }: { products: Product[] }) {
+/** The account wishlist: syncs this browser's hearts with the account, then lists the products. */
+export function WishlistView({ products, userId }: { products: Product[]; userId: string }) {
   const hydrated = useHydratedWishlist();
   const ids = useWishlist((s) => s.ids);
   const [merged, setMerged] = useState(false);
@@ -17,7 +17,7 @@ export function WishlistView({ products }: { products: Product[] }) {
   useEffect(() => {
     if (!hydrated) return;
     let cancelled = false;
-    void mergeWishlistIntoAccount()
+    void syncWithAccount(userId)
       .catch(() => false)
       .finally(() => {
         if (!cancelled) setMerged(true);
@@ -25,7 +25,7 @@ export function WishlistView({ products }: { products: Product[] }) {
     return () => {
       cancelled = true;
     };
-  }, [hydrated]);
+  }, [hydrated, userId]);
 
   if (!hydrated || !merged) return <p className="py-10 text-center text-ink/70">Loading your wishlist…</p>;
 

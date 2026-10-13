@@ -53,11 +53,14 @@ export async function getMyProfile(userId: string): Promise<Profile> {
 }
 
 export async function getMyOrders(limit = 50): Promise<OrderSummary[]> {
-  await ensureCustomer();
+  // Filter by the customer explicitly: RLS would also let staff read every order.
+  const customerId = await ensureCustomer();
+  if (!customerId) return [];
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('orders')
     .select('number, status, created_at, total, order_items(parent_item_id, quantity)')
+    .eq('customer_id', customerId)
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw new Error(`Failed to load your orders: ${error.message}`);
@@ -68,9 +71,15 @@ export async function getMyOrders(limit = 50): Promise<OrderSummary[]> {
 
 export async function getMyOrder(number: number): Promise<OrderConfirmation | null> {
   if (!Number.isInteger(number) || number <= 0) return null;
-  await ensureCustomer();
+  const customerId = await ensureCustomer();
+  if (!customerId) return null;
   const supabase = await createClient();
-  const { data, error } = await supabase.from('orders').select(ORDER_SELECT).eq('number', number).maybeSingle();
+  const { data, error } = await supabase
+    .from('orders')
+    .select(ORDER_SELECT)
+    .eq('customer_id', customerId)
+    .eq('number', number)
+    .maybeSingle();
   if (error) throw new Error(`Failed to load the order: ${error.message}`);
   return data ? toAccountOrder(data as unknown as OrderRow) : null;
 }

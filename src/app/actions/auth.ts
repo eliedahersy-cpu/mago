@@ -9,7 +9,9 @@ import { fieldErrors } from '@/lib/checkout/schema';
 import { createClient } from '@/lib/supabase/server';
 
 export type AuthState = {
-  status: 'idle' | 'error' | 'sent';
+  status: 'idle' | 'error' | 'sent' | 'signed-in';
+  /** Where to go after signing in (already checked by safeNextPath). */
+  next?: string;
   message: string;
   fieldErrors?: Record<string, string>;
   /** Typed values to put back after a mistake (never passwords). */
@@ -45,7 +47,8 @@ export async function signIn(_prev: AuthState, form: FormData): Promise<AuthStat
   }
   const { error: claimError } = await supabase.rpc('claim_customer');
   if (claimError) console.error('claim_customer failed', claimError);
-  redirect(safeNextPath(text(form, 'next')));
+  // The form does a full page load to this path, so every part of the page sees the new session.
+  return { status: 'signed-in', message: '', next: safeNextPath(text(form, 'next')) };
 }
 
 export async function sendSignInLink(_prev: AuthState, form: FormData): Promise<AuthState> {
@@ -92,7 +95,7 @@ export async function register(_prev: AuthState, form: FormData): Promise<AuthSt
   if (data.session) {
     // Email confirmation is off: already signed in.
     await supabase.rpc('claim_customer');
-    redirect(safeNextPath(text(form, 'next')));
+    return { status: 'signed-in', message: '', next: safeNextPath(text(form, 'next')) };
   }
   return { status: 'sent', message: `Check ${parsed.data.email} for a link to confirm your account. It signs you in.` };
 }

@@ -77,6 +77,13 @@ export async function placeOrder(input: {
     return { ok: false, error: 'We could not place your order. Please try again in a moment.' };
   }
   const result = data as { number: number; access_token: string };
-  if (user && input.saveAddress) await addAddressFromCheckout(order);
+  if (user && input.saveAddress) {
+    // The order is placed; failing to keep the address must not tell the customer otherwise.
+    try {
+      await addAddressFromCheckout(order);
+    } catch (e) {
+      console.error('saving the checkout address failed', e);
+    }
+  }
   return { ok: true, token: result.access_token, number: result.number };
 }

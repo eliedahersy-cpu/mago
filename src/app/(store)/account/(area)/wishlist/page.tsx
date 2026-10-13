@@ -23,6 +23,6 @@ export default function WishlistPage() {
 }
 
 async function Wishlist() {
-  await requireUser('/account/wishlist');
-  return <WishlistView products={await getAllActiveProducts()} />;
+  const user = await requireUser('/account/wishlist');
+  return <WishlistView products={await getAllActiveProducts()} userId={user.id} />;
 }
