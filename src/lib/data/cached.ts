@@ -7,6 +7,7 @@ import type { Product } from '@/lib/types';
 import * as catalog from './catalog';
 import * as content from './content';
 import * as search from './search';
+import * as stores from './stores';
 
 export const CACHE_TAGS = {
   settings: 'settings',
@@ -14,6 +15,7 @@ export const CACHE_TAGS = {
   recipes: 'recipes',
   reviews: 'reviews',
   discounts: 'discounts',
+  stores: 'stores',
 } as const;
 
 function tagged(...tags: string[]) {
@@ -103,4 +105,10 @@ export async function searchCatalog(raw: string) {
   'use cache';
   tagged(CACHE_TAGS.catalog, CACHE_TAGS.recipes);
   return search.searchCatalog(raw);
+}
+
+export async function getStores() {
+  'use cache';
+  tagged(CACHE_TAGS.stores);
+  return stores.getActiveStores();
 }

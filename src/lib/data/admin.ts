@@ -707,3 +707,61 @@ export async function getAdminRecipe(id: string): Promise<Raw | null> {
   if (error) fail('recipe', error);
   return (data as Raw | null) ?? null;
 }
+
+// ---------------------------------------------------------------------------- stores
+
+export interface AdminStoreRow {
+  id: string;
+  name: string;
+  type: string;
+  area: string | null;
+  city: string | null;
+  lat: number | null;
+  isActive: boolean;
+  productCount: number;
+}
+
+export async function listAdminStores(): Promise<AdminStoreRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('stores').select('id, name, type, area, city, lat, is_active, store_products (product_id)').order('name');
+  if (error) fail('stores', error);
+  return (data as Raw[]).map((s) => ({
+    id: String(s.id),
+    name: String(s.name),
+    type: String(s.type),
+    area: (s.area as string | null) ?? null,
+    city: (s.city as string | null) ?? null,
+    lat: s.lat === null ? null : Number(s.lat),
+    isActive: Boolean(s.is_active),
+    productCount: ((s.store_products as Raw[]) ?? []).length,
+  }));
+}
+
+/** Editor values for one store (strings for the form). */
+export async function getAdminStore(id: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('stores').select('*, store_products (product_id)').eq('id', id).maybeSingle();
+  if (error) fail('store', error);
+  if (!data) return null;
+  const s = data as Raw;
+  const str = (v: unknown) => (v === null || v === undefined ? '' : String(v));
+  const hours = s.hours as Raw | null;
+  return {
+    id: String(s.id),
+    name: str(s.name),
+    slug: str(s.slug),
+    chain: str(s.chain),
+    type: str(s.type) || 'supermarket',
+    address: str(s.address),
+    area: str(s.area),
+    city: str(s.city),
+    lat: str(s.lat),
+    lng: str(s.lng),
+    hours: typeof hours?.summary === 'string' ? hours.summary : '',
+    phone: str(s.phone),
+    website: str(s.website),
+    image: str(s.image),
+    isActive: Boolean(s.is_active),
+    productIds: ((s.store_products as Raw[]) ?? []).map((p) => String(p.product_id)),
+  };
+}
