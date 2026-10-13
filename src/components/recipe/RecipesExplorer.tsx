@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArchDecor, LeafSprig, SunMark } from '@/components/brand/Decor';
 import type { RecipeSummary } from '@/lib/types';
+import { recipeImage } from '@/config/visual-media';
 
 const categories = [
   {title:'All',tag:''},
@@ -45,7 +46,7 @@ export function RecipesExplorer({recipes}:{recipes:RecipeSummary[]}) {
       <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="font-display text-3xl font-bold text-forest uppercase md:text-4xl">All recipes</h2><p className="text-sm text-ink/70">{filtered.length} ideas to explore</p></div><label className="flex w-full items-center gap-2 rounded-full border border-forest/20 bg-[#fffdf6] px-4 py-2 sm:w-72"><Search size={18} className="text-forest"/><input aria-label="Search recipes" type="search" placeholder="Search recipes" value={search} onChange={(e)=>setSearch(e.target.value)} className="w-full bg-transparent text-sm text-forest outline-none placeholder:text-forest/40"/></label></div>
       <div className="scrollbar-none mt-6 flex gap-2 overflow-x-auto pb-3">{categories.map((c)=><button type="button" key={c.title} onClick={()=>setActive(c.tag)} aria-pressed={active===c.tag} className={'shrink-0 rounded-full px-5 py-2 text-sm font-semibold '+(active===c.tag?'bg-forest text-white':'border border-forest/20 bg-[#fffdf6] text-forest')}>{c.title}</button>)}</div>
       {filtered.length ? <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{filtered.map((recipe)=>{
-        const image=recipe.heroImage??'/images/lifestyle-movie-night.webp';
+        const image=recipeImage(recipe.slug,recipe.heroImage);
         const packshot=image.startsWith('/products/');
         return <Link href={'/recipes/'+recipe.slug} key={recipe.slug} className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] bg-[#fffbf2] shadow-[0_5px_24px_rgba(2,48,37,.08)] ring-1 ring-forest/5 transition-shadow hover:shadow-lg">
           <div className={'relative aspect-[4/3] overflow-hidden '+(packshot?'bg-[#f3e4cf]':'')}><Image src={image} alt="" fill sizes="(max-width:768px) 95vw, 320px" className={'transition-transform duration-300 group-hover:scale-[1.05] '+(packshot?'object-contain p-3 mix-blend-multiply':'object-cover')}/></div>

@@ -5,19 +5,21 @@ import { Carousel } from '@/components/ui/Carousel';
 import { buttonVariants } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { cn } from '@/lib/cn';
+import { recipeImage } from '@/config/visual-media';
 import type { RecipeSummary } from '@/lib/types';
 
 export function RecipeCard({ recipe }: { recipe: RecipeSummary }) {
-  const isPackshot = recipe.heroImage?.startsWith('/products/');
+  const src = recipeImage(recipe.slug, recipe.heroImage);
+  const isPackshot = src.startsWith('/products/');
   return (
     <Link
       href={`/recipes/${recipe.slug}`}
       className="group flex h-full flex-col overflow-hidden rounded-2xl bg-cream-light shadow-sm ring-1 ring-forest/5 transition-shadow hover:shadow-md"
     >
       <div className={cn('relative aspect-[4/3] overflow-hidden', isPackshot && 'bg-cream-dark/50')}>
-        {recipe.heroImage ? (
+        {src ? (
           <Image
-            src={recipe.heroImage}
+            src={src}
             alt=""
             fill
             sizes="(min-width: 1024px) 220px, 60vw"

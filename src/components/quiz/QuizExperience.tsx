@@ -49,12 +49,12 @@ const questions: Question[] = [
   {
     title: 'When will you most likely enjoy your MAGO cup?', hint: 'Choose the moments that fit your lifestyle', short: 'Eating Occasion', max: 2,
     options: [
-      { label: 'Desk Lunch', img: '/products/fusilli-al-pesto-genovese.webp' },
-      { label: 'Between Classes', img: '/products/fusilli-spicy-muhammara.webp' },
-      { label: 'Cozy Dinner', img: '/products/tagliolini-al-tartufo-bianco.webp' },
-      { label: 'After the Gym', img: '/products/rishta-lentil-pasta-soup.webp' },
-      { label: 'Late-Night Comfort', img: '/products/conchiglie-mac-and-cheese.webp' },
-      { label: 'On-the-Go Meal', img: '/products/tagliolini-al-limone.webp' },
+      { label: 'Desk Lunch', img: '/images/lifestyle-lemon-office.webp' },
+      { label: 'Between Classes', img: '/images/lifestyle-pantry-shelf.webp' },
+      { label: 'Cozy Dinner', img: '/images/lifestyle-movie-night.webp' },
+      { label: 'After the Gym', img: '/images/lifestyle-post-workout.webp' },
+      { label: 'Late-Night Comfort', img: '/images/lifestyle-rainy-day-soup.webp' },
+      { label: 'On-the-Go Meal', img: '/images/lifestyle-lemon-office.webp' },
     ],
   },
   {
@@ -217,15 +217,17 @@ export function QuizExperience({ cups }: { cups: Product[] }) {
             <h2 className="font-display text-2xl leading-tight font-bold text-forest uppercase md:text-3xl">{step+1}. {question.title}</h2>
             <p className="mt-1 text-sm text-ink/75 md:text-base">{question.hint}</p>
           </div>
-          <div className="mx-auto mt-7 grid max-w-5xl grid-cols-3 gap-x-3 gap-y-6 md:grid-cols-6 md:gap-5">
+          <div className="mx-auto mt-7 grid max-w-6xl grid-cols-3 gap-x-3 gap-y-6 md:grid-cols-6 md:gap-5">
             {question.options.map((opt)=>{
               const active = selected.includes(opt.label);
-              return <button type="button" key={opt.label} onClick={()=>toggle(opt.label)} aria-pressed={active} className="group flex min-w-0 flex-col items-center gap-2 text-center">
-                <span className={'relative flex aspect-square w-full max-w-[145px] items-center justify-center rounded-full border-[3px] bg-[#fff0d8] transition-all group-hover:scale-[1.03] '+(active ? 'border-forest shadow-[0_0_0_3px_#f0a02a]' : 'border-[#e8bb83]')}>
-                  <Image src={opt.img} alt="" fill sizes="(max-width:768px) 30vw, 150px" className="rounded-full object-contain p-2 mix-blend-multiply" />
+              const lifestyle = step===3;
+              const tile = step===4 || step===5;
+              return <button type="button" key={opt.label} onClick={()=>toggle(opt.label)} aria-pressed={active} className={'group flex min-w-0 flex-col items-center gap-2 text-center transition-transform duration-300 '+(active?'relative z-10 scale-[1.055]':'hover:-translate-y-1')}>
+                <span className={'relative flex '+(tile?'aspect-[4/5] max-w-[165px] rounded-[1.2rem]':'aspect-square max-w-[145px] rounded-full')+' w-full items-center justify-center overflow-visible border-[3px] bg-[#fff0d8] transition-all group-hover:shadow-lg '+(active ? 'border-forest shadow-[0_9px_25px_rgba(2,48,37,.21)]' : 'border-[#e8bb83]')}>
+                  <Image src={opt.img} alt="" fill sizes="(max-width:768px) 30vw, 150px" className={(lifestyle?'object-cover':tile?'object-contain p-2 mix-blend-multiply':'object-contain p-2 mix-blend-multiply')+(tile?' rounded-[1.1rem]':' rounded-full')} />
                   {active && <span className="absolute -top-1 -right-1 grid size-7 place-items-center rounded-full bg-forest text-white"><Check size={16}/></span>}
                 </span>
-                <span className="text-xs leading-tight font-bold text-forest md:text-sm">{opt.label}</span>
+                <span className={'text-xs leading-tight font-bold text-forest md:text-sm '+(tile?'max-w-[160px]':'')}>{opt.label}</span>
               </button>;
             })}
           </div>

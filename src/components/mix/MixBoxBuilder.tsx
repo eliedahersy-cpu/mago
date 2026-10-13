@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArchDecor, LeafSprig, SunMark } from '@/components/brand/Decor';
 import { Button } from '@/components/ui/Button';
+import { MixBoxGallery } from '@/components/mix/MixBoxGallery';
 import { toCartProduct } from '@/lib/cart/lines';
 import { useCart } from '@/lib/cart/store';
 import { isPurchasable } from '@/lib/catalog/stock';
@@ -53,9 +54,7 @@ export function MixBoxBuilder({ cups }: { cups: Product[] }) {
             <li className="flex flex-col items-center gap-2"><Gift size={28} strokeWidth={1.6}/>The perfect gift</li>
           </ul>
         </div>
-        <div className="relative mx-auto aspect-[5/4] w-full max-w-lg">
-          <Image src="/products/mago-mix-box-open.webp" alt="Open MAGO mix box with five cups" fill priority sizes="(max-width:768px) 95vw, 530px" className="object-contain mix-blend-multiply drop-shadow-xl"/>
-        </div>
+        <div className="mx-auto w-full max-w-[570px]"><MixBoxGallery /></div>
       </div>
     </section>
     <div className="border-y border-forest/10 bg-[#f5ecd9]">
@@ -91,9 +90,7 @@ export function MixBoxBuilder({ cups }: { cups: Product[] }) {
       </div>
       <aside className="lg:self-start lg:sticky lg:top-28">
         <div className="overflow-hidden rounded-[2rem] bg-[#f8e8d1] shadow-[0_10px_40px_rgba(2,48,37,.1)] ring-1 ring-forest/10">
-          <div className="relative h-48 overflow-hidden bg-[#edd4b7] sm:h-56">
-            <Image src="/products/mago-mix-box.webp" fill sizes="350px" alt="MAGO Mix Box" className="object-contain p-2 mix-blend-multiply"/>
-          </div>
+          <MixBoxGallery compact />
           <div className="p-5"><h2 className="font-display text-2xl leading-tight font-bold text-forest uppercase">Your MAGO Mix Box</h2><p className="mt-1 text-sm text-ink/70">5 cups. Your mix.</p>
             <div className="mt-4 space-y-3">
               {chosen.map((p)=><div key={p.id} className="flex items-center gap-3 rounded-xl bg-[#fffaf2] p-2">

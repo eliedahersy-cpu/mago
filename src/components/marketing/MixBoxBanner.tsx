@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { ArchDecor, LeafSprig } from '@/components/brand/Decor';
 import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
+import { mixBoxGallery } from '@/config/visual-media';
 
 const perks = [
   { icon: Layers, label: 'Mix your favourites' },
@@ -16,7 +17,7 @@ export function MixBoxBanner({ variant }: { variant: 'home' | 'shop' }) {
       <Container className="py-10">
         <section className="relative grid items-center gap-6 overflow-hidden rounded-3xl bg-cream-dark/60 p-6 md:grid-cols-[1fr_1.4fr_auto] md:p-8">
           <div className="relative mx-auto aspect-[4/3] w-full max-w-xs">
-            <Image src="/products/mago-mix-box.webp" alt="The MAGO Mix Box" fill sizes="320px" className="object-contain" />
+            <Image src={mixBoxGallery[0].src} alt="The MAGO Mix Box" fill sizes="320px" className="object-cover rounded-xl" />
           </div>
           <div className="text-center md:text-left">
             <h2 className="font-display text-3xl leading-none font-bold text-forest uppercase md:text-4xl">Build your own MAGO box</h2>
@@ -57,13 +58,13 @@ export function MixBoxBanner({ variant }: { variant: 'home' | 'shop' }) {
             Start mixing <ArrowRight size={18} aria-hidden />
           </ButtonLink>
         </div>
-        <div className="relative aspect-[4/3] w-full">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] shadow-lg">
           <Image
-            src="/products/mago-mix-box.webp"
+            src={mixBoxGallery[0].src}
             alt="The MAGO Mix Box: 5 cups, your mix"
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-contain drop-shadow-xl"
+            className="object-cover rounded-[1.5rem] drop-shadow-xl
           />
         </div>
       </Container>
