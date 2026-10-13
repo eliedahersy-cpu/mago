@@ -25,6 +25,7 @@
   --font-display: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
   --font-sans: var(--font-dm-sans), system-ui, sans-serif;
   --font-script: var(--font-caveat), cursive;
+  --font-serif: var(--font-lora), Georgia, serif;
 }
 
 @layer base {
@@ -45,5 +46,14 @@
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* Home cup carousel: each slide gets --o (signed distance from the front cup) and --d (its size). */
+@utility cup-slide {
+  transform: translateX(calc(-50% + var(--o) * 62vw)) scale(calc(1 - var(--d) * 0.12));
+  @media (width >= 48rem) {
+    transform: translateX(calc(-50% + var(--o) * clamp(180px, 19vw, 290px))) translateY(calc(var(--d) * 14px))
+      scale(calc(1 - var(--d) * 0.1));
   }
 }
