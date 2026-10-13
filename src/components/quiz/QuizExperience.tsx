@@ -154,12 +154,12 @@ function MatchCard({ product, label }: { product: Product; label: string }) {
 }
 
 export function QuizExperience({ cups }: { cups: Product[] }) {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(-1);
   const [answers, setAnswers] = useState<string[][]>(questions.map(() => []));
   const add = useCart((s) => s.add);
   const ranked = useMemo(() => rankProducts(cups, answers), [cups, answers]);
   const results = step >= questions.length;
-  const question = questions[Math.min(step, questions.length - 1)];
+  const question = questions[Math.max(0, Math.min(step, questions.length - 1))];
   const selected = answers[step] ?? [];
   const completed = answers.filter((a) => a.length > 0).length;
 
@@ -170,7 +170,7 @@ export function QuizExperience({ cups }: { cups: Product[] }) {
       return question.max === 1 ? [value] : [...entry, value].slice(-question.max);
     }));
   }
-  function restart() { setAnswers(questions.map(() => [])); setStep(0); }
+  function restart() { setAnswers(questions.map(() => [])); setStep(-1); }
   function addMix() {
     ranked.slice(0, 5).forEach((p) => add(toCartProduct(p), 1));
   }
@@ -206,13 +206,17 @@ export function QuizExperience({ cups }: { cups: Product[] }) {
     <section className="relative border-y border-forest/5 bg-[#fff9ed] px-4 py-9 md:py-12">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto flex max-w-4xl items-start justify-between">
-          {questions.map((q,i)=><button key={q.short} type="button" disabled={i > completed || results} onClick={()=>setStep(i)} className="relative z-0 flex w-[16.2%] flex-col items-center gap-2 text-center disabled:cursor-default">
+          {questions.map((q,i)=><button key={q.short} type="button" disabled={(i > completed && i!==0) || results} onClick={()=>setStep(i)} className="relative z-0 flex w-[16.2%] flex-col items-center gap-2 text-center disabled:cursor-default">
             <span className={'relative z-10 flex size-8 items-center justify-center rounded-full border text-sm font-bold md:size-10 '+(results || i < step ? 'border-forest bg-forest text-white' : i === step ? 'border-forest bg-forest text-white' : 'border-saffron bg-[#fffaf1] text-forest')}>{i < step || results ? <Check size={17}/> : i+1}</span>
             <span className="hidden text-[11px] font-semibold text-forest sm:block md:text-xs">{q.short}</span>
             {i < 5 && <span className="absolute top-4 left-[60%] -z-10 h-px w-[82%] bg-saffron md:top-5" />}
           </button>)}
         </div>
-        {!results ? <>
+        {step<0 ? <div className="mx-auto mt-8 max-w-3xl py-8 text-center md:py-11">
+          <h2 className="sr-only">Find your perfect MAGO flavour</h2>
+          <Button size="lg" className="mx-auto w-full max-w-sm shadow-md" onClick={()=>setStep(0)}>Start the quiz <ArrowRight size={19}/></Button>
+          <p className="mt-3 text-sm font-medium text-forest/75">Six quick questions. Takes approximately two minutes.</p>
+        </div> : !results ? <>
           <div className="mt-9 text-center">
             <h2 className="font-display text-2xl leading-tight font-bold text-forest uppercase md:text-3xl">{step+1}. {question.title}</h2>
             <p className="mt-1 text-sm text-ink/75 md:text-base">{question.hint}</p>
@@ -232,7 +236,7 @@ export function QuizExperience({ cups }: { cups: Product[] }) {
             })}
           </div>
           <div className="mx-auto mt-9 flex max-w-lg items-center gap-4">
-            <button type="button" onClick={()=>setStep(Math.max(0,step-1))} className="flex size-11 shrink-0 items-center justify-center rounded-full border border-forest/30 text-forest" aria-label="Previous question"><ArrowLeft size={20}/></button>
+            <button type="button" onClick={()=>setStep(Math.max(-1,step-1))} className="flex size-11 shrink-0 items-center justify-center rounded-full border border-forest/30 text-forest" aria-label="Previous question"><ArrowLeft size={20}/></button>
             <Button disabled={!selected.length} className="min-w-0 flex-1" onClick={()=>setStep(step+1)}>{step===5 ? 'See my results' : 'Next'} <ArrowRight size={18}/></Button>
           </div>
         </> : <div className="mx-auto mt-10 max-w-5xl text-center">
@@ -243,7 +247,7 @@ export function QuizExperience({ cups }: { cups: Product[] }) {
             {ranked.slice(0,3).map((p,i)=><MatchCard key={p.id} product={p} label={['Best match','Also great','Try something new'][i]}/>)}
           </div>
           <div className="mt-8 grid items-center gap-5 rounded-[2rem] bg-[#f9e5c9] p-5 md:grid-cols-[1fr_1.5fr] md:p-8">
-            <div className="relative aspect-[4/3]"><Image src="/products/mago-mix-box.webp" alt="MAGO 5-cup Mix Box" fill sizes="400px" className="object-contain mix-blend-multiply"/></div>
+            <div className="relative aspect-[4/3]"><Image src="/products/mago-mix-box-open.webp" alt="Open MAGO 5-cup Mix Box" fill sizes="400px" className="rounded-xl object-cover"/></div>
             <div className="text-left">
               <h3 className="font-display text-3xl leading-tight font-bold text-forest uppercase">Your suggested <span className="text-terracotta">5-cup mix</span></h3>
               <p className="mt-2 text-sm text-ink/75">Five cups selected from your strongest matches. One box, your way.</p>
@@ -260,11 +264,22 @@ export function QuizExperience({ cups }: { cups: Product[] }) {
       <div className="mx-auto grid max-w-6xl items-center gap-6 md:grid-cols-[.9fr_1.1fr]">
         <div className="flex items-center gap-5">
           {ranked[0] && <CupArt product={ranked[0]} className="h-44 w-32 shrink-0 md:h-52 md:w-40"/>}
-          <div><ScriptNote className="text-xl">Same pasta.<br/>More possibilities.</ScriptNote><p className="mt-3 text-xs font-bold tracking-wide uppercase text-forest">Your MAGO taste profile</p><h3 className="mt-1 font-display text-2xl leading-none font-bold text-forest uppercase md:text-4xl">Perfect flavours for you.</h3><p className="mt-3 text-sm text-ink/75">A preview of flavours that may fit your choices.</p></div>
+          <div><ScriptNote className="text-xl">Same pasta.<br/>More possibilities.</ScriptNote><p className="mt-3 text-xs font-bold tracking-wide uppercase text-forest">{step<0?'Your quiz results will include':'Your MAGO taste profile'}</p><h3 className="mt-1 font-display text-2xl leading-none font-bold text-forest uppercase md:text-4xl">{step<0?'A perfect match, just for you.':'Perfect flavours for you.'}</h3><p className="mt-3 text-sm text-ink/75">{step<0?'Get a top match, alternatives and a curated five-cup box, tailored to your preferences.':'A preview of flavours that may fit your choices.'}</p></div>
         </div>
-        <div className="grid grid-cols-3 gap-2 md:gap-3">{ranked.slice(0,3).map((p)=><Link key={p.id} href={'/shop/'+p.slug} className="rounded-xl bg-[#fffaf1] p-2 text-center shadow-sm"><CupArt product={p} className="aspect-square"/><span className="line-clamp-2 text-[11px] font-bold text-forest">{p.flavour ?? p.name}</span></Link>)}</div>
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
+          {ranked.slice(0,step<0?2:3).map((p,i)=><Link key={p.id} href={'/shop/'+p.slug} className="relative rounded-xl bg-[#fffaf1] p-2 text-center shadow-sm">
+            <span className={'absolute top-1 left-1 z-10 rounded-full px-2 py-1 text-[9px] font-bold uppercase text-white '+(i===0?'bg-terracotta':'bg-saffron')}>{i===0?'Your top match':'Great alternatives'}</span>
+            <CupArt product={p} className="aspect-square"/>
+            <span className="line-clamp-2 text-[11px] font-bold text-forest">{p.flavour ?? p.name}</span>
+          </Link>)}
+          {step<0&&<Link href="/mix-box" className="relative rounded-xl bg-[#fffaf1] p-2 text-center shadow-sm">
+            <span className="absolute top-1 left-1 z-10 rounded-full bg-forest px-2 py-1 text-[9px] font-bold uppercase text-white">Your 5-cup mix</span>
+            <span className="relative block aspect-square"><Image src="/products/mago-mix-box-open.webp" fill alt="Open five-cup MAGO Mix Box" sizes="(max-width:768px) 28vw, 180px" className="rounded-lg object-cover"/></span>
+            <span className="line-clamp-2 text-[11px] font-bold text-forest">Your own MAGO Mix Box</span>
+          </Link>}
+        </div>
       </div>
     </section>}
-    <div className="sr-only" aria-live="polite">{results ? 'Quiz completed' : 'Question '+(step+1)+' of six'}</div>
+    <div className="sr-only" aria-live="polite">{results ? 'Quiz completed' : step<0?'Quiz introduction' : 'Question '+(step+1)+' of six'}</div>
   </div>;
 }
