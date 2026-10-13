@@ -23,33 +23,33 @@ declare
   again     jsonb;
   i         int;
 begin
-  first := public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', first_key), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'rate@test.local', 'phone', '+961 70 111 111'));
+  first := public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', first_key, 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'rate@test.local', 'phone', '+961 70 111 111')));
   for i in 2..5 loop
-    perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid()), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'rate@test.local', 'phone', '+961 70 111 111'));
+    perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid(), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'rate@test.local', 'phone', '+961 70 111 111')));
   end loop;
 
   -- A 6th order from the same email is refused…
   begin
-    perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid()), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'RATE@test.local', 'phone', '+961 70 999 999'));
+    perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid(), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'RATE@test.local', 'phone', '+961 70 999 999')));
     raise exception 'FAIL a 6th order from the same email was accepted';
   exception when sqlstate 'P0001' then
     if sqlerrm not like 'You have placed several orders%' then raise exception 'FAIL wrong message: %', sqlerrm; end if;
   end;
   -- …and from the same phone with another email.
   begin
-    perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid()), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'other@test.local', 'phone', '+961 70 111 111'));
+    perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid(), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'other@test.local', 'phone', '+961 70 111 111')));
     raise exception 'FAIL a 6th order from the same phone was accepted';
   exception when sqlstate 'P0001' then null;
   end;
 
   -- Retrying the first submission still answers with the first order.
-  again := public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', first_key), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'rate@test.local', 'phone', '+961 70 111 111'));
+  again := public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', first_key, 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'rate@test.local', 'phone', '+961 70 111 111')));
   if again ->> 'number' <> first ->> 'number' then
     raise exception 'FAIL a retried submission was refused or duplicated: % vs %', again, first;
   end if;
 
   -- Someone else is not affected.
-  perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid()), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'fresh@test.local', 'phone', '+961 70 222 222'));
+  perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid(), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'fresh@test.local', 'phone', '+961 70 222 222')));
 end $$;
 reset role;
 
@@ -62,7 +62,7 @@ select set_config('request.jwt.claims', '', true);
 set local role anon;
 do $$
 begin
-  perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid()), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'calm@test.local', 'phone', '+961 70 333 333'));
+  perform public.place_order(current_setting('test.base')::jsonb || jsonb_build_object('idempotency_key', gen_random_uuid(), 'contact', jsonb_build_object('full_name', 'Rate Tester', 'email', 'calm@test.local', 'phone', '+961 70 333 333')));
   raise exception 'FAIL an order went through during a flood';
 exception when sqlstate 'P0001' then
   if sqlerrm not like 'We are receiving a lot of orders%' then raise exception 'FAIL wrong message: %', sqlerrm; end if;
