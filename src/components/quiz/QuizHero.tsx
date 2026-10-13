@@ -49,7 +49,8 @@ export function QuizHero({ started }: { started: boolean }) {
             src="/images/quiz-hero.webp"
             alt="MAGO pasta cups surrounded by fresh Mediterranean ingredients"
             fill
-            priority
+            loading="eager"
+            fetchPriority="high"
             sizes="(min-width: 768px) 55vw, 100vw"
             className="object-cover object-[60%_100%] [mask-image:linear-gradient(to_bottom,transparent,#000_18%)] md:[mask-image:linear-gradient(to_right,transparent,#000_22%)]"
           />

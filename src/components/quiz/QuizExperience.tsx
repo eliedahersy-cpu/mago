@@ -72,6 +72,7 @@ export function QuizExperience({ cups, bundle, boxSize }: { cups: Product[]; bun
   function pick(id: string) {
     if (!question) return;
     setAnswers((a) => ({ ...a, [question.id]: toggleAnswer(question, a[question.id], id) }));
+    setAddedAll(false);
   }
 
   function restart() {

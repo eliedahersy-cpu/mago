@@ -75,11 +75,14 @@ function MatchCard({ product, badge, tone }: { product: Product; badge: string; 
 }
 
 /** What the results will hold, shown before the quiz starts. */
-function PreviewCard({ badge, tone, image, title, body }: { badge: string; tone: Tone; image: string; title: string; body: string }) {
+function PreviewCard({ badge, short, tone, image, title, body }: { badge: string; short: string; tone: Tone; image: string; title: string; body: string }) {
   return (
     <article className="relative flex min-w-0 flex-col rounded-2xl bg-cream-light p-2 shadow-[0_8px_24px_rgba(40,53,28,0.08)] ring-1 ring-forest/10 sm:p-3">
       <div className="leading-none">
-        <Badge tone={tone}>{badge}</Badge>
+        <Badge tone={tone}>
+          <span className="sm:hidden">{short}</span>
+          <span className="hidden sm:inline">{badge}</span>
+        </Badge>
       </div>
       <div className="relative mt-2 aspect-[5/4]">
         <Image src={image} alt="" fill sizes="(min-width: 1024px) 220px, 31vw" className="object-contain mix-blend-multiply" />
@@ -195,9 +198,9 @@ export function QuizResults({
         >
           {phase === 'intro'
             ? [
-                { badge: 'Your top match', tone: 'terracotta' as const, image: sample[0] ? packshot(sample[0]) : null, title: 'Primary Match', body: 'Your best flavour match based on your answers.' },
-                { badge: 'Great alternatives', tone: 'saffron' as const, image: sample[1] ? packshot(sample[1]) : null, title: 'Alternative Options', body: 'Other flavours you’ll love too.' },
-                { badge: `Your ${boxSize}-cup mix`, tone: 'forest' as const, image: '/products/mago-mix-box-open.webp', title: 'Suggested Mix & Match', body: `A curated ${boxSize}-cup box made for you.` },
+                { badge: 'Your top match', short: 'Top match', tone: 'terracotta' as const, image: sample[0] ? packshot(sample[0]) : null, title: 'Primary Match', body: 'Your best flavour match based on your answers.' },
+                { badge: 'Great alternatives', short: 'Alternatives', tone: 'saffron' as const, image: sample[1] ? packshot(sample[1]) : null, title: 'Alternative Options', body: 'Other flavours you’ll love too.' },
+                { badge: `Your ${boxSize}-cup mix`, short: `${boxSize}-cup mix`, tone: 'forest' as const, image: '/products/mago-mix-box-open.webp', title: 'Suggested Mix & Match', body: `A curated ${boxSize}-cup box made for you.` },
               ].map((c) => (c.image ? <PreviewCard key={c.badge} {...c} image={c.image} /> : null))
             : picks.map((p, i) => <MatchCard key={p.product.id} product={p.product} badge={p.badge} tone={TONES[i] ?? 'forest'} />)}
         </div>

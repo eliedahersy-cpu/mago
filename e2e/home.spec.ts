@@ -37,6 +37,8 @@ test('the cup carousel turns with its arrows', async ({ page }) => {
   await page.getByRole('button', { name: 'Previous cup' }).click();
   await page.getByRole('button', { name: 'Previous cup' }).click();
   await expect(dots.nth(1)).toHaveAttribute('aria-current', 'true');
+  await page.getByRole('button', { name: 'Pause the carousel' }).click();
+  await expect(page.getByRole('button', { name: 'Play the carousel' })).toBeVisible();
 });
 
 test('the Mix Box banner starts mixing', async ({ page }) => {

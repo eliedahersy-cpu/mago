@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
@@ -39,6 +39,7 @@ export function CupCollection({ products }: { products: Product[] }) {
   const [active, setActive] = useState(Math.floor(length / 2));
   const [paused, setPaused] = useState(false);
   const [still, setStill] = useState(false);
+  const [stopped, setStopped] = useState(false);
   const touchX = useRef<number | null>(null);
 
   useEffect(() => {
@@ -50,10 +51,10 @@ export function CupCollection({ products }: { products: Product[] }) {
   }, []);
 
   useEffect(() => {
-    if (paused || still || length < 2) return;
+    if (paused || stopped || still || length < 2) return;
     const timer = window.setInterval(() => setActive((a) => (a + 1) % length), AUTOPLAY_MS);
     return () => window.clearInterval(timer);
-  }, [paused, still, length]);
+  }, [paused, stopped, still, length]);
 
   if (length === 0) return null;
   const move = (by: number) => setActive((a) => (a + by + length) % length);
@@ -166,7 +167,6 @@ export function CupCollection({ products }: { products: Product[] }) {
                       src={image}
                       alt=""
                       fill
-                      priority={centre}
                       sizes="(min-width: 768px) 250px, 58vw"
                       className="object-contain"
                     />
@@ -221,17 +221,29 @@ export function CupCollection({ products }: { products: Product[] }) {
           </Link>
         </div>
 
-        <div className="mt-5 flex items-center justify-center gap-2.5 md:mt-6" role="group" aria-label="Choose a cup">
-          {products.map((p, i) => (
+        <div className="mt-5 flex items-center justify-center gap-4 md:mt-6">
+          <div className="flex items-center gap-2.5" role="group" aria-label="Choose a cup">
+            {products.map((p, i) => (
+              <button
+                type="button"
+                key={p.id}
+                onClick={() => setActive(i)}
+                aria-label={`Show ${p.name} ${p.flavour ?? ''}`.trim()}
+                aria-current={i === active ? 'true' : undefined}
+                className={cn('size-2.5 rounded-full transition-all', i === active ? 'scale-125 bg-forest' : 'bg-forest/25 hover:bg-forest/50')}
+              />
+            ))}
+          </div>
+          {!still && length > 1 ? (
             <button
               type="button"
-              key={p.id}
-              onClick={() => setActive(i)}
-              aria-label={`Show ${p.name} ${p.flavour ?? ''}`.trim()}
-              aria-current={i === active ? 'true' : undefined}
-              className={cn('size-2.5 rounded-full transition-all', i === active ? 'scale-125 bg-forest' : 'bg-forest/25 hover:bg-forest/50')}
-            />
-          ))}
+              onClick={() => setStopped((s) => !s)}
+              aria-label={stopped ? 'Play the carousel' : 'Pause the carousel'}
+              className="grid size-7 place-items-center rounded-full text-forest/70 ring-1 ring-forest/20 transition hover:bg-cream-light hover:text-forest"
+            >
+              {stopped ? <Play size={12} fill="currentColor" aria-hidden /> : <Pause size={12} fill="currentColor" aria-hidden />}
+            </button>
+          ) : null}
         </div>
       </div>
     </section>
