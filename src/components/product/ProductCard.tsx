@@ -10,6 +10,7 @@ import { cn } from '@/lib/cn';
 import { formatPrice } from '@/lib/format';
 import type { Product } from '@/lib/types';
 import { AddToCartButton } from './AddToCartButton';
+import { WishlistButton } from './WishlistButton';
 
 function Packshot({ product, sizes, className }: { product: Product; sizes: string; className?: string }) {
   const image = product.images.find((i) => i.kind === 'packshot') ?? product.images[0];
@@ -52,7 +53,7 @@ export function ProductCard({ product, variant = 'shop' }: { product: Product; v
   return (
     <article
       data-testid="product-card"
-      className="group flex h-full flex-col rounded-2xl bg-cream-light p-3 shadow-sm ring-1 ring-forest/5 transition-shadow hover:shadow-md"
+      className="group relative flex h-full flex-col rounded-2xl bg-cream-light p-3 shadow-sm ring-1 ring-forest/5 transition-shadow hover:shadow-md"
     >
       <Link href={href} tabIndex={-1} aria-hidden className="relative block aspect-[4/5] overflow-hidden rounded-xl bg-cream-dark/50">
         <Packshot product={product} sizes={compact ? '200px' : '(min-width: 1280px) 18vw, (min-width: 768px) 30vw, 45vw'} className="p-3" />
@@ -61,6 +62,9 @@ export function ProductCard({ product, variant = 'shop' }: { product: Product; v
           <ProteinBadge grams={product.proteinG} className="absolute right-2 bottom-2 size-12" />
         ) : null}
       </Link>
+      {!compact ? (
+        <WishlistButton productId={product.id} label={`${product.name} ${product.flavour ?? ''}`.trim()} className="absolute top-5 right-5 z-10" />
+      ) : null}
       <div className="mt-3 flex flex-1 flex-col px-1">
         <h3 className={cn('font-display leading-tight font-semibold text-forest', compact ? 'text-sm' : 'text-base')}>
           <Link href={href} className="hover:text-terracotta">

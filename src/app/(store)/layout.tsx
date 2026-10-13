@@ -1,4 +1,5 @@
 import { CartButton } from '@/components/cart/CartButton';
+import { WishlistSync } from '@/components/account/WishlistSync';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Footer } from '@/components/layout/Footer';
@@ -16,6 +17,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
       </main>
       <Footer settings={settings} />
       <CartDrawer />
+      <WishlistSync />
     </>
   );
 }

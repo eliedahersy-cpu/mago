@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { CartProduct } from '@/lib/cart/lines';
 import { AddToCartButton } from './AddToCartButton';
 import { QuantityStepper } from './QuantityStepper';
+import { WishlistButton } from './WishlistButton';
 
 export function ProductPurchase({ product, purchasable }: { product: CartProduct; purchasable: boolean }) {
   const [qty, setQty] = useState(1);
@@ -18,6 +19,7 @@ export function ProductPurchase({ product, purchasable }: { product: CartProduct
         showIcon
         className="min-w-52 flex-1"
       />
+      <WishlistButton productId={product.productId} label={`${product.name} ${product.flavour ?? ''}`.trim()} className="size-13" />
     </div>
   );
 }

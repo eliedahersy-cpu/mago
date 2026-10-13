@@ -5,6 +5,18 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/app/actions/auth';
 import { cn } from '@/lib/cn';
+import { useWishlist } from '@/lib/wishlist/store';
+import { WISHLIST_SYNCED_KEY } from '@/lib/wishlist/use-wishlist';
+
+/** Signing out leaves no trace of the account's wishlist in this browser. */
+function forgetAccountData() {
+  useWishlist.getState().clear();
+  try {
+    window.sessionStorage.removeItem(WISHLIST_SYNCED_KEY);
+  } catch {
+    // ignore
+  }
+}
 
 const links = [
   { href: '/account', label: 'Overview', icon: LayoutDashboard },
@@ -42,7 +54,7 @@ function NavList({ pathname }: { pathname: string | null }) {
           </li>
         ))}
         <li className="shrink-0 lg:mt-2 lg:border-t lg:border-forest/10 lg:pt-2">
-          <form action={signOut}>
+          <form action={signOut} onSubmit={forgetAccountData}>
             <button type="submit" className="flex w-full items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold text-ink/70 hover:bg-forest/10 hover:text-forest">
               <LogOut size={18} aria-hidden /> Sign out
             </button>
