@@ -1,5 +1,5 @@
 import { ArrowRight, Clock } from 'lucide-react';
-import Image from 'next/image';
+import { ManagedMediaImage } from '@/components/media/ManagedMediaImage';
 import Link from 'next/link';
 import { Carousel } from '@/components/ui/Carousel';
 import { buttonVariants } from '@/components/ui/Button';
@@ -18,8 +18,9 @@ export function RecipeCard({ recipe }: { recipe: RecipeSummary }) {
     >
       <div className={cn('relative aspect-[4/3] overflow-hidden', isPackshot && 'bg-cream-dark/50')}>
         {src ? (
-          <Image
-            src={src}
+          <ManagedMediaImage
+            slotKey={'recipe:'+recipe.slug}
+            fallback={src}
             alt=""
             fill
             sizes="(min-width: 1024px) 220px, 60vw"

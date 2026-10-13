@@ -2,6 +2,7 @@
 
 import { ArrowRight, Clock3, Search, Sparkles } from 'lucide-react';
 import Image from 'next/image';
+import { ManagedMediaImage } from '@/components/media/ManagedMediaImage';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArchDecor, LeafSprig, SunMark } from '@/components/brand/Decor';
@@ -49,7 +50,7 @@ export function RecipesExplorer({recipes}:{recipes:RecipeSummary[]}) {
         const image=recipeImage(recipe.slug,recipe.heroImage);
         const packshot=image.startsWith('/products/');
         return <Link href={'/recipes/'+recipe.slug} key={recipe.slug} className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] bg-[#fffbf2] shadow-[0_5px_24px_rgba(2,48,37,.08)] ring-1 ring-forest/5 transition-shadow hover:shadow-lg">
-          <div className={'relative aspect-[4/3] overflow-hidden '+(packshot?'bg-[#f3e4cf]':'')}><Image src={image} alt="" fill sizes="(max-width:768px) 95vw, 320px" className={'transition-transform duration-300 group-hover:scale-[1.05] '+(packshot?'object-contain p-3 mix-blend-multiply':'object-cover')}/></div>
+          <div className={'relative aspect-[4/3] overflow-hidden '+(packshot?'bg-[#f3e4cf]':'')}><ManagedMediaImage slotKey={'recipe:'+recipe.slug} fallback={image} alt="" fill sizes="(max-width:768px) 95vw, 320px" className={'transition-transform duration-300 group-hover:scale-[1.05] '+(packshot?'object-contain p-3 mix-blend-multiply':'object-cover')}/></div>
           <div className="flex flex-1 flex-col p-5"><h3 className="font-display text-xl leading-tight font-bold text-forest">{recipe.title}</h3>{recipe.subtitle&&<p className="mt-1 text-sm text-ink/60">{recipe.subtitle}</p>}<div className="mt-auto flex items-center justify-between pt-5"><span className="flex items-center gap-1 text-sm font-semibold text-forest"><Clock3 size={16}/>{recipe.minutes} min</span><span className="flex items-center gap-1 font-display text-xs font-bold text-terracotta uppercase">See recipe <ArrowRight size={15}/></span></div></div>
         </Link>;
       })}</div>:<p className="py-16 text-center text-ink/65">No recipes found. Try a different category or search.</p>}

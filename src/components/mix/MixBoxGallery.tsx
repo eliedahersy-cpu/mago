@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Image from 'next/image';
+import { ManagedMediaImage } from '@/components/media/ManagedMediaImage';
 import { useState } from 'react';
 import { mixBoxGallery } from '@/config/visual-media';
 
@@ -11,7 +11,7 @@ export function MixBoxGallery({compact=false}:{compact?:boolean}) {
   const go=(dir:number)=>setIndex(old=>(old+dir+mixBoxGallery.length)%mixBoxGallery.length);
   return <div className={compact?'w-full':'w-full'}>
     <div className={'relative isolate overflow-hidden '+(compact?'aspect-[1.46] bg-[#edd4b7]':'aspect-[5/4] rounded-[1.7rem] bg-[#f6e3cd] shadow-[0_14px_46px_rgba(25,36,20,.1)]')}>
-      <Image key={image.id} src={image.src} alt={image.alt} fill priority={!compact&&index===0}
+      <ManagedMediaImage key={image.id} slotKey={'mix:'+image.id} fallback={image.src} alt={image.alt} fill priority={!compact&&index===0}
         sizes={compact?'350px':'(max-width:768px) 90vw, 650px'}
         className="object-cover transition-opacity duration-300"
         style={{objectPosition:image.position??'center',transform:'scale('+(image.zoom??1)+')'}}/>
@@ -22,7 +22,7 @@ export function MixBoxGallery({compact=false}:{compact?:boolean}) {
       {mixBoxGallery.map((item,i)=><button type="button" key={item.id} onClick={()=>setIndex(i)}
         aria-label={'Show '+item.label} aria-pressed={index===i}
         className={'relative aspect-[4/3] overflow-hidden rounded-lg border-2 bg-[#f4e3cd] transition '+(index===i?'border-forest shadow-sm':'border-transparent hover:border-forest/40')}>
-        <Image src={item.src} alt="" fill sizes={compact?'80px':'(min-width:768px) 140px, 22vw'} className="object-cover" style={{objectPosition:item.position??'center',transform:'scale('+(item.zoom??1)+')'}}/>
+        <ManagedMediaImage slotKey={'mix:'+item.id} fallback={item.src} alt="" fill sizes={compact?'80px':'(min-width:768px) 140px, 22vw'} className="object-cover" style={{objectPosition:item.position??'center',transform:'scale('+(item.zoom??1)+')'}}/>
       </button>)}
     </div>
   </div>;
