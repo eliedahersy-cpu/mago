@@ -41,12 +41,14 @@ The app never needs the service-role / secret key. Staff permissions come from
 
 SQL lives in `supabase/`:
 
-1. `migrations/0001_schema.sql` → `0009_admin_fixes.sql` — apply in order. 0006 adds the checkout
+1. `migrations/0001_schema.sql` → `0010_engagement.sql` — apply in order. 0006 adds the checkout
    functions `quote_cart`, `place_order` and `get_order_by_token`; 0007 adds `claim_customer`, which
    links a verified account to its customer record (and its earlier guest orders); 0008 adds the
    admin functions (order status flow with restock, payments, stock adjustments, stats, customers, roles);
    0009 limits automatic discounts to "percentage off cups" and makes `place_order` take stock in a
-   fixed order.
+   fixed order; 0010 adds customer reviews (`submit_review`) and Subscribe & Save
+   (`quote_subscription`, `create_subscription`, `update_subscription`, `process_due_subscriptions`)
+   and schedules the daily pg_cron job `mago-process-due-subscriptions` (03:00 UTC = 06:00 Beirut).
 2. `seed/0001_catalog.sql` — **bootstrap data for a new project** (catalog, recipes, stores, plans,
    settings). It can be re-run during development, but it resets settings (delivery fee, free-delivery
    threshold, announcement), collection visibility, product copy, featured/best-seller flags and
@@ -96,6 +98,20 @@ admin access (Settings). Every page and action checks the role again on the serv
 database functions in `0008_admin.sql` refuse anyone else.
 
 Checked by hand with [docs/qa/admin-checklist.md](docs/qa/admin-checklist.md).
+
+## Reviews, stores, recipes and subscriptions
+
+- **Reviews:** signed-in customers write them on product pages; they stay hidden until staff
+  approve them in **/admin/reviews**. "Bought it" is set by the database from the customer's orders.
+- **Store locator:** **/stores** (map from OpenStreetMap through Leaflet, no API key) and
+  **/stores/[slug]**; managed in **/admin/stores**.
+- **Recipes:** managed in **/admin/recipes** (photos go to the `content-images` bucket).
+- **Subscribe & Save:** **/subscribe** → **/subscribe/build** (plan, 5 cups, delivery, review;
+  sign-in at the end). Customers manage boxes in **/account/subscriptions**; staff in
+  **/admin/subscriptions** (plans editor, "Run due subscriptions now"). Every morning the pg_cron job
+  creates a cash-on-delivery order for each box due within 2 days.
+
+Checked by hand with [docs/qa/engagement-checklist.md](docs/qa/engagement-checklist.md).
 
 ## Deploy (Vercel)
 
