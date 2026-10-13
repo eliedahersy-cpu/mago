@@ -4,9 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { StoreBadge } from '@/components/stores/StoreLocator';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { StoreMap } from '@/components/stores/StoreMap';
 import { Container } from '@/components/ui/Container';
 import { getStores } from '@/lib/data/cached';
+import { siteUrl, storeJsonLd } from '@/lib/seo/jsonld';
 import { directionsUrl, distanceKm, formatDistance, sortByDistance } from '@/lib/stores/geo';
 
 // Unknown or inactive stores are a real 404.
@@ -36,6 +38,7 @@ export default async function StorePage({ params }: PageProps<'/stores/[slug]'>)
 
   return (
     <Container className="py-8 md:py-12">
+      <JsonLd data={storeJsonLd(store, siteUrl())} />
       <Link href="/stores" className="inline-flex items-center gap-1 text-sm font-medium text-forest/80 hover:text-forest">
         <ChevronLeft size={16} aria-hidden /> All stores
       </Link>

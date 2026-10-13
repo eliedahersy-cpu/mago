@@ -18,6 +18,7 @@ import {
   UpsellStrip,
 } from '@/components/product/ProductSections';
 import { ProductTabs } from '@/components/product/ProductTabs';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { ReviewForm } from '@/components/product/ReviewForm';
 import { Badge } from '@/components/ui/Badge';
 import { Carousel } from '@/components/ui/Carousel';
@@ -35,6 +36,7 @@ import {
   getSettings,
 } from '@/lib/data/cached';
 import { formatPrice } from '@/lib/format';
+import { productJsonLd, siteUrl } from '@/lib/seo/jsonld';
 
 // Unknown or draft slugs must return a real 404, so this segment may block instead of streaming a shell.
 export const instant = false;
@@ -92,6 +94,7 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
 
   return (
     <div className="relative overflow-hidden">
+      <JsonLd data={productJsonLd(product, siteUrl())} />
       <ArchDecor className="pointer-events-none absolute top-24 -left-12 hidden w-28 opacity-50 xl:block" />
       <LeafSprig className="pointer-events-none absolute top-16 -right-4 hidden w-16 rotate-12 opacity-70 xl:block" />
       <Container className="pt-6 pb-4">

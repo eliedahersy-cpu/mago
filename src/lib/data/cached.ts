@@ -120,3 +120,15 @@ export async function getSubscriptionPlans() {
   tagged(CACHE_TAGS.plans);
   return subscriptions.getActivePlans();
 }
+
+export async function getRecipe(slug: string) {
+  'use cache';
+  tagged(CACHE_TAGS.recipes);
+  return content.getPublishedRecipe(slug);
+}
+
+export async function getRecipeSlugs() {
+  'use cache';
+  tagged(CACHE_TAGS.recipes);
+  return content.getPublishedRecipeSlugs();
+}

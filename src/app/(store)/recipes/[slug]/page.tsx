@@ -6,20 +6,17 @@ import { notFound } from 'next/navigation';
 import { AddToCartButton } from '@/components/product/AddToCartButton';
 import { SunMark } from '@/components/brand/Decor';
 import { toCartProduct } from '@/lib/cart/lines';
-import { getActiveProducts } from '@/lib/data/catalog';
-import { createPublicClient } from '@/lib/supabase/public';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { getAllActiveProducts, getRecipe, getRecipeSlugs } from '@/lib/data/cached';
+import { recipeJsonLd, siteUrl } from '@/lib/seo/jsonld';
 
 export const instant = false;
 
-type RecipeRow = {
-  title:string;subtitle:string|null;hero_image:string|null;minutes:number;difficulty:string|null;servings:string|null;
-  intro:string|null;ingredients:string[]|null;steps:{title:string;body:string}[]|null;tip:string|null;product_id:string|null;
-};
+// Published recipes are cached (tag "recipes", refreshed by the admin); unknown slugs are a real 404.
+const findRecipe = getRecipe;
 
-async function findRecipe(slug:string):Promise<RecipeRow|null>{
-  const {data,error}=await createPublicClient().from('recipes').select('title,subtitle,hero_image,minutes,difficulty,servings,intro,ingredients,steps,tip,product_id').eq('slug',slug).eq('status','published').maybeSingle();
-  if(error)throw new Error('Failed to load recipe');
-  return data as RecipeRow|null;
+export async function generateStaticParams() {
+  return (await getRecipeSlugs()).map((slug) => ({ slug }));
 }
 export async function generateMetadata({params}:PageProps<'/recipes/[slug]'>):Promise<Metadata>{
   const {slug}=await params;const r=await findRecipe(slug);return r?{title:r.title,description:r.intro??r.subtitle??undefined}:{title:'Recipe'};
@@ -27,8 +24,10 @@ export async function generateMetadata({params}:PageProps<'/recipes/[slug]'>):Pr
 export default async function RecipeDetailPage({params}:PageProps<'/recipes/[slug]'>){
   const {slug}=await params;
   const r=await findRecipe(slug);if(!r)notFound();
-  const product=(await getActiveProducts()).find((p)=>p.id===r.product_id);
+  const product=(await getAllActiveProducts()).find((p)=>p.id===r.product_id);
+  const ld = recipeJsonLd({ slug, title: r.title, intro: r.intro, heroImage: r.hero_image, minutes: r.minutes, servings: r.servings, ingredients: r.ingredients ?? [], steps: r.steps ?? [], tags: r.tags ?? [] }, siteUrl());
   return <div className="bg-[#fff6e9]">
+    <JsonLd data={ld} />
     <div className="mx-auto max-w-6xl px-5 py-8 md:px-8">
       <Link href="/recipes" className="inline-flex items-center gap-2 text-sm font-semibold text-forest"><ArrowLeft size={17}/> All recipes</Link>
       <div className="mt-6 grid items-center gap-8 md:grid-cols-2">
