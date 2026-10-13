@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useTransition, type FormEvent, type ReactNode } from 'react';
 import { placeOrder, type PlaceOrderResult } from '@/app/actions/checkout';
 import { Button } from '@/components/ui/Button';
+import { Field, inputClass } from '@/components/ui/Field';
 import { useCart } from '@/lib/cart/store';
 import { forgetOrderKey, orderKeyFor } from '@/lib/checkout/order-key';
 import { blockingIssues } from '@/lib/checkout/quote';
@@ -15,26 +16,6 @@ import { safeSessionStorage } from '@/lib/safe-storage';
 import { OrderLines } from './OrderLines';
 import { DiscountCodeField, EmptyCart, QuoteError, QuoteIssues, QuoteTotals } from './QuoteParts';
 import { useCartQuote } from './use-cart-quote';
-
-const inputClass =
-  'mt-1.5 w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink focus:border-forest focus:outline-none aria-[invalid=true]:border-terracotta';
-
-function Field({ id, label, optional, error, children }: { id: string; label: string; optional?: boolean; error?: string; children: ReactNode }) {
-  return (
-    <div>
-      <label htmlFor={id} className="text-sm font-semibold text-forest">
-        {label}
-        {optional ? <span className="font-normal text-ink/60"> (optional)</span> : null}
-      </label>
-      {children}
-      {error ? (
-        <p id={`${id}-error`} className="mt-1 text-sm text-terracotta">
-          {error}
-        </p>
-      ) : null}
-    </div>
-  );
-}
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
