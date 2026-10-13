@@ -39,9 +39,9 @@ function useGoWhenSignedIn(state: AuthState) {
   }, [state]);
 }
 
-export function LoginForm() {
+export function LoginForm({ defaultNext = '/account', showRegister = true }: { defaultNext?: string; showRegister?: boolean } = {}) {
   const params = useSearchParams();
-  const next = safeNextPath(params.get('next'));
+  const next = safeNextPath(params.get('next'), defaultNext);
   const [state, passwordAction, signingIn] = useActionState(signIn, idle);
   const [linkState, linkAction, sendingLink] = useActionState(sendSignInLink, idle);
   useGoWhenSignedIn(state);
@@ -51,6 +51,7 @@ export function LoginForm() {
 
   return (
     <form action={passwordAction} noValidate className="space-y-4">
+      {params.get('error') === 'staff' ? <Alert>This account does not have admin access. Sign in with an owner or staff account.</Alert> : null}
       {params.get('error') === 'link' ? (
         <Alert>That link has expired or was opened in a different browser. Sign in with your password, or send yourself a new link.</Alert>
       ) : null}
@@ -78,12 +79,14 @@ export function LoginForm() {
       <Button type="submit" formAction={linkAction} variant="outline" className="w-full" disabled={busy}>
         {sendingLink ? 'Sending…' : 'Email me a sign-in link'}
       </Button>
+      {showRegister ? (
       <p className="pt-2 text-center text-sm text-ink/75">
         New to MAGO?{' '}
         <Link href={`/account/register?next=${encodeURIComponent(next)}`} className={linkClass}>
           Create an account
         </Link>
       </p>
+      ) : null}
     </form>
   );
 }

@@ -5,6 +5,13 @@ import { getSupabaseEnv } from '@/lib/supabase/env';
 /** Account pages that a signed-out visitor may open. */
 const PUBLIC_ACCOUNT_PAGES = new Set(['/account/login', '/account/register', '/account/forgot-password', '/account/reset-password']);
 
+/** Where a signed-out visitor to a private page is sent (admin pages have their own sign-in). */
+function signInPath(pathname: string): string | null {
+  if (pathname.startsWith('/admin')) return pathname === '/admin/login' ? null : '/admin/login';
+  if (pathname.startsWith('/account')) return PUBLIC_ACCOUNT_PAGES.has(pathname) ? null : '/account/login';
+  return null;
+}
+
 /**
  * Keeps the Supabase session cookies fresh where the session is read, and sends signed-out
  * visitors from private account pages to sign in. This is an optimistic check only: every
@@ -30,9 +37,10 @@ export async function proxy(request: NextRequest) {
   const signedIn = Boolean(data?.claims?.sub);
 
   const { pathname, search } = request.nextUrl;
-  if (pathname.startsWith('/account') && !PUBLIC_ACCOUNT_PAGES.has(pathname) && !signedIn) {
+  const loginPath = signInPath(pathname);
+  if (loginPath && !signedIn) {
     const login = request.nextUrl.clone();
-    login.pathname = '/account/login';
+    login.pathname = loginPath;
     login.search = `?next=${encodeURIComponent(pathname + search)}`;
     return NextResponse.redirect(login);
   }
@@ -40,5 +48,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/account/:path*', '/auth/:path*', '/checkout'],
+  matcher: ['/account/:path*', '/admin/:path*', '/auth/:path*', '/checkout'],
 };

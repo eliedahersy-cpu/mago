@@ -28,3 +28,25 @@ export async function requireUser(nextPath: string): Promise<AccountUser> {
   if (!user) redirect(`/account/login?next=${encodeURIComponent(nextPath)}`);
   return user;
 }
+
+export interface StaffUser extends AccountUser {
+  role: 'owner' | 'staff';
+}
+
+/** The signed-in owner or staff member, or null (customers are not staff). */
+export const getStaff = cache(async (): Promise<StaffUser | null> => {
+  const user = await getUser();
+  if (!user) return null;
+  const supabase = await createClient();
+  const { data } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
+  const role = data?.role;
+  return role === 'owner' || role === 'staff' ? { ...user, role } : null;
+});
+
+/** Every admin page and action calls this: signed out -> admin sign-in; not staff -> told so. */
+export async function requireStaff(nextPath: string): Promise<StaffUser> {
+  const staff = await getStaff();
+  if (staff) return staff;
+  if (!(await getUser())) redirect(`/admin/login?next=${encodeURIComponent(nextPath)}`);
+  redirect('/admin/login?error=staff');
+}
