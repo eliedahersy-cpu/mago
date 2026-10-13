@@ -41,8 +41,9 @@ The app never needs the service-role / secret key. Staff permissions come from
 
 SQL lives in `supabase/`:
 
-1. `migrations/0001_schema.sql` → `0006_commerce_functions.sql` — apply in order. 0006 adds the
-   checkout functions `quote_cart`, `place_order` and `get_order_by_token`.
+1. `migrations/0001_schema.sql` → `0007_accounts.sql` — apply in order. 0006 adds the checkout
+   functions `quote_cart`, `place_order` and `get_order_by_token`; 0007 adds `claim_customer`, which
+   links a verified account to its customer record (and its earlier guest orders).
 2. `seed/0001_catalog.sql` — **bootstrap data for a new project** (catalog, recipes, stores, plans,
    settings). It can be re-run during development, but it resets settings (delivery fee, free-delivery
    threshold, announcement), collection visibility, product copy, featured/best-seller flags and
