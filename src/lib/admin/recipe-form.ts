@@ -65,7 +65,8 @@ export function parseRecipeForm(fd: FormData): FormResult<RecipeInput> {
   const productId = text(fd, 'productId');
   return parseWith(recipeSchema, {
     title,
-    slug: text(fd, 'slug') || slugify(title),
+    // No title: only the title is reported, not a slug made from nothing.
+    slug: text(fd, 'slug') || (title ? slugify(title) : 'untitled'),
     subtitle: optionalText(fd, 'subtitle'),
     heroImage: optionalText(fd, 'heroImage'),
     minutes: num(fd, 'minutes') ?? Number.NaN,
