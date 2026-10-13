@@ -18,6 +18,7 @@ import {
   UpsellStrip,
 } from '@/components/product/ProductSections';
 import { ProductTabs } from '@/components/product/ProductTabs';
+import { ReviewForm } from '@/components/product/ReviewForm';
 import { Badge } from '@/components/ui/Badge';
 import { Carousel } from '@/components/ui/Carousel';
 import { Container } from '@/components/ui/Container';
@@ -77,7 +78,16 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
     ...(product.ingredients.length ? [{ id: 'ingredients', label: 'Ingredients', content: <IngredientsPanel product={product} /> }] : []),
     ...(product.nutrition.length ? [{ id: 'nutrition', label: 'Nutritional facts', content: <NutritionPanel product={product} /> }] : []),
     ...(product.preparation.length ? [{ id: 'prepare', label: 'How to prepare', content: <PreparationPanel product={product} /> }] : []),
-    { id: 'reviews', label: `Reviews (${product.ratingCount})`, content: <ReviewList reviews={reviews} /> },
+    {
+      id: 'reviews',
+      label: `Reviews (${product.ratingCount})`,
+      content: (
+        <div className="space-y-6">
+          <ReviewList reviews={reviews} />
+          <ReviewForm productId={product.id} productName={[product.name, product.flavour].filter(Boolean).join(' ')} returnTo={`/shop/${product.slug}`} />
+        </div>
+      ),
+    },
   ];
 
   return (

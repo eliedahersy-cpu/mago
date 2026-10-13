@@ -1,7 +1,22 @@
 export interface AdminNavItem {
   href: string;
   label: string;
-  icon: 'home' | 'orders' | 'products' | 'collections' | 'inventory' | 'customers' | 'discounts' | 'analytics' | 'settings';
+  icon:
+    | 'home'
+    | 'orders'
+    | 'products'
+    | 'collections'
+    | 'inventory'
+    | 'customers'
+    | 'discounts'
+    | 'subscriptions'
+    | 'recipes'
+    | 'stores'
+    | 'reviews'
+    | 'analytics'
+    | 'settings';
+  /** Starts a new group in the sidebar. */
+  group?: string;
 }
 
 export const ADMIN_NAV: AdminNavItem[] = [
@@ -12,7 +27,11 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { href: '/admin/inventory', label: 'Inventory', icon: 'inventory' },
   { href: '/admin/customers', label: 'Customers', icon: 'customers' },
   { href: '/admin/discounts', label: 'Discounts', icon: 'discounts' },
-  { href: '/admin/analytics', label: 'Analytics', icon: 'analytics' },
+  { href: '/admin/subscriptions', label: 'Subscriptions', icon: 'subscriptions' },
+  { href: '/admin/recipes', label: 'Recipes', icon: 'recipes', group: 'Content' },
+  { href: '/admin/stores', label: 'Stores', icon: 'stores' },
+  { href: '/admin/reviews', label: 'Reviews', icon: 'reviews' },
+  { href: '/admin/analytics', label: 'Analytics', icon: 'analytics', group: 'Insights' },
   { href: '/admin/settings', label: 'Settings', icon: 'settings' },
 ];
 

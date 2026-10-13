@@ -2,13 +2,17 @@
 
 import {
   BarChart3,
+  BookOpen,
   Boxes,
   FolderTree,
   Home,
+  MapPin,
   Menu,
   Package,
+  Repeat,
   Settings,
   ShoppingBag,
+  Star,
   Tag,
   Users,
   X,
@@ -28,6 +32,10 @@ const ICONS: Record<AdminNavItem['icon'], LucideIcon> = {
   inventory: Boxes,
   customers: Users,
   discounts: Tag,
+  subscriptions: Repeat,
+  recipes: BookOpen,
+  stores: MapPin,
+  reviews: Star,
   analytics: BarChart3,
   settings: Settings,
 };
@@ -40,6 +48,7 @@ function Links({ pathname, onNavigate }: { pathname: string | null; onNavigate?:
         const active = pathname !== null && isActiveNav(pathname, item.href);
         return (
           <li key={item.href}>
+            {item.group ? <p className="mt-4 mb-1 px-3 text-[11px] font-semibold tracking-wide text-cream-light/50 uppercase">{item.group}</p> : null}
             <Link
               href={item.href}
               onClick={onNavigate}

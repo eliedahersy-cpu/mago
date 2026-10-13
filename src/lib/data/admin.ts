@@ -618,3 +618,51 @@ export async function listStaff(): Promise<StaffMember[]> {
     role: s.role as StaffMember['role'],
   }));
 }
+
+// ---------------------------------------------------------------------------- reviews
+
+export interface AdminReview {
+  id: string;
+  productId: string;
+  product: string;
+  authorName: string;
+  rating: number;
+  title: string | null;
+  body: string;
+  status: string;
+  isVerifiedBuyer: boolean;
+  createdAt: string;
+}
+
+/** Waiting reviews oldest first (a queue); published and rejected newest first. */
+export async function listReviews(status: string): Promise<AdminReview[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('id, product_id, author_name, rating, title, body, status, is_verified_buyer, created_at, product:products (name, flavour)')
+    .eq('status', status)
+    .order('created_at', { ascending: status === 'pending' })
+    .limit(100);
+  if (error) fail('reviews', error);
+  return (data as Raw[]).map((r) => {
+    const p = (r.product as Raw | null) ?? {};
+    return {
+      id: String(r.id),
+      productId: String(r.product_id),
+      product: [p.name, p.flavour].filter(Boolean).join(' '),
+      authorName: String(r.author_name),
+      rating: toNum(r.rating),
+      title: (r.title as string | null) ?? null,
+      body: String(r.body),
+      status: String(r.status),
+      isVerifiedBuyer: Boolean(r.is_verified_buyer),
+      createdAt: String(r.created_at),
+    };
+  });
+}
+
+export async function countPendingReviews(): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('status', 'pending');
+  return count ?? 0;
+}
