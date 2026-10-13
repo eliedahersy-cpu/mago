@@ -1,0 +1,88 @@
+import type { ProductDefaults } from '@/components/admin/ProductForm';
+
+type Row = Record<string, unknown>;
+const s = (v: unknown) => (v === null || v === undefined ? '' : String(v));
+const list = (v: unknown) => (Array.isArray(v) ? (v as unknown[]).map(String) : []);
+
+/** Editor defaults for a new product. */
+export const NEW_PRODUCT: ProductDefaults = {
+  id: null,
+  name: '',
+  flavour: '',
+  slug: '',
+  type: 'cup',
+  status: 'draft',
+  sauce: '',
+  tagline: '',
+  shortDescription: '',
+  description: '',
+  story: '',
+  price: '4.50',
+  compareAtPrice: '',
+  sku: '',
+  stock: '0',
+  trackInventory: true,
+  allowBackorder: false,
+  lowStockThreshold: '10',
+  proteinG: '30',
+  prepMinutes: '4',
+  isBestSeller: false,
+  isFeatured: false,
+  sortOrder: '0',
+  badges: '',
+  ingredients: '',
+  nutrition: '',
+  preparation: '',
+  flavourProfiles: [],
+  spiceLevel: '0',
+  textures: [],
+  occasions: [],
+  style: '',
+  bundleSize: '',
+  seoTitle: '',
+  seoDescription: '',
+  collectionIds: [],
+};
+
+/** Editor defaults from a products row (jsonb lists back into one-per-line text). */
+export function productDefaults(row: Row, collectionIds: string[]): ProductDefaults {
+  const objects = (v: unknown) => (Array.isArray(v) ? (v as Row[]) : []);
+  return {
+    id: s(row.id),
+    name: s(row.name),
+    flavour: s(row.flavour),
+    slug: s(row.slug),
+    type: s(row.type),
+    status: s(row.status),
+    sauce: s(row.sauce),
+    tagline: s(row.tagline),
+    shortDescription: s(row.short_description),
+    description: s(row.description),
+    story: s(row.story),
+    price: s(row.price),
+    compareAtPrice: s(row.compare_at_price),
+    sku: s(row.sku),
+    stock: s(row.stock),
+    trackInventory: Boolean(row.track_inventory),
+    allowBackorder: Boolean(row.allow_backorder),
+    lowStockThreshold: s(row.low_stock_threshold),
+    proteinG: s(row.protein_g),
+    prepMinutes: s(row.prep_minutes),
+    isBestSeller: Boolean(row.is_best_seller),
+    isFeatured: Boolean(row.is_featured),
+    sortOrder: s(row.sort_order),
+    badges: list(row.badges).join('\n'),
+    ingredients: objects(row.ingredients).map((i) => s(i.name)).join('\n'),
+    nutrition: objects(row.nutrition).map((n) => `${s(n.label)}: ${s(n.value)}`).join('\n'),
+    preparation: objects(row.preparation).map((p) => (p.body ? `${s(p.title)}: ${s(p.body)}` : s(p.title))).join('\n'),
+    flavourProfiles: list(row.flavour_profiles),
+    spiceLevel: s(row.spice_level),
+    textures: list(row.textures),
+    occasions: list(row.occasions),
+    style: s(row.style),
+    bundleSize: s(row.bundle_size),
+    seoTitle: s(row.seo_title),
+    seoDescription: s(row.seo_description),
+    collectionIds,
+  };
+}
