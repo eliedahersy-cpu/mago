@@ -35,3 +35,10 @@ test('password reset asks for a valid email', async ({ page }) => {
   await page.getByRole('button', { name: 'Send reset link' }).click();
   await expect(page.getByText('Please enter a valid email address.')).toBeVisible();
 });
+
+test('every private account page asks signed-out visitors to sign in', async ({ page }) => {
+  for (const path of ['/account', '/account/orders/1001', '/account/addresses', '/account/wishlist']) {
+    await page.goto(path);
+    await expect(page).toHaveURL((url) => url.pathname === '/account/login' && url.searchParams.get('next') === path, { timeout: 30_000 });
+  }
+});
