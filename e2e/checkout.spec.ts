@@ -4,12 +4,14 @@ import { expect, test, type Page } from '@playwright/test';
 // addresses; run supabase/cleanup/e2e-orders.sql afterwards to remove them and restore stock.
 
 const testEmail = () => `e2e-${Date.now()}-${Math.floor(Math.random() * 1e4)}@example.com`;
+// A different phone each time too: place_order allows 5 orders per phone in 10 minutes.
+const testPhone = () => `+961 70 ${String(Math.floor(Math.random() * 1e6)).padStart(6, '0')}`;
 
 async function fillCheckout(page: Page) {
   const form = page.locator('#checkout-form');
   await form.getByLabel('Full name').fill('E2E Tester');
   await form.getByLabel('Email').fill(testEmail());
-  await form.getByLabel('Phone').fill('+961 70 000 000');
+  await form.getByLabel('Phone').fill(testPhone());
   await form.getByLabel('Governorate').selectOption('Beirut');
   await form.getByLabel('Area').fill('Hamra');
   await form.getByLabel('Street').fill('Bliss Street');
