@@ -23,6 +23,8 @@ const archTones = {
   terracotta: ['#c14120', '#e0754f', '#f2dcbc'],
   forest: ['#0d4a39', '#3e7a3a', '#f2dcbc'],
   saffron: ['#f0900f', '#f6b52a', '#f9e9d1'],
+  peach: ['#e48d63', '#f2b48c', '#f8e2c8'],
+  sage: ['#6f9a7c', '#a9c4a6', '#eef0dc'],
 } as const;
 
 /** Nested Mediterranean arch used as background decoration. */
