@@ -41,10 +41,12 @@ The app never needs the service-role / secret key. Staff permissions come from
 
 SQL lives in `supabase/`:
 
-1. `migrations/0001_schema.sql` → `0008_admin.sql` — apply in order. 0006 adds the checkout
+1. `migrations/0001_schema.sql` → `0009_admin_fixes.sql` — apply in order. 0006 adds the checkout
    functions `quote_cart`, `place_order` and `get_order_by_token`; 0007 adds `claim_customer`, which
    links a verified account to its customer record (and its earlier guest orders); 0008 adds the
-   admin functions (order status flow with restock, payments, stock adjustments, stats, customers, roles).
+   admin functions (order status flow with restock, payments, stock adjustments, stats, customers, roles);
+   0009 limits automatic discounts to "percentage off cups" and makes `place_order` take stock in a
+   fixed order.
 2. `seed/0001_catalog.sql` — **bootstrap data for a new project** (catalog, recipes, stores, plans,
    settings). It can be re-run during development, but it resets settings (delivery fee, free-delivery
    threshold, announcement), collection visibility, product copy, featured/best-seller flags and
@@ -83,6 +85,17 @@ session fresh on `/account`, `/auth` and `/checkout` and sends signed-out visito
 
 Supabase's built-in email service sends only a few emails per hour; connect a real SMTP provider
 (Authentication → Emails → SMTP) before launch. Manual test steps: `docs/qa/accounts-checklist.md`.
+
+## Admin
+
+Owner and staff manage the store at **/admin** (sign in at `/admin/login`): dashboard and
+analytics, orders (status flow, payments, notes, packing slips, CSV export, orders taken by
+phone), products with photo uploads, collections, inventory with a logged history, customers,
+discounts and settings. Only `owner`/`staff` profiles get in; only the owner gives or removes
+admin access (Settings). Every page and action checks the role again on the server, and the
+database functions in `0008_admin.sql` refuse anyone else.
+
+Checked by hand with [docs/qa/admin-checklist.md](docs/qa/admin-checklist.md).
 
 ## Deploy (Vercel)
 
