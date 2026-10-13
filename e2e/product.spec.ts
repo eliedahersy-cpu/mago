@@ -36,3 +36,14 @@ test('adds to cart and persists', async ({ page }) => {
   await expect(page.getByRole('button', { name: /Open cart, 2 items/ })).toBeVisible();
   expect(errors.filter((e) => /hydrat/i.test(e))).toEqual([]);
 });
+
+test('on phones product details open as an accordion', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/shop/fusilli-spicy-muhammara');
+  const nutrition = page.getByRole('button', { name: 'Nutritional facts' });
+  await expect(nutrition).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByText('30 g per serving')).toBeHidden();
+  await nutrition.click();
+  await expect(nutrition).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByText('30 g per serving')).toBeVisible();
+});

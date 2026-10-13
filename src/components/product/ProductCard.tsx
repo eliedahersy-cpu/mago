@@ -2,7 +2,6 @@ import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge, ProteinBadge } from '@/components/ui/Badge';
-import { ButtonLink } from '@/components/ui/Button';
 import { StarRating } from '@/components/ui/StarRating';
 import { toCartProduct } from '@/lib/cart/lines';
 import { isPurchasable } from '@/lib/catalog/stock';
@@ -26,28 +25,9 @@ function Packshot({ product, sizes, className }: { product: Product; sizes: stri
   );
 }
 
-export function ProductCard({ product, variant = 'shop' }: { product: Product; variant?: 'shop' | 'compact' | 'showcase' }) {
+export function ProductCard({ product, variant = 'shop' }: { product: Product; variant?: 'shop' | 'compact' }) {
   const href = `/shop/${product.slug}`;
   const purchasable = isPurchasable(product);
-
-  if (variant === 'showcase') {
-    return (
-      <article data-testid="showcase-card" className="group flex h-full flex-col items-center text-center">
-        <Link href={href} className="relative block aspect-[4/5] w-full" tabIndex={-1} aria-hidden>
-          <Packshot product={product} sizes="(min-width: 1024px) 18vw, 70vw" className="p-2" />
-        </Link>
-        <h3 className="mt-2 font-display leading-tight font-bold text-forest uppercase">
-          <Link href={href}>
-            {product.name}
-            {product.flavour ? <span className="block text-sm font-medium normal-case text-ink/80">{product.flavour}</span> : null}
-          </Link>
-        </h3>
-        <ButtonLink href={href} size="sm" className="mt-3" aria-label={`View details: ${product.name} ${product.flavour ?? ''}`.trim()}>
-          View details
-        </ButtonLink>
-      </article>
-    );
-  }
 
   const compact = variant === 'compact';
   return (

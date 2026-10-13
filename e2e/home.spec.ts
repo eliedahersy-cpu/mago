@@ -26,3 +26,23 @@ test('newsletter validates email', async ({ page }) => {
   await page.getByRole('button', { name: 'Subscribe' }).click();
   await expect(page.getByText('Enter a valid email')).toBeVisible();
 });
+
+test('the cup carousel turns with its arrows', async ({ page }) => {
+  await page.goto('/');
+  const dots = page.getByRole('group', { name: 'Choose a cup' }).getByRole('button');
+  await expect(dots).toHaveCount(5);
+  await expect(dots.nth(2)).toHaveAttribute('aria-current', 'true');
+  await page.getByRole('button', { name: 'Next cup' }).click();
+  await expect(dots.nth(3)).toHaveAttribute('aria-current', 'true');
+  await page.getByRole('button', { name: 'Previous cup' }).click();
+  await page.getByRole('button', { name: 'Previous cup' }).click();
+  await expect(dots.nth(1)).toHaveAttribute('aria-current', 'true');
+  await page.getByRole('button', { name: 'Pause the carousel' }).click();
+  await expect(page.getByRole('button', { name: 'Play the carousel' })).toBeVisible();
+});
+
+test('the Mix Box banner starts mixing', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: /start mixing/i }).click();
+  await expect(page).toHaveURL(/\/mix-box$/, { timeout: 30_000 });
+});

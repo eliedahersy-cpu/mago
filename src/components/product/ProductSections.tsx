@@ -16,10 +16,13 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ArchDecor, LeafSprig, ScriptNote } from '@/components/brand/Decor';
 import { Container } from '@/components/ui/Container';
 import { StarRating } from '@/components/ui/StarRating';
 import { toCartProduct } from '@/lib/cart/lines';
+import { cutoutImage } from '@/lib/catalog/cutout';
 import { isPurchasable } from '@/lib/catalog/stock';
+import { cn } from '@/lib/cn';
 import { formatPrice } from '@/lib/format';
 import type { AutomaticDiscount, Product, Review } from '@/lib/types';
 import { AddToCartButton } from './AddToCartButton';
@@ -144,27 +147,66 @@ const occasionInfo: Record<string, { label: string; icon: typeof Home }> = {
   'post-workout': { label: 'Post-workout fuel', icon: Dumbbell },
 };
 
-export function StoryPanel({ product }: { product: Product }) {
+/** The About tab: the flavour's story, a photo, what it is perfect for and a customer quote. */
+export function StoryPanel({ product, review = null }: { product: Product; review?: Review | null }) {
+  const photo = product.images.find((i) => i.kind === 'lifestyle');
+  const pack = product.images.find((i) => i.kind === 'packshot');
+  const cutout = pack ? cutoutImage(pack.url) : null;
   return (
-    <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
-      <p className="text-lg leading-relaxed text-ink/90">{product.story}</p>
-      {product.occasions.length > 0 ? (
-        <div>
-          <h3 className="font-display text-lg font-bold text-forest uppercase">Perfect for</h3>
-          <ul className="mt-3 grid grid-cols-2 gap-3">
-            {product.occasions.map((o) => {
-              const info = occasionInfo[o];
-              if (!info) return null;
-              const Icon = info.icon;
-              return (
-                <li key={o} className="flex flex-col items-center gap-1 rounded-xl bg-cream p-3 text-center text-xs font-medium text-forest">
-                  <Icon size={20} aria-hidden /> {info.label}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ) : null}
+    <div className="grid items-center gap-6 lg:grid-cols-[1fr_1.15fr_1fr] lg:gap-8">
+      <div>
+        <h3 className="font-display text-2xl leading-tight font-bold text-forest uppercase md:text-3xl">{product.tagline ?? 'Our story'}</h3>
+        <p className="mt-3 leading-relaxed text-ink/85">{product.story}</p>
+      </div>
+      <div className="relative isolate aspect-[4/3] overflow-hidden rounded-2xl bg-[radial-gradient(ellipse_at_50%_65%,#fff4e2_0%,#f3dcbb_75%)]">
+        {photo ? (
+          <Image src={photo.url} alt={photo.alt || ''} fill sizes="(min-width: 1024px) 30vw, 90vw" className="object-cover" />
+        ) : cutout ? (
+          <>
+            <ArchDecor tone="terracotta" className="absolute -bottom-6 left-[8%] -z-10 w-[30%] opacity-80" />
+            <LeafSprig className="absolute top-2 right-3 -z-10 w-[16%] rotate-[25deg] text-leaf" />
+            <Image src={cutout} alt="" fill sizes="(min-width: 1024px) 30vw, 90vw" className="object-contain p-5" />
+          </>
+        ) : null}
+        <ScriptNote
+          arrow="down"
+          className={cn('absolute top-3 right-4 -rotate-6 text-lg', photo ? 'text-cream-light drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]' : 'text-forest')}
+        >
+          Same pasta.
+          <br />
+          More possibilities.
+        </ScriptNote>
+      </div>
+      <div>
+        {product.occasions.length > 0 ? (
+          <>
+            <h3 className="font-display text-lg font-bold text-forest uppercase">Perfect for</h3>
+            <ul className="mt-3 grid grid-cols-4 gap-2">
+              {product.occasions.map((o) => {
+                const info = occasionInfo[o];
+                if (!info) return null;
+                const Icon = info.icon;
+                return (
+                  <li key={o} className="flex flex-col items-center gap-1 text-center text-[11px] leading-tight font-medium text-forest">
+                    <Icon size={24} strokeWidth={1.6} aria-hidden /> {info.label}
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        ) : null}
+        {review ? (
+          <blockquote className="mt-5 rounded-2xl bg-cream p-4 text-sm leading-relaxed text-ink/85">
+            <p>&ldquo;{review.body}&rdquo;</p>
+            <footer className="mt-2 flex items-center gap-2 text-xs text-ink/70">
+              <span className="tracking-wider text-saffron" role="img" aria-label={`Rated ${review.rating} out of 5`}>
+                {'★'.repeat(review.rating)}
+              </span>
+              &mdash; {review.authorName}
+            </footer>
+          </blockquote>
+        ) : null}
+      </div>
     </div>
   );
 }
