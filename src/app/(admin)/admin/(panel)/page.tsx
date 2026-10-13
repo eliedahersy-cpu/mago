@@ -7,7 +7,7 @@ import { AdminOrdersTable } from '@/components/admin/OrdersTable';
 import { adminButton, Card, EmptyState, LoadingBlock, PageHeader } from '@/components/admin/ui';
 import { percentChange, rangeFromParam } from '@/lib/admin/stats';
 import { requireStaff } from '@/lib/auth/dal';
-import { getAdminStats, getRecentOrders } from '@/lib/data/admin';
+import { countActiveSubscriptions, countPendingReviews, getAdminStats, getRecentOrders } from '@/lib/data/admin';
 import { formatPrice } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'Home' };
@@ -24,7 +24,12 @@ async function Dashboard({ searchParams }: { searchParams: PageProps<'/admin'>['
   const staff = await requireStaff('/admin');
   const sp = await searchParams;
   const range = rangeFromParam(sp.range);
-  const [stats, recent] = await Promise.all([getAdminStats(range.from, range.to), getRecentOrders(6)]);
+  const [stats, recent, activeSubs, pendingReviews] = await Promise.all([
+    getAdminStats(range.from, range.to),
+    getRecentOrders(6),
+    countActiveSubscriptions(),
+    countPendingReviews(),
+  ]);
   const first = (staff.fullName ?? '').split(' ')[0];
 
   return (
@@ -47,6 +52,18 @@ async function Dashboard({ searchParams }: { searchParams: PageProps<'/admin'>['
         <KpiCard label="Orders" value={String(stats.orders)} change={percentChange(stats.orders, stats.previous.orders)} />
         <KpiCard label="Average order" value={formatPrice(stats.aov)} change={percentChange(stats.aov, stats.previous.aov)} />
         <KpiCard label="New customers" value={String(stats.newCustomers)} change={percentChange(stats.newCustomers, stats.previous.newCustomers)} />
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2 text-sm">
+        <Link href="/admin/subscriptions" className="rounded-full bg-white px-3 py-1.5 font-medium text-forest ring-1 ring-forest/10 hover:bg-cream-light">
+          {activeSubs} active {activeSubs === 1 ? 'subscription' : 'subscriptions'}
+        </Link>
+        <Link
+          href="/admin/reviews"
+          className={pendingReviews ? 'rounded-full bg-sun/30 px-3 py-1.5 font-medium text-[#7a4b00] ring-1 ring-sun/40 hover:bg-sun/40' : 'rounded-full bg-white px-3 py-1.5 font-medium text-forest ring-1 ring-forest/10 hover:bg-cream-light'}
+        >
+          {pendingReviews} {pendingReviews === 1 ? 'review' : 'reviews'} waiting
+        </Link>
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr]">

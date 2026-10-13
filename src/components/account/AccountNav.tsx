@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, LayoutDashboard, LogOut, MapPin, Package } from 'lucide-react';
+import { Heart, LayoutDashboard, LogOut, MapPin, Package, Repeat } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/app/actions/auth';
@@ -10,6 +10,7 @@ import { forgetAccountData } from '@/lib/wishlist/use-wishlist';
 const links = [
   { href: '/account', label: 'Overview', icon: LayoutDashboard },
   { href: '/account/orders', label: 'Orders', icon: Package },
+  { href: '/account/subscriptions', label: 'Subscriptions', icon: Repeat },
   { href: '/account/addresses', label: 'Addresses', icon: MapPin },
   { href: '/account/wishlist', label: 'Wishlist', icon: Heart },
 ];

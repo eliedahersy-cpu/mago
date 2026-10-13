@@ -8,6 +8,7 @@ import * as catalog from './catalog';
 import * as content from './content';
 import * as search from './search';
 import * as stores from './stores';
+import * as subscriptions from './subscriptions';
 
 export const CACHE_TAGS = {
   settings: 'settings',
@@ -16,6 +17,7 @@ export const CACHE_TAGS = {
   reviews: 'reviews',
   discounts: 'discounts',
   stores: 'stores',
+  plans: 'plans',
 } as const;
 
 function tagged(...tags: string[]) {
@@ -111,4 +113,10 @@ export async function getStores() {
   'use cache';
   tagged(CACHE_TAGS.stores);
   return stores.getActiveStores();
+}
+
+export async function getSubscriptionPlans() {
+  'use cache';
+  tagged(CACHE_TAGS.plans);
+  return subscriptions.getActivePlans();
 }

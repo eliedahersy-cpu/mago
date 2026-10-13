@@ -765,3 +765,160 @@ export async function getAdminStore(id: string) {
     productIds: ((s.store_products as Raw[]) ?? []).map((p) => String(p.product_id)),
   };
 }
+
+// ---------------------------------------------------------------------------- subscriptions
+
+export interface AdminSubscriptionRow {
+  id: string;
+  status: string;
+  customerId: string;
+  customer: string;
+  email: string;
+  plan: string;
+  nextDeliveryDate: string;
+  cups: number;
+  lastRunNote: string | null;
+  createdAt: string;
+}
+
+const SUB_SELECT =
+  'id, status, customer_id, items, address, next_delivery_date, is_gift, gift_note, last_order_id, last_run_at, last_run_note, created_at, customer:customers (full_name, email, phone), plan:subscription_plans (name, interval_weeks, discount_percent)';
+
+function cupTotal(items: unknown): number {
+  const cups = ((items as Raw | null)?.cups as Raw[] | undefined) ?? [];
+  return cups.reduce((n, c) => n + toNum(c.quantity), 0);
+}
+
+export async function listAdminSubscriptions(status: string | null): Promise<AdminSubscriptionRow[]> {
+  const supabase = await createClient();
+  let query = supabase.from('subscriptions').select(SUB_SELECT).order('next_delivery_date').limit(200);
+  if (status) query = query.eq('status', status);
+  const { data, error } = await query;
+  if (error) fail('subscriptions', error);
+  return (data as Raw[]).map((s) => {
+    const c = (s.customer as Raw | null) ?? {};
+    const p = (s.plan as Raw | null) ?? {};
+    return {
+      id: String(s.id),
+      status: String(s.status),
+      customerId: String(s.customer_id),
+      customer: String(c.full_name ?? (s.address as Raw | null)?.full_name ?? c.email ?? ''),
+      email: String(c.email ?? ''),
+      plan: String(p.name ?? ''),
+      nextDeliveryDate: String(s.next_delivery_date),
+      cups: cupTotal(s.items),
+      lastRunNote: (s.last_run_note as string | null) ?? null,
+      createdAt: String(s.created_at),
+    };
+  });
+}
+
+export interface AdminSubscription {
+  id: string;
+  status: string;
+  customerId: string;
+  customer: { fullName: string | null; email: string; phone: string | null };
+  plan: { name: string; intervalWeeks: number; discountPercent: number };
+  items: { cups: { productId: string; quantity: number }[]; extras: { productId: string; quantity: number }[] };
+  address: Address;
+  nextDeliveryDate: string;
+  isGift: boolean;
+  giftNote: string | null;
+  lastRunAt: string | null;
+  lastRunNote: string | null;
+  createdAt: string;
+  orders: AdminOrderRow[];
+}
+
+export async function getAdminSubscription(id: string): Promise<AdminSubscription | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('subscriptions').select(SUB_SELECT).eq('id', id).maybeSingle();
+  if (error) fail('subscription', error);
+  if (!data) return null;
+  const s = data as Raw;
+  const { data: orders, error: ordersError } = await supabase
+    .from('orders')
+    .select(ORDER_LIST_SELECT)
+    .eq('subscription_id', id)
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (ordersError) fail('subscription orders', ordersError);
+  const c = (s.customer as Raw | null) ?? {};
+  const p = (s.plan as Raw | null) ?? {};
+  const list = (k: string) =>
+    ((((s.items as Raw | null) ?? {})[k] as Raw[] | undefined) ?? []).map((i) => ({ productId: String(i.product_id), quantity: toNum(i.quantity) }));
+  return {
+    id: String(s.id),
+    status: String(s.status),
+    customerId: String(s.customer_id),
+    customer: { fullName: (c.full_name as string | null) ?? null, email: String(c.email ?? ''), phone: (c.phone as string | null) ?? null },
+    plan: { name: String(p.name ?? ''), intervalWeeks: toNum(p.interval_weeks), discountPercent: toNum(p.discount_percent) },
+    items: { cups: list('cups'), extras: list('extras') },
+    address: (s.address as Address) ?? {},
+    nextDeliveryDate: String(s.next_delivery_date),
+    isGift: Boolean(s.is_gift),
+    giftNote: (s.gift_note as string | null) ?? null,
+    lastRunAt: (s.last_run_at as string | null) ?? null,
+    lastRunNote: (s.last_run_note as string | null) ?? null,
+    createdAt: String(s.created_at),
+    orders: (orders as Raw[]).map(toOrderRow),
+  };
+}
+
+export interface AdminPlan {
+  id: string;
+  name: string;
+  intervalWeeks: number;
+  discountPercent: number;
+  isPopular: boolean;
+  isActive: boolean;
+  sortOrder: number;
+  subscribers: number;
+}
+
+export async function listAdminPlans(): Promise<AdminPlan[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('subscription_plans')
+    .select('id, name, interval_weeks, discount_percent, is_popular, is_active, sort_order, subscriptions (status)')
+    .order('sort_order');
+  if (error) fail('plans', error);
+  return (data as Raw[]).map((p) => ({
+    id: String(p.id),
+    name: String(p.name),
+    intervalWeeks: toNum(p.interval_weeks),
+    discountPercent: toNum(p.discount_percent),
+    isPopular: Boolean(p.is_popular),
+    isActive: Boolean(p.is_active),
+    sortOrder: toNum(p.sort_order),
+    subscribers: ((p.subscriptions as Raw[]) ?? []).filter((s) => s.status !== 'cancelled').length,
+  }));
+}
+
+export async function countActiveSubscriptions(): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase.from('subscriptions').select('id', { count: 'exact', head: true }).eq('status', 'active');
+  return count ?? 0;
+}
+
+export async function listCustomerSubscriptions(customerId: string): Promise<AdminSubscriptionRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('subscriptions').select(SUB_SELECT).eq('customer_id', customerId).order('created_at', { ascending: false });
+  if (error) fail('subscriptions', error);
+  return (data as Raw[]).map((s) => {
+    const c = (s.customer as Raw | null) ?? {};
+    const p = (s.plan as Raw | null) ?? {};
+    return {
+      id: String(s.id),
+      status: String(s.status),
+      customerId: String(s.customer_id),
+      customer: String(c.full_name ?? c.email ?? ''),
+      email: String(c.email ?? ''),
+      plan: String(p.name ?? ''),
+      nextDeliveryDate: String(s.next_delivery_date),
+      cups: cupTotal(s.items),
+      lastRunNote: (s.last_run_note as string | null) ?? null,
+      createdAt: String(s.created_at),
+    };
+  });
+}

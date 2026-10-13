@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { CustomerNotesForm } from '@/components/admin/CustomerNotesForm';
 import { AdminOrdersTable } from '@/components/admin/OrdersTable';
 import { Card, EmptyState, LoadingBlock, PageHeader, Pill } from '@/components/admin/ui';
 import { requireStaff } from '@/lib/auth/dal';
-import { getAdminCustomer } from '@/lib/data/admin';
+import { getAdminCustomer, listCustomerSubscriptions } from '@/lib/data/admin';
 import { formatDate, formatPrice } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'Customer' };
@@ -26,7 +27,7 @@ async function Customer({ params }: { params: PageProps<'/admin/customers/[id]'>
   const { id } = await params;
   await requireStaff(`/admin/customers/${encodeURIComponent(id)}`);
   if (!UUID.test(id)) notFound();
-  const c = await getAdminCustomer(id);
+  const [c, subs] = await Promise.all([getAdminCustomer(id), listCustomerSubscriptions(id)]);
   if (!c) notFound();
   const live = c.orders.filter((o) => o.status !== 'cancelled');
   const spent = live.reduce((s, o) => s + o.total, 0);
@@ -56,6 +57,20 @@ async function Customer({ params }: { params: PageProps<'/admin/customers/[id]'>
               </div>
             ))}
           </div>
+          {subs.length ? (
+            <Card title="Subscriptions">
+              <ul className="divide-y divide-forest/5 text-sm">
+                {subs.map((s) => (
+                  <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                    <Link href={`/admin/subscriptions/${s.id}`} className="font-medium text-forest hover:underline">
+                      {s.plan}
+                    </Link>
+                    <span className="text-ink/70">{s.status === 'active' ? `Next box ${formatDate(`${s.nextDeliveryDate}T12:00:00Z`)}` : s.status}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          ) : null}
           <section>
             <h2 className="mb-2 font-display text-base font-bold text-forest">Orders</h2>
             {c.orders.length ? <AdminOrdersTable orders={c.orders} /> : <EmptyState title="No orders yet" />}
