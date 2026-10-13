@@ -73,10 +73,10 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
   const isCup = product.type === 'cup';
 
   const tabs = [
+    ...(product.story ? [{ id: 'about', label: 'About', content: <StoryPanel product={product} review={reviews[0] ?? null} /> }] : []),
     ...(product.ingredients.length ? [{ id: 'ingredients', label: 'Ingredients', content: <IngredientsPanel product={product} /> }] : []),
     ...(product.nutrition.length ? [{ id: 'nutrition', label: 'Nutritional facts', content: <NutritionPanel product={product} /> }] : []),
     ...(product.preparation.length ? [{ id: 'prepare', label: 'How to prepare', content: <PreparationPanel product={product} /> }] : []),
-    ...(product.story ? [{ id: 'story', label: 'Our story behind this flavour', content: <StoryPanel product={product} /> }] : []),
     { id: 'reviews', label: `Reviews (${product.ratingCount})`, content: <ReviewList reviews={reviews} /> },
   ];
 
@@ -112,7 +112,7 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
         </nav>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
-          <ProductGallery images={product.images} name={[product.name, product.flavour].filter(Boolean).join(' ')} />
+          <ProductGallery images={product.images} name={[product.name, product.flavour].filter(Boolean).join(' ')} proteinG={isCup ? product.proteinG : null} />
 
           <div className="flex flex-col gap-5">
             {product.isBestSeller ? <Badge className="self-start">Best seller</Badge> : null}

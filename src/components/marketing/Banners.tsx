@@ -4,38 +4,43 @@ import { ArchDecor, LeafSprig, ScriptNote } from '@/components/brand/Decor';
 import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
+/** Home band inviting people to the quiz: copy on the left, a close-up of a full cup cropped by the band. */
 export function QuizBanner() {
   return (
-    <section className="relative overflow-hidden bg-cream-light">
-      <ArchDecor tone="terracotta" className="pointer-events-none absolute -bottom-12 left-1/2 hidden w-40 opacity-25 md:block" />
-      <Container className="grid items-center gap-8 py-12 md:grid-cols-2 md:py-16">
-        <div>
-          <h2 className="font-display leading-none font-bold uppercase">
-            <span className="block text-3xl text-terracotta md:text-4xl">Find your</span>
-            <span className="block text-5xl text-forest md:text-7xl">Match</span>
+    <section className="relative isolate overflow-hidden bg-[linear-gradient(100deg,#fbefdc_0%,#f6e3c6_55%,#f1dcc0_100%)]">
+      <div className="mx-auto grid h-[250px] max-w-7xl grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] sm:h-[300px] md:h-[340px] md:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
+        <div className="relative z-10 flex flex-col justify-center py-6 pl-5 md:pl-10 lg:pl-16">
+          <h2 className="font-display leading-[0.9] font-bold uppercase">
+            <span className="block text-2xl text-terracotta sm:text-3xl md:text-4xl">Find your</span>
+            <span className="block text-[2.6rem] text-forest sm:text-5xl md:text-7xl">Match</span>
           </h2>
-          <p className="mt-4 max-w-md text-lg text-ink/80">
+          <p className="mt-2 max-w-md text-[13px] leading-snug text-ink/85 sm:text-base md:mt-3 md:text-lg">
             Not sure where to start? Answer a few quick questions and we&apos;ll find your perfect MAGO flavours.
           </p>
-          <ButtonLink href="/find-your-match" className="mt-7">
-            Take the quiz <ArrowRight size={18} aria-hidden />
+          <ButtonLink href="/find-your-match" size="sm" className="mt-4 w-fit md:mt-6 md:h-11 md:px-6 md:text-sm">
+            Take the quiz <ArrowRight size={16} aria-hidden />
           </ButtonLink>
         </div>
-        <div className="relative mx-auto aspect-square w-full max-w-md">
-          <Image
-            src="/products/fusilli-spicy-muhammara.webp"
-            alt="MAGO Fusilli Cup Spicy Muhammara"
-            fill
-            sizes="(min-width: 768px) 420px, 80vw"
-            className="object-contain mix-blend-multiply"
-          />
-          <ScriptNote arrow="left" className="absolute top-6 -right-2 rotate-6 md:-right-10">
+        <div className="relative">
+          <ArchDecor tone="terracotta" className="absolute bottom-0 left-[2%] hidden w-28 md:block lg:w-36" />
+          <LeafSprig className="absolute bottom-0 left-[14%] hidden w-24 -rotate-[20deg] text-leaf md:block lg:w-28" />
+          <LeafSprig className="absolute -top-4 right-2 w-12 rotate-[200deg] text-leaf/90 md:w-20" />
+          <div className="absolute -top-[22%] -right-[45%] aspect-[4/5] h-[118%] sm:-right-[28%] sm:h-[150%] md:right-auto md:left-[4%] lg:left-[8%]">
+            <Image
+              src="/products/cutouts/fusilli-spicy-muhammara.webp"
+              alt="A MAGO Fusilli Cup Spicy Muhammara, full of pasta"
+              fill
+              sizes="(min-width: 768px) 420px, 55vw"
+              className="object-contain drop-shadow-[0_18px_20px_rgba(55,39,23,0.18)]"
+            />
+          </div>
+          <ScriptNote arrow="left" className="absolute top-[30%] right-0 hidden -rotate-6 text-2xl lg:inline-flex">
             Same pasta.
             <br />
             More possibilities.
           </ScriptNote>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

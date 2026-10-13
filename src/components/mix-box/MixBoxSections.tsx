@@ -7,35 +7,39 @@ import { BoxStepper } from './BoxStepper';
 
 export function MixBoxHero({ size }: { size: number }) {
   return (
-    <section className="relative overflow-hidden">
-      <ArchDecor className="pointer-events-none absolute -bottom-6 -left-10 hidden w-28 opacity-50 md:block" />
-      <ArchDecor tone="saffron" className="pointer-events-none absolute top-10 -right-8 hidden w-24 opacity-40 lg:block" />
-      <LeafSprig className="pointer-events-none absolute top-6 left-4 hidden w-12 -rotate-12 opacity-60 md:block" />
-      <Container className="grid items-center gap-8 py-8 md:grid-cols-[1fr_1.1fr] md:py-12">
-        <div className="text-center md:text-left">
+    <section className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_25%_30%,#fff5e4_0%,#f9e6ca_60%,#f3d9b6_100%)]">
+      <LeafSprig className="pointer-events-none absolute -top-3 -left-5 -z-10 w-16 -rotate-[35deg] text-leaf md:w-28" />
+      <ArchDecor tone="peach" className="pointer-events-none absolute bottom-0 -left-10 -z-10 w-24 opacity-80 md:w-32" />
+      <LeafSprig className="pointer-events-none absolute -top-2 -right-4 -z-10 w-16 rotate-[30deg] text-forest-light md:hidden" />
+      {/* One image for every width: phones stack title, photo, controls; wider screens put the photo on the right. */}
+      <div className="mx-auto grid max-w-7xl px-5 text-center md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] md:grid-rows-[1fr_auto_auto_1fr] md:px-0 md:text-left">
+        <div className="pt-8 md:col-start-1 md:row-start-2 md:pt-12 md:pr-4 md:pl-10 lg:pl-16">
           <h1 className="font-display leading-[0.9] font-bold text-forest uppercase">
-            <span className="block text-4xl md:text-6xl">Build your</span>
-            <span className="block text-5xl md:text-7xl">MAGO Mix Box</span>
+            <span className="block text-[2.4rem] sm:text-5xl md:text-6xl">Build your</span>
+            <span className="block text-[2.4rem] whitespace-nowrap sm:text-5xl md:text-[clamp(3rem,5.6vw,4.75rem)]">MAGO Mix Box</span>
           </h1>
-          <p className="mt-3 text-lg text-ink/80 md:text-xl">Pick {size} cups. Your way. More flavours. More fun.</p>
-          <BoxStepper size={size} className="mt-6" />
-          <ButtonLink href="#cups" size="lg" className="mt-6">
-            Start mixing <ArrowRight size={18} aria-hidden />
-          </ButtonLink>
+          <p className="mt-3 text-base text-ink/80 md:text-xl">Pick {size} cups. Your way. More flavours. More fun.</p>
         </div>
-        <div className="relative mx-auto aspect-[760/707] w-full max-w-xl">
-          <SunMark className="absolute -top-8 right-6 z-10 w-20 md:-top-10 md:w-28" />
+        <div className="relative mx-auto mt-5 aspect-[900/880] w-full max-w-sm md:col-start-2 md:row-span-4 md:row-start-1 md:mt-0 md:aspect-auto md:h-full md:min-h-[460px] md:max-w-none">
+          <ArchDecor tone="terracotta" className="absolute top-6 -right-6 hidden w-36 opacity-80 md:block lg:w-44" />
+          <SunMark className="absolute top-4 left-[12%] z-10 hidden w-20 md:block lg:w-24" />
           <Image
-            src="/products/mago-mix-box-open.webp"
+            src="/images/mix-box-hero.webp"
             alt="An open MAGO Mix Box holding five pasta cups"
             fill
             loading="eager"
             fetchPriority="high"
-            sizes="(min-width: 768px) 50vw, 100vw"
-            className="rounded-3xl object-contain shadow-xl"
+            sizes="(min-width: 768px) 50vw, 90vw"
+            className="object-cover object-center [mask-image:radial-gradient(ellipse_at_center,#000_60%,transparent_75%)]"
           />
         </div>
-      </Container>
+        <div className="pb-8 md:col-start-1 md:row-start-3 md:pr-4 md:pb-12 md:pl-10 lg:pl-16">
+          <BoxStepper size={size} className="mt-5 md:mt-6" />
+          <ButtonLink href="#cups" size="lg" className="mt-5 md:mt-6">
+            Start mixing <ArrowRight size={18} aria-hidden />
+          </ButtonLink>
+        </div>
+      </div>
     </section>
   );
 }
