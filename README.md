@@ -41,14 +41,15 @@ The app never needs the service-role / secret key. Staff permissions come from
 
 SQL lives in `supabase/`:
 
-1. `migrations/0001_schema.sql` → `0010_engagement.sql` — apply in order. 0006 adds the checkout
+1. `migrations/0001_schema.sql` → `0011_rate_limits.sql` — apply in order. 0006 adds the checkout
    functions `quote_cart`, `place_order` and `get_order_by_token`; 0007 adds `claim_customer`, which
    links a verified account to its customer record (and its earlier guest orders); 0008 adds the
    admin functions (order status flow with restock, payments, stock adjustments, stats, customers, roles);
    0009 limits automatic discounts to "percentage off cups" and makes `place_order` take stock in a
    fixed order; 0010 adds customer reviews (`submit_review`) and Subscribe & Save
    (`quote_subscription`, `create_subscription`, `update_subscription`, `process_due_subscriptions`)
-   and schedules the daily pg_cron job `mago-process-due-subscriptions` (03:00 UTC = 06:00 Beirut).
+   and schedules the daily pg_cron job `mago-process-due-subscriptions` (03:00 UTC = 06:00 Beirut);
+   0011 limits orders to 5 per email or phone in 10 minutes and 100 site-wide in 2 minutes.
 2. `seed/0001_catalog.sql` — **bootstrap data for a new project** (catalog, recipes, stores, plans,
    settings). It can be re-run during development, but it resets settings (delivery fee, free-delivery
    threshold, announcement), collection visibility, product copy, featured/best-seller flags and
@@ -112,6 +113,22 @@ Checked by hand with [docs/qa/admin-checklist.md](docs/qa/admin-checklist.md).
   creates a cash-on-delivery order for each box due within 2 days.
 
 Checked by hand with [docs/qa/engagement-checklist.md](docs/qa/engagement-checklist.md).
+
+## Download app, search engines, accessibility
+
+- **Download app:** the shop is an installable web app (`src/app/manifest.ts`, `public/sw.js`,
+  icons in `public/app-icons`). A small **Download app** button sits in the footer; a floating one
+  appears only where the browser can install the site (and shows Add to Home Screen steps on
+  iPhone/iPad), never over checkout, and disappears for good once the app is installed. The service
+  worker caches nothing, so prices and stock are always current.
+- **Search engines:** `/sitemap.xml` and `/robots.txt` are generated from the live catalogue;
+  product, recipe, store and home pages carry schema.org data (`src/lib/seo/jsonld.ts`). Social
+  cards use `src/app/opengraph-image.jpg` (products use their own photo).
+- **Accessibility:** `e2e/a11y.spec.ts` runs axe (WCAG 2.1 A/AA) on every public page at desktop
+  and phone width.
+
+Before going live, work through [docs/launch-checklist.md](docs/launch-checklist.md) (email
+provider, domain, backups, Search Console).
 
 ## Deploy (Vercel)
 
