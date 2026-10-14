@@ -223,7 +223,7 @@ export function SubscribeFlow({
                 <input type="radio" name="plan" value={p.id} checked={on} onChange={() => update({ planId: p.id })} className="sr-only" />
                 <span className="font-display text-xl font-bold text-forest">{p.name}</span>
                 <span className="mt-1 text-sm text-ink/70">{boxSize} cups per box</span>
-                <span className="mt-3 rounded-full bg-leaf/15 px-3 py-1 text-sm font-semibold text-leaf">Save {p.discountPercent}% on cups</span>
+                <span className="mt-3 rounded-full bg-leaf/15 px-3 py-1 text-sm font-semibold text-forest">Save {p.discountPercent}% on cups</span>
                 <span className={cn('mt-4 grid size-6 place-items-center rounded-full border-2', on ? 'border-forest bg-forest text-cream-light' : 'border-forest/30')}>
                   {on ? <Check size={14} strokeWidth={3} aria-hidden /> : null}
                 </span>
@@ -395,7 +395,7 @@ export function SubscribeFlow({
                 </button>
               </div>
               <p className="mt-2 font-semibold text-forest">
-                {plan.name} <span className="ml-1 rounded-full bg-leaf/15 px-2 py-0.5 text-xs text-leaf">Save {plan.discountPercent}%</span>
+                {plan.name} <span className="ml-1 rounded-full bg-leaf/15 px-2 py-0.5 text-xs font-semibold text-forest">Save {plan.discountPercent}%</span>
               </p>
               <p className="mt-1 text-sm text-ink/80">First box: {longDate(firstDate)}</p>
               <p className="mt-1 text-sm text-ink/80">

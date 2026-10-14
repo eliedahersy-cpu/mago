@@ -99,7 +99,7 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
       <LeafSprig className="pointer-events-none absolute top-16 -right-4 hidden w-16 rotate-12 opacity-70 xl:block" />
       <Container className="pt-6 pb-4">
         <nav aria-label="Breadcrumb">
-          <ol className="flex flex-wrap items-center gap-1 text-sm text-ink/60">
+          <ol className="flex flex-wrap items-center gap-1 text-sm text-ink/75">
             <li>
               <Link href="/" className="hover:text-forest">Home</Link>
             </li>
@@ -118,7 +118,7 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
               </>
             ) : null}
             <ChevronRight size={14} aria-hidden />
-            <li aria-current="page" className="font-medium text-terracotta">
+            <li aria-current="page" className="font-medium text-[#9c3418]">
               {product.flavour ?? product.name}
             </li>
           </ol>

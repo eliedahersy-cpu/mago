@@ -59,7 +59,11 @@ export function FeatureStrip() {
       <LeafSprig className="pointer-events-none absolute -bottom-6 -left-2 hidden w-16 opacity-70 md:block" />
       <LeafSprig className="pointer-events-none absolute -top-6 -right-2 hidden w-16 rotate-180 opacity-70 md:block" />
       <Container className="py-8">
-        <ul className="scrollbar-none -mx-4 flex snap-x gap-6 overflow-x-auto px-4 md:mx-0 md:grid md:grid-cols-5 md:px-0">
+        <ul
+          tabIndex={0}
+          aria-label="Why MAGO"
+          className="scrollbar-none -mx-4 flex snap-x gap-6 overflow-x-auto px-4 focus-visible:outline-offset-4 md:mx-0 md:grid md:grid-cols-5 md:px-0"
+        >
           {features.map(({ icon: Icon, title, detail }) => (
             <li key={title} className="flex min-w-36 shrink-0 snap-start flex-col items-center text-center">
               <Icon size={34} strokeWidth={1.5} className="text-forest" aria-hidden />

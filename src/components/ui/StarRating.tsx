@@ -14,7 +14,7 @@ export function StarRating({
   className?: string;
 }) {
   if (count === 0 || avg === null) {
-    return <p className={cn('text-sm text-ink/60', className)}>No reviews yet</p>;
+    return <p className={cn('text-sm text-ink/70', className)}>No reviews yet</p>;
   }
   const px = size === 'sm' ? 14 : 18;
   return (

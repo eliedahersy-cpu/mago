@@ -139,7 +139,7 @@ async function Plans() {
           {p.isPopular ? <span className="absolute -top-3 rounded-full bg-sun px-3 py-1 font-display text-xs font-bold text-forest uppercase">Most popular</span> : null}
           <h3 className="font-display text-2xl font-bold text-forest">{p.name}</h3>
           <p className="mt-1 text-sm text-ink/70">{size} cups per box</p>
-          <p className="mt-3 rounded-full bg-leaf/15 px-3 py-1 text-sm font-semibold text-leaf">Save {p.discountPercent}% on cups</p>
+          <p className="mt-3 rounded-full bg-leaf/15 px-3 py-1 text-sm font-semibold text-forest">Save {p.discountPercent}% on cups</p>
           <Link
             href={`/subscribe/build?plan=${p.id}`}
             className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-forest px-6 font-display text-sm font-semibold tracking-wide text-cream-light uppercase hover:bg-forest-light"

@@ -20,7 +20,7 @@ export interface CardProduct {
 const longDate = (iso: string) => new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`));
 
 const STATUS: Record<MySubscription['status'], { label: string; tone: string }> = {
-  active: { label: 'Active', tone: 'bg-leaf/15 text-leaf' },
+  active: { label: 'Active', tone: 'bg-leaf/15 text-forest' },
   paused: { label: 'Paused', tone: 'bg-sun/30 text-[#7a4b00]' },
   cancelled: { label: 'Cancelled', tone: 'bg-ink/10 text-ink/70' },
 };

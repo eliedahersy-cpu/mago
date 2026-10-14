@@ -45,7 +45,7 @@ export function ProductTabs({ tabs }: { tabs: { id: string; label: string; conte
               'relative shrink-0 px-3 py-4 font-display text-sm font-semibold whitespace-nowrap uppercase transition-colors',
               active === tab.id
                 ? 'text-forest after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-terracotta'
-                : 'text-ink/60 hover:text-forest',
+                : 'text-ink/75 hover:text-forest',
             )}
           >
             {tab.label}

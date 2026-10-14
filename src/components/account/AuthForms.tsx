@@ -73,7 +73,7 @@ export function LoginForm({ defaultNext = '/account', showRegister = true }: { d
       <Button type="submit" size="lg" className="w-full" disabled={busy}>
         {signingIn || state.status === 'signed-in' ? 'Signing in…' : 'Sign in'}
       </Button>
-      <div className="flex items-center gap-3 text-xs text-ink/50 uppercase" aria-hidden>
+      <div className="flex items-center gap-3 text-xs text-ink/70 uppercase" aria-hidden>
         <span className="h-px flex-1 bg-forest/15" /> or <span className="h-px flex-1 bg-forest/15" />
       </div>
       <Button type="submit" formAction={linkAction} variant="outline" className="w-full" disabled={busy}>

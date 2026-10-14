@@ -201,7 +201,7 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
           <div className="mx-auto grid max-w-7xl items-center gap-4 rounded-3xl bg-terracotta p-5 text-cream-light md:grid-cols-[1fr_2.6fr] md:p-7">
             <div>
               <h2 className="font-display text-2xl leading-none font-bold uppercase md:text-3xl">Share your creations</h2>
-              <p className="mt-2 text-sm text-cream-light/90">Made something delicious with your MAGO cup? Share it with #MagoMoments.</p>
+              <p className="mt-2 text-sm text-cream-light">Made something delicious with your MAGO cup? Share it with #MagoMoments.</p>
             </div>
             <ul className="scrollbar-none -mx-1 flex gap-3 overflow-x-auto px-1">
               {showcase.map((r) => (
