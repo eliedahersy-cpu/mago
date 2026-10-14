@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Caveat, DM_Sans, Fredoka, Lora } from 'next/font/google';
 import './globals.css';
 
@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   title: { default: 'MAGO — Good food, brighter days.', template: '%s | MAGO' },
   description:
     'Nourishing pasta cups inspired by Mediterranean flavours. Real ingredients. Big taste. Ready in minutes.',
+  appleWebApp: { capable: true, title: 'MAGO', statusBarStyle: 'default' },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#023025',
 };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {

@@ -4,6 +4,7 @@ import { Logo } from '@/components/brand/Logo';
 import { Container } from '@/components/ui/Container';
 import { footerNav } from '@/config/navigation';
 import type { SocialNetwork, StoreSettings } from '@/lib/types';
+import { InstallAppButton } from '@/components/pwa/InstallApp';
 import { NewsletterForm } from './NewsletterForm';
 
 const socialIcons: Record<SocialNetwork, { label: string; path: string }> = {
@@ -74,6 +75,7 @@ export function Footer({ settings }: { settings: StoreSettings }) {
               ))}
             </ul>
           ) : null}
+          <InstallAppButton />
         </div>
       </Container>
       <div className="border-t border-cream-light/10">
