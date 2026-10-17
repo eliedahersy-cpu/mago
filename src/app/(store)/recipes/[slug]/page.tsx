@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { AddToCartButton } from '@/components/product/AddToCartButton';
 import { SunMark } from '@/components/brand/Decor';
+import { RecipeIngredients } from '@/components/shopping/RecipeIngredients';
 import { toCartProduct } from '@/lib/cart/lines';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getAllActiveProducts, getRecipe, getRecipeSlugs } from '@/lib/data/cached';
@@ -35,7 +36,7 @@ export default async function RecipeDetailPage({params}:PageProps<'/recipes/[slu
         <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#f3dfbe] shadow-lg"><Image src={r.hero_image??'/products/fusilli-spicy-muhammara.webp'} alt={r.title} fill priority sizes="(max-width:768px) 95vw, 570px" className={r.hero_image?.startsWith('/products/')?'object-contain p-6 mix-blend-multiply':'object-cover'}/></div>
       </div>
       <div className="mt-10 grid gap-8 md:grid-cols-[.75fr_1.25fr]">
-        <section className="rounded-[1.7rem] bg-[#f5e4cb] p-6 md:p-8"><h2 className="font-display text-2xl font-bold text-forest uppercase">Ingredients</h2><ul className="mt-5 space-y-3">{(r.ingredients??[]).map((item,i)=><li className="flex gap-3 text-sm text-ink/80" key={i}><Check className="size-5 shrink-0 text-terracotta"/>{item}</li>)}</ul></section>
+        <RecipeIngredients slug={slug} title={r.title} ingredients={r.ingredients??[]}/>
         <section><h2 className="font-display text-2xl font-bold text-forest uppercase">Method</h2><ol className="mt-5 space-y-5">{(r.steps??[]).map((s,i)=><li key={i} className="flex gap-4"><span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-forest font-display text-lg font-bold text-white">{i+1}</span><div><h3 className="font-display text-lg font-bold text-forest">{s.title}</h3><p className="mt-1 text-sm leading-relaxed text-ink/75">{s.body}</p></div></li>)}</ol>
           {r.tip&&<div className="mt-8 rounded-2xl bg-[#f5e4cb] p-5"><p className="flex items-center gap-2 font-display font-bold text-forest uppercase"><Lightbulb size={21}/> MAGO tip</p><p className="mt-2 text-sm text-ink/75">{r.tip}</p></div>}
         </section>

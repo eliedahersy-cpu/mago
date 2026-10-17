@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Logo } from '@/components/brand/Logo';
 import { ButtonLink } from '@/components/ui/Button';
+import { ShoppingListLink } from '@/components/shopping/ShoppingListLink';
 import { HeaderSearch } from './HeaderSearch';
 import { MobileNav } from './MobileNav';
 import { NavLinks } from './NavLinks';
@@ -32,6 +33,7 @@ export function Header({ cart }: { cart?: ReactNode }) {
           <Link href="/account" aria-label="Account" className={`${iconButton} hidden sm:flex`}>
             <User size={21} aria-hidden />
           </Link>
+          <ShoppingListLink className={`${iconButton} hidden sm:flex`} />
           {cart}
           <ButtonLink href="/shop" size="sm" className="ml-2 hidden lg:inline-flex">
             Order now <ArrowRight size={16} aria-hidden />

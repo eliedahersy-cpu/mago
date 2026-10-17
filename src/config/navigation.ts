@@ -17,6 +17,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { label: 'Gifts', href: '/mix-box' },
       { label: 'Subscriptions', href: '/subscribe' },
       { label: 'Find a store', href: '/stores' },
+      { label: 'My shopping list', href: '/shopping-list' },
     ],
   },
   {
