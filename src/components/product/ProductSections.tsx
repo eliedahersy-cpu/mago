@@ -21,6 +21,7 @@ import { Container } from '@/components/ui/Container';
 import { StarRating } from '@/components/ui/StarRating';
 import { toCartProduct } from '@/lib/cart/lines';
 import { cutoutImage } from '@/lib/catalog/cutout';
+import { ingredientPhoto } from '@/lib/catalog/ingredient-icons';
 import { isPurchasable } from '@/lib/catalog/stock';
 import { cn } from '@/lib/cn';
 import { formatPrice } from '@/lib/format';
@@ -62,22 +63,38 @@ export function UpsellStrip({ discount }: { discount: AutomaticDiscount }) {
 }
 
 export function IngredientsPanel({ product }: { product: Product }) {
+  const names = product.ingredients.map((i) => i.name.toLowerCase());
+  const blend = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : (names[0] ?? '');
   return (
-    <div className="grid gap-6 md:grid-cols-[1fr_2fr] md:items-center">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.2fr)] lg:items-center lg:gap-10">
       <div>
-        <h3 className="font-display text-2xl leading-none font-bold text-forest uppercase">
+        <h3 className="font-display text-2xl leading-none font-bold text-forest uppercase md:text-3xl">
           Real ingredients.
           <br />
           Bold flavours.
         </h3>
-        {product.sauce ? <p className="mt-3 text-ink/80">{product.sauce}</p> : null}
+        <p className="mt-3 text-ink/85">
+          {product.sauce ? `${product.sauce}. ` : ''}A delicious blend of {blend}, made with real, simple ingredients.
+        </p>
       </div>
-      <ul className="flex flex-wrap gap-2">
-        {product.ingredients.map((ing) => (
-          <li key={ing.name} className="flex items-center gap-1.5 rounded-full bg-cream px-4 py-2 text-sm font-medium text-forest">
-            <Leaf size={14} aria-hidden /> {ing.name}
-          </li>
-        ))}
+      <ul className="grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 md:flex md:flex-wrap md:justify-between md:gap-x-5">
+        {product.ingredients.map((ing) => {
+          const photo = ingredientPhoto(ing.name);
+          return (
+            <li key={ing.name} className="flex w-full flex-col items-center gap-2 text-center md:w-24">
+              <span className="relative flex h-16 w-full items-end justify-center md:h-[4.5rem]">
+                {photo ? (
+                  <Image src={photo} alt="" fill sizes="96px" className="object-contain object-bottom" />
+                ) : (
+                  <span className="flex size-14 items-center justify-center rounded-full bg-cream-dark/70 text-forest">
+                    <Leaf size={24} strokeWidth={1.6} aria-hidden />
+                  </span>
+                )}
+              </span>
+              <span className="text-xs leading-tight font-semibold text-forest md:text-[13px]">{ing.name}</span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -101,8 +118,54 @@ export function NutritionPanel({ product }: { product: Product }) {
 
 const stepIcons = [Droplets, Package, UtensilsCrossed];
 
+/** A photo of someone enjoying the cup when there is one, otherwise the shared lifestyle photo. */
+export function preparationImage(product: Product): { url: string; alt: string } {
+  const own = product.images.find((i) => i.kind === 'lifestyle' && /enjoying/i.test(i.alt));
+  return own ? { url: own.url, alt: own.alt } : { url: '/images/lifestyle-lemon-office.webp', alt: 'Enjoying a MAGO pasta cup' };
+}
+
+/** Desktop "How to prepare" band, as in the design: the steps on a cream card over a photo. */
+export function PreparationBanner({ product }: { product: Product }) {
+  const photo = preparationImage(product);
+  return (
+    <section id="prepare" aria-labelledby="prepare-title" className="relative isolate hidden scroll-mt-24 overflow-hidden rounded-3xl bg-cream-dark/50 md:block">
+      <Image src={photo.url} alt="" fill sizes="(min-width: 1280px) 1200px, 95vw" className="-z-10 object-cover object-[50%_30%]" />
+      <div className="grid min-h-72 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
+        <div className="m-5 rounded-2xl bg-cream-light/95 p-6 shadow-sm backdrop-blur-sm lg:m-8 lg:p-8">
+          <h2 id="prepare-title" className="font-display text-2xl font-bold text-forest uppercase md:text-3xl">
+            How to prepare
+          </h2>
+          <ol className="mt-5 grid grid-cols-3 gap-3">
+            {product.preparation.map((step, i) => {
+              const Icon = stepIcons[i] ?? UtensilsCrossed;
+              return (
+                <li key={step.title} className="flex flex-col items-center gap-2 text-center">
+                  <Icon size={30} strokeWidth={1.5} className="text-forest" aria-hidden />
+                  <span className="text-sm font-semibold text-forest">
+                    {i + 1}. {step.title}
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+          {product.prepMinutes ? (
+            <p className="mt-5 flex items-center justify-center gap-2 text-sm font-semibold text-forest">
+              <Timer size={18} aria-hidden /> Ready in {product.prepMinutes === 4 ? '3–4' : product.prepMinutes} minutes
+            </p>
+          ) : null}
+        </div>
+        <ScriptNote arrow="down" className="mt-8 mr-8 hidden -rotate-6 self-start justify-self-end text-2xl text-cream-light drop-shadow-[0_1px_3px_rgba(0,0,0,0.65)] lg:inline-flex">
+          Same pasta.
+          <br />
+          More possibilities.
+        </ScriptNote>
+      </div>
+    </section>
+  );
+}
+
 export function PreparationPanel({ product }: { product: Product }) {
-  const lifestyle = product.images.find((i) => i.kind === 'lifestyle');
+  const lifestyle = preparationImage(product);
   return (
     <div className="grid gap-6 md:grid-cols-2 md:items-center">
       <div>
@@ -131,11 +194,9 @@ export function PreparationPanel({ product }: { product: Product }) {
           </p>
         ) : null}
       </div>
-      {lifestyle ? (
-        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-          <Image src={lifestyle.url} alt={lifestyle.alt} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover" />
-        </div>
-      ) : null}
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+        <Image src={lifestyle.url} alt={lifestyle.alt} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover object-[50%_30%]" />
+      </div>
     </div>
   );
 }
@@ -149,7 +210,8 @@ const occasionInfo: Record<string, { label: string; icon: typeof Home }> = {
 
 /** The About tab: the flavour's story, a photo, what it is perfect for and a customer quote. */
 export function StoryPanel({ product, review = null }: { product: Product; review?: Review | null }) {
-  const photo = product.images.find((i) => i.kind === 'lifestyle');
+  const lifestyles = product.images.filter((i) => i.kind === 'lifestyle');
+  const photo = lifestyles.find((i) => !/enjoying/i.test(i.alt)) ?? lifestyles[0];
   const pack = product.images.find((i) => i.kind === 'packshot');
   const cutout = pack ? cutoutImage(pack.url) : null;
   return (

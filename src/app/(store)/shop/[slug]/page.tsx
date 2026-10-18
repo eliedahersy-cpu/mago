@@ -12,6 +12,7 @@ import {
   IngredientsPanel,
   NutritionPanel,
   PerksRow,
+  PreparationBanner,
   PreparationPanel,
   ReviewList,
   StoryPanel,
@@ -75,11 +76,12 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
   const collection = product.collections.find((c) => c.slug !== 'best-sellers') ?? product.collections[0];
   const isCup = product.type === 'cup';
 
+  // Same order as the design: ingredients first; "How to prepare" scrolls to its band on wide screens.
   const tabs = [
-    ...(product.story ? [{ id: 'about', label: 'About', content: <StoryPanel product={product} review={reviews[0] ?? null} /> }] : []),
     ...(product.ingredients.length ? [{ id: 'ingredients', label: 'Ingredients', content: <IngredientsPanel product={product} /> }] : []),
     ...(product.nutrition.length ? [{ id: 'nutrition', label: 'Nutritional facts', content: <NutritionPanel product={product} /> }] : []),
-    ...(product.preparation.length ? [{ id: 'prepare', label: 'How to prepare', content: <PreparationPanel product={product} /> }] : []),
+    ...(product.preparation.length ? [{ id: 'prepare', label: 'How to prepare', scrollTo: 'prepare', content: <PreparationPanel product={product} /> }] : []),
+    ...(product.story ? [{ id: 'about', label: 'Our story behind this flavour', content: <StoryPanel product={product} review={reviews[0] ?? null} /> }] : []),
     {
       id: 'reviews',
       label: `Reviews (${product.ratingCount})`,
@@ -146,6 +148,11 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
 
       <Container className="py-8">
         <ProductTabs tabs={tabs} />
+        {product.preparation.length ? (
+          <div className="mt-6">
+            <PreparationBanner product={product} />
+          </div>
+        ) : null}
       </Container>
 
       <Container className="grid gap-8 pb-14 lg:grid-cols-[2.3fr_1fr]">

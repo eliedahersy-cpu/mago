@@ -1,36 +1,11 @@
 import { ArrowRight } from 'lucide-react';
-import Image, { getImageProps } from 'next/image';
+import { getImageProps } from 'next/image';
 import Link from 'next/link';
-import { LeafSprig } from '@/components/brand/Decor';
-import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { cn } from '@/lib/cn';
 
 export function MixBoxBanner({ variant }: { variant: 'home' | 'shop' }) {
-  if (variant === 'shop') {
-    return (
-      <Container className="py-10">
-        <section className="relative grid items-center gap-6 overflow-hidden rounded-3xl bg-cream-dark/60 p-6 md:grid-cols-[1fr_1.4fr_auto] md:p-8">
-          <div className="relative mx-auto aspect-[4/3] w-full max-w-xs">
-            <Image src="/products/mago-mix-box.webp" alt="The MAGO Mix Box" fill sizes="320px" className="object-contain" />
-          </div>
-          <div className="text-center md:text-left">
-            <h2 className="font-display text-3xl leading-none font-bold text-forest uppercase md:text-4xl">Build your own MAGO box</h2>
-            <p className="mt-2 text-ink/80">Choose any 5 flavours, mix and match, and make it yours.</p>
-            <ButtonLink href="/mix-box" className="mt-5">
-              Start building <ArrowRight size={18} aria-hidden />
-            </ButtonLink>
-          </div>
-          <div className="mx-auto flex size-28 flex-col items-center justify-center rounded-full bg-sun text-center font-display leading-none font-bold text-forest uppercase shadow-md">
-            <span className="text-4xl">5</span>
-            <span className="text-sm">cups</span>
-            <span className="text-[11px]">your way</span>
-          </div>
-          <LeafSprig className="pointer-events-none absolute -top-6 -right-4 hidden w-16 rotate-45 opacity-70 md:block" />
-        </section>
-      </Container>
-    );
-  }
+  if (variant === 'shop') return <ShopMixBoxBanner />;
 
   return <HomeMixBoxBanner />;
 }
@@ -70,5 +45,32 @@ function HomeMixBoxBanner() {
         </span>
       </Link>
     </section>
+  );
+}
+
+const SHOP_ALT = 'Build your MAGO Mix Box. Pick 5 cups. Your way. Start mixing.';
+
+/** The Mix Box banner on the shop page: the approved artwork (4:5 on phones, a wide strip from 768px) links to the builder. */
+function ShopMixBoxBanner() {
+  const {
+    props: { srcSet: wide },
+  } = getImageProps({ alt: SHOP_ALT, sizes: '(min-width: 1280px) 1280px, 100vw', width: 1600, height: 499, src: '/images/mix-box-shop-wide.webp' });
+  const {
+    props: { srcSet: tall, ...img },
+  } = getImageProps({ alt: SHOP_ALT, sizes: '100vw', width: 1122, height: 1402, src: '/images/mix-box-shop-tall.webp' });
+
+  return (
+    <Container className="py-10">
+      <Link
+        href="/mix-box"
+        aria-label="Build your MAGO Mix Box: pick 5 cups, your way. Start mixing"
+        className="block overflow-hidden rounded-3xl shadow-sm ring-1 ring-forest/10 transition hover:shadow-md focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-saffron"
+      >
+        <picture>
+          <source media="(min-width: 768px)" srcSet={wide} width={1600} height={499} />
+          <img {...img} srcSet={tall} alt="" loading="lazy" className="block h-auto w-full" />
+        </picture>
+      </Link>
+    </Container>
   );
 }

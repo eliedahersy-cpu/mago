@@ -7,9 +7,10 @@ import { cn } from '@/lib/cn';
 /**
  * Product information: tabs from 768px, an accordion on phones (as in the mockups).
  * Each section's content is rendered once; the two controls only decide when it shows.
+ * A tab with `scrollTo` does not swap the panel on wide screens: it scrolls to that section of the page instead.
  */
-export function ProductTabs({ tabs }: { tabs: { id: string; label: string; content: ReactNode }[] }) {
-  const [active, setActive] = useState(tabs[0]?.id);
+export function ProductTabs({ tabs }: { tabs: { id: string; label: string; content: ReactNode; scrollTo?: string }[] }) {
+  const [active, setActive] = useState(tabs.find((t) => !t.scrollTo)?.id);
   const [open, setOpen] = useState<string[]>([]);
   const base = useId();
 
@@ -18,8 +19,13 @@ export function ProductTabs({ tabs }: { tabs: { id: string; label: string; conte
     if (!delta) return;
     e.preventDefault();
     const next = tabs[(index + delta + tabs.length) % tabs.length];
-    setActive(next.id);
+    if (!next.scrollTo) setActive(next.id);
     document.getElementById(`${base}-tab-${next.id}`)?.focus();
+  };
+  const choose = (tab: { id: string; scrollTo?: string }) => {
+    if (!tab.scrollTo) return setActive(tab.id);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById(tab.scrollTo)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   };
   const toggle = (id: string) => setOpen((o) => (o.includes(id) ? o.filter((x) => x !== id) : [...o, id]));
 
@@ -39,7 +45,7 @@ export function ProductTabs({ tabs }: { tabs: { id: string; label: string; conte
             aria-selected={active === tab.id}
             aria-controls={`${base}-panel-${tab.id}`}
             tabIndex={active === tab.id ? 0 : -1}
-            onClick={() => setActive(tab.id)}
+            onClick={() => choose(tab)}
             onKeyDown={(e) => onKeyDown(e, i)}
             className={cn(
               'relative shrink-0 px-3 py-4 font-display text-sm font-semibold whitespace-nowrap uppercase transition-colors',

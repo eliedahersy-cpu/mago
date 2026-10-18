@@ -1,7 +1,7 @@
 import { ArrowRight, Gift, Leaf, Smile, Soup, Truck } from 'lucide-react';
 import Image from 'next/image';
 import { ArchDecor, LeafSprig, ScriptNote, SunMark } from '@/components/brand/Decor';
-import { ButtonLink } from '@/components/ui/Button';
+import { ScrollLink } from '@/components/ui/ScrollLink';
 import { Container } from '@/components/ui/Container';
 import { BoxStepper } from './BoxStepper';
 
@@ -35,9 +35,9 @@ export function MixBoxHero({ size }: { size: number }) {
         </div>
         <div className="pb-8 md:col-start-1 md:row-start-3 md:pr-4 md:pb-12 md:pl-10 lg:pl-16">
           <BoxStepper size={size} className="mt-5 md:mt-6" />
-          <ButtonLink href="#cups" size="lg" className="mt-5 md:mt-6">
+          <ScrollLink href="#cups" size="lg" className="mt-5 md:mt-6">
             Start mixing <ArrowRight size={18} aria-hidden />
-          </ButtonLink>
+          </ScrollLink>
         </div>
       </div>
     </section>
@@ -126,9 +126,9 @@ export function CravingsBanner() {
             From vibrant Mediterranean flavours to comforting classics, your MAGO Mix Box is all about more of what you love.
           </p>
           <div className="mt-6 flex flex-col items-center gap-4 md:flex-row">
-            <ButtonLink href="#cups" size="lg">
+            <ScrollLink href="#cups" size="lg">
               Start mixing <ArrowRight size={18} aria-hidden />
-            </ButtonLink>
+            </ScrollLink>
             <ScriptNote arrow="left" className="-rotate-6">
               Same pasta. More possibilities.
             </ScriptNote>

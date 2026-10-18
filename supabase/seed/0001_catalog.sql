@@ -255,6 +255,67 @@ from (values
 ) as v (slug, url, alt, position, kind)
 join public.products p on p.slug = v.slug;
 
+-- Product photos (approved product-page designs): photos first, then the existing packshots / lifestyle shots.
+delete from public.product_images where url like '/products/gallery/%';
+
+-- Put the existing images in a clean 0..n-1 order, then make room in front for the photos.
+update public.product_images pi
+set position = r.rn - 1
+from (
+  select id, row_number() over (partition by product_id order by position, created_at) as rn
+  from public.product_images
+  where product_id in (select id from public.products where slug = any (array['fusilli-spicy-muhammara', 'tagliolini-al-tartufo-bianco', 'rishta-lentil-pasta-soup', 'lasagna-melanzane-ricotta', 'fusilli-400g', 'lasagna-400g', 'conchiglie-400g', 'tagliolini-400g']))
+) r
+where pi.id = r.id;
+
+update public.product_images pi
+set position = pi.position + c.n
+from (select p.id, v.n from (values ('fusilli-spicy-muhammara', 6), ('tagliolini-al-tartufo-bianco', 6), ('rishta-lentil-pasta-soup', 4), ('lasagna-melanzane-ricotta', 5), ('fusilli-400g', 4), ('lasagna-400g', 4), ('conchiglie-400g', 3), ('tagliolini-400g', 5)) as v (slug, n) join public.products p on p.slug = v.slug) c
+where pi.product_id = c.id;
+
+insert into public.product_images (product_id, url, alt, position, kind)
+select p.id, v.url, v.alt, v.position, 'lifestyle'
+from (values
+  ('fusilli-spicy-muhammara', '/products/gallery/fusilli-spicy-muhammara-1.webp', 'MAGO Fusilli Cup Spicy Muhammara with roasted peppers and walnuts', 0),
+  ('fusilli-spicy-muhammara', '/products/gallery/fusilli-spicy-muhammara-2.webp', 'A bowl of spicy muhammara fusilli', 1),
+  ('fusilli-spicy-muhammara', '/products/gallery/fusilli-spicy-muhammara-3.webp', 'Spicy muhammara fusilli lifted on a fork', 2),
+  ('fusilli-spicy-muhammara', '/products/gallery/fusilli-spicy-muhammara-4.webp', 'A MAGO Fusilli Cup Spicy Muhammara beside a bowl of fusilli', 3),
+  ('fusilli-spicy-muhammara', '/products/gallery/fusilli-spicy-muhammara-5.webp', 'Enjoying a MAGO Fusilli Cup Spicy Muhammara', 4),
+  ('fusilli-spicy-muhammara', '/products/gallery/fusilli-spicy-muhammara-6.webp', 'MAGO Fusilli Cup Spicy Muhammara with fresh peppers and tomatoes', 5),
+  ('tagliolini-al-tartufo-bianco', '/products/gallery/tagliolini-al-tartufo-bianco-1.webp', 'MAGO Tagliolini Cup Al Tartufo Bianco with truffle and parmesan', 0),
+  ('tagliolini-al-tartufo-bianco', '/products/gallery/tagliolini-al-tartufo-bianco-2.webp', 'Truffle tagliolini with mushrooms in a bowl', 1),
+  ('tagliolini-al-tartufo-bianco', '/products/gallery/tagliolini-al-tartufo-bianco-3.webp', 'Truffle tagliolini lifted on a fork from the cup', 2),
+  ('tagliolini-al-tartufo-bianco', '/products/gallery/tagliolini-al-tartufo-bianco-4.webp', 'MAGO Tagliolini Cup Al Tartufo Bianco with parmesan and mushrooms', 3),
+  ('tagliolini-al-tartufo-bianco', '/products/gallery/tagliolini-al-tartufo-bianco-5.webp', 'Enjoying a MAGO Tagliolini Cup Al Tartufo Bianco', 4),
+  ('tagliolini-al-tartufo-bianco', '/products/gallery/tagliolini-al-tartufo-bianco-6.webp', 'MAGO Tagliolini Cup Al Tartufo Bianco with a plate of tagliolini', 5),
+  ('rishta-lentil-pasta-soup', '/products/gallery/rishta-lentil-pasta-soup-1.webp', 'MAGO Rishta Cup Lentil & Pasta Soup with a bowl of soup', 0),
+  ('rishta-lentil-pasta-soup', '/products/gallery/rishta-lentil-pasta-soup-2.webp', 'A MAGO Rishta Cup with a spoonful of lentil soup', 1),
+  ('rishta-lentil-pasta-soup', '/products/gallery/rishta-lentil-pasta-soup-3.webp', 'Enjoying a MAGO Rishta Cup Lentil & Pasta Soup', 2),
+  ('rishta-lentil-pasta-soup', '/products/gallery/rishta-lentil-pasta-soup-4.webp', 'MAGO Rishta Cup with lentils, onion, garlic and lemon', 3),
+  ('lasagna-melanzane-ricotta', '/products/gallery/lasagna-melanzane-ricotta-1.webp', 'MAGO Lasagna Cup Melanzane & Ricotta with grilled aubergine', 0),
+  ('lasagna-melanzane-ricotta', '/products/gallery/lasagna-melanzane-ricotta-2.webp', 'Lasagna melanzane and ricotta in a bowl', 1),
+  ('lasagna-melanzane-ricotta', '/products/gallery/lasagna-melanzane-ricotta-3.webp', 'A MAGO Lasagna Cup Melanzane & Ricotta, opened', 2),
+  ('lasagna-melanzane-ricotta', '/products/gallery/lasagna-melanzane-ricotta-4.webp', 'Enjoying a MAGO Lasagna Cup Melanzane & Ricotta', 3),
+  ('lasagna-melanzane-ricotta', '/products/gallery/lasagna-melanzane-ricotta-5.webp', 'Lasagna melanzane and ricotta lifted on a fork', 4),
+  ('fusilli-400g', '/products/gallery/fusilli-400g-1.webp', 'MAGO Fusilli 400g box in a Mediterranean kitchen', 0),
+  ('fusilli-400g', '/products/gallery/fusilli-400g-2.webp', 'Pesto fusilli made with MAGO Fusilli', 1),
+  ('fusilli-400g', '/products/gallery/fusilli-400g-3.webp', 'MAGO Fusilli 400g box with fresh ingredients', 2),
+  ('fusilli-400g', '/products/gallery/fusilli-400g-4.webp', 'Cooking with MAGO Fusilli', 3),
+  ('lasagna-400g', '/products/gallery/lasagna-400g-1.webp', 'MAGO Lasagna 400g box with cheese and basil', 0),
+  ('lasagna-400g', '/products/gallery/lasagna-400g-2.webp', 'MAGO Lasagna 400g box on the kitchen counter', 1),
+  ('lasagna-400g', '/products/gallery/lasagna-400g-3.webp', 'Layering lasagna with MAGO Lasagna sheets', 2),
+  ('lasagna-400g', '/products/gallery/lasagna-400g-4.webp', 'MAGO Lasagna 400g box beside a baked lasagna', 3),
+  ('conchiglie-400g', '/products/gallery/conchiglie-400g-1.webp', 'MAGO Conchiglie 400g box beside a bowl of shells', 0),
+  ('conchiglie-400g', '/products/gallery/conchiglie-400g-2.webp', 'MAGO Conchiglie 400g box', 1),
+  ('conchiglie-400g', '/products/gallery/conchiglie-400g-3.webp', 'MAGO Conchiglie 400g box with shells and basil', 2),
+  ('tagliolini-400g', '/products/gallery/tagliolini-400g-1.webp', 'MAGO Tagliolini 400g box with nests of tagliolini', 0),
+  ('tagliolini-400g', '/products/gallery/tagliolini-400g-2.webp', 'MAGO Tagliolini 400g box beside a bowl of tagliolini', 1),
+  ('tagliolini-400g', '/products/gallery/tagliolini-400g-3.webp', 'Tossing tagliolini in a pan', 2),
+  ('tagliolini-400g', '/products/gallery/tagliolini-400g-4.webp', 'MAGO Tagliolini 400g box with lemon and parmesan', 3),
+  ('tagliolini-400g', '/products/gallery/tagliolini-400g-5.webp', 'MAGO Tagliolini 400g box beside a plate of tagliolini', 4)
+) as v (slug, url, alt, position)
+join public.products p on p.slug = v.slug;
+
 -- ---------------------------------------------------------------------------
 -- Collection membership
 -- ---------------------------------------------------------------------------
@@ -306,49 +367,49 @@ select
   v.tags::text[], p.id, v.intro, v.ingredients::jsonb, v.steps::jsonb, v.tip, 'published', v.sort_order
 from (values
   ('spicy-muhammara-fusilli-roasted-veggies', 'Spicy Muhammara Fusilli with Roasted Veggies', 'Fusilli Cup Spicy Muhammara',
-   '/images/lifestyle-movie-night.webp', 10, true, '{quick-meals,vegetarian}', 'fusilli-spicy-muhammara', 1,
+   '/images/recipes/spicy-muhammara-fusilli-roasted-veggies.webp', 10, true, '{quick-meals,vegetarian}', 'fusilli-spicy-muhammara', 1,
    'A bold and vibrant meal with roasted vegetables, finished with a drizzle of olive oil and fresh herbs. Ready in minutes, full of flavour.',
    '["1 MAGO Fusilli Cup Spicy Muhammara","1 cup cherry tomatoes, halved","1 small zucchini, diced","1 red bell pepper, sliced","1 tbsp olive oil","Salt & pepper to taste","Fresh parsley or basil, chopped","Optional: crumbled feta or labneh"]',
    '[{"title":"Prepare your MAGO cup","body":"Add hot water to the Fusilli Cup Spicy Muhammara, stir and let it sit for 5 minutes."},{"title":"Roast the vegetables","body":"Toss the tomatoes, zucchini and pepper with olive oil, salt and pepper. Roast at 200°C for 15–20 minutes until tender and slightly charred."},{"title":"Combine","body":"Add the roasted vegetables to your prepared fusilli and mix well."},{"title":"Finish and serve","body":"Top with fresh herbs and crumbled feta or labneh if you like. Enjoy!"}]',
    'Add a squeeze of lemon juice or a drizzle of olive oil to lift the flavours even more.'),
   ('pesto-fusilli-grilled-chicken', 'Pesto Fusilli with Grilled Chicken', 'Fusilli Cup Al Pesto Genovese',
-   '/images/lifestyle-kitchen-portrait.webp', 12, false, '{extra-protein}', 'fusilli-al-pesto-genovese', 2,
+   '/images/recipes/pesto-fusilli-grilled-chicken.webp', 12, false, '{extra-protein}', 'fusilli-al-pesto-genovese', 2,
    'Fresh pesto fusilli topped with juicy grilled chicken for an extra protein boost.',
    '["1 MAGO Fusilli Cup Al Pesto Genovese","1 small chicken breast","1 tsp olive oil","Salt & pepper to taste","A few cherry tomatoes","Fresh basil leaves"]',
    '[{"title":"Grill the chicken","body":"Season the chicken with olive oil, salt and pepper and grill for 5–6 minutes per side until cooked through. Rest, then slice."},{"title":"Prepare your MAGO cup","body":"Make the Fusilli Cup Al Pesto Genovese as directed on the cup."},{"title":"Top and serve","body":"Add the sliced chicken, halved cherry tomatoes and fresh basil."}]',
    'Grill extra chicken at the weekend and keep it in the fridge for quick lunches.'),
   ('creamy-truffle-tagliolini-mushrooms', 'Creamy Truffle Tagliolini with Mushrooms', 'Tagliolini Cup Al Tartufo Bianco',
-   '/images/lifestyle-post-workout.webp', 15, true, '{mediterranean-twists,vegetarian}', 'tagliolini-al-tartufo-bianco', 3,
+   '/images/recipes/creamy-truffle-tagliolini-mushrooms.webp', 15, true, '{mediterranean-twists,vegetarian}', 'tagliolini-al-tartufo-bianco', 3,
    'Earthy sautéed mushrooms make our white truffle tagliolini even more indulgent.',
    '["1 MAGO Tagliolini Cup Al Tartufo Bianco","1 cup mushrooms, sliced","1 tsp butter or olive oil","1 small garlic clove, minced","Grated parmesan","Black pepper"]',
    '[{"title":"Sauté the mushrooms","body":"Cook the mushrooms in butter or olive oil over medium-high heat until golden, adding the garlic for the last minute."},{"title":"Prepare your MAGO cup","body":"Make the Tagliolini Cup Al Tartufo Bianco as directed on the cup."},{"title":"Combine and finish","body":"Fold in the mushrooms and finish with parmesan and black pepper."}]',
    'Do not crowd the pan: mushrooms brown best in a single layer.'),
   ('mac-and-cheese-conchiglie-crispy-breadcrumbs', 'Mac & Cheese Conchiglie with Crispy Breadcrumbs', 'Conchiglie Cup Mac & Cheese',
-   '/images/lifestyle-kids-game-night.webp', 10, true, '{comfort-food,vegetarian}', 'conchiglie-mac-and-cheese', 4,
+   '/images/recipes/mac-and-cheese-conchiglie-crispy-breadcrumbs.webp', 10, true, '{comfort-food,vegetarian}', 'conchiglie-mac-and-cheese', 4,
    'Creamy mac and cheese shells with a golden, crunchy breadcrumb topping.',
    '["1 MAGO Conchiglie Cup Mac & Cheese","2 tbsp breadcrumbs","1 tsp butter","A pinch of paprika","Chopped parsley"]',
    '[{"title":"Toast the breadcrumbs","body":"Melt the butter in a small pan, add the breadcrumbs and paprika and toast until golden and crisp."},{"title":"Prepare your MAGO cup","body":"Make the Conchiglie Cup Mac & Cheese as directed on the cup."},{"title":"Top and serve","body":"Scatter the crispy breadcrumbs and parsley over the shells."}]',
    'A little grated cheddar on top before the breadcrumbs makes it extra golden.'),
   ('rishta-soup-lemon-herbs', 'Rishta Soup with Lemon & Herbs', 'Rishta Cup Lentil & Pasta Soup',
-   '/images/lifestyle-rainy-day-soup.webp', 12, true, '{soups,vegetarian}', 'rishta-lentil-pasta-soup', 5,
+   '/images/recipes/rishta-soup-lemon-herbs.webp', 12, true, '{soups,vegetarian}', 'rishta-lentil-pasta-soup', 5,
    'Our hearty lentil soup brightened with lemon, fresh herbs and crispy onions.',
    '["1 MAGO Rishta Cup Lentil & Pasta Soup","Juice of half a lemon","Fresh coriander or parsley","1 small onion, thinly sliced","1 tsp olive oil"]',
    '[{"title":"Crisp the onions","body":"Fry the sliced onion in olive oil until deep golden and crispy."},{"title":"Prepare your MAGO cup","body":"Make the Rishta Cup Lentil & Pasta Soup as directed on the cup."},{"title":"Brighten and serve","body":"Stir in the lemon juice, then top with fresh herbs and the crispy onions."}]',
    'Serve with warm bread for a full winter meal.'),
   ('sweet-cinnamon-pastina-caramelized-bananas', 'Sweet Cinnamon Pastina with Caramelized Bananas', 'Pastina Cup Sweet Cinnamon',
-   '/products/pastina-sweet-cinnamon.webp', 8, true, '{comfort-food,vegetarian}', 'pastina-sweet-cinnamon', 6,
+   '/images/recipes/sweet-cinnamon-pastina-caramelized-bananas.webp', 8, true, '{comfort-food,vegetarian}', 'pastina-sweet-cinnamon', 6,
    'Creamy cinnamon pastina topped with warm caramelized bananas. Dessert or breakfast, you decide.',
    '["1 MAGO Pastina Cup Sweet Cinnamon Milk Pasta","1 banana, sliced","1 tsp butter","1 tsp brown sugar","A pinch of cinnamon","Optional: chopped walnuts"]',
    '[{"title":"Caramelize the bananas","body":"Melt the butter with the brown sugar, add the banana slices and cook for 1–2 minutes per side until golden."},{"title":"Prepare your MAGO cup","body":"Make the Pastina Cup Sweet Cinnamon Milk Pasta as directed on the cup."},{"title":"Top and serve","body":"Spoon the bananas over the pastina and finish with cinnamon and walnuts."}]',
    'Swap the banana for apple slices in autumn.'),
   ('lemon-tagliolini-fresh-herbs', 'Lemon Tagliolini with Fresh Herbs', 'Tagliolini Cup Al Limone',
-   '/images/lifestyle-lemon-office.webp', 10, true, '{quick-meals,vegetarian}', 'tagliolini-al-limone', 7,
+   '/images/recipes/lemon-tagliolini-fresh-herbs.webp', 10, true, '{quick-meals,vegetarian}', 'tagliolini-al-limone', 7,
    'Zesty lemon tagliolini finished with a handful of fresh garden herbs.',
    '["1 MAGO Tagliolini Cup Al Limone","Zest of half a lemon","Fresh parsley, basil or mint","Grated parmesan","Black pepper"]',
    '[{"title":"Prepare your MAGO cup","body":"Make the Tagliolini Cup Al Limone as directed on the cup."},{"title":"Add the herbs","body":"Chop the herbs and fold them through with the lemon zest."},{"title":"Finish","body":"Top with parmesan and plenty of black pepper."}]',
    'Mint and lemon is a surprisingly fresh combination: try it.'),
   ('garlic-macaroon-crispy-chickpeas', 'Garlic Macaroon with Crispy Chickpeas', 'Macaroon Bil Toum',
-   '/products/macaroon-bil-toum.webp', 12, true, '{extra-protein,mediterranean-twists,vegetarian}', 'macaroon-bil-toum', 8,
+   '/images/recipes/garlic-macaroon-crispy-chickpeas.webp', 12, true, '{extra-protein,mediterranean-twists,vegetarian}', 'macaroon-bil-toum', 8,
    'Lebanese garlic pasta with crunchy spiced chickpeas for extra protein and texture.',
    '["1 MAGO Macaroon Bil Toum","Half a can of chickpeas, drained and dried","1 tsp olive oil","A pinch of cumin and paprika","Fresh mint"]',
    '[{"title":"Crisp the chickpeas","body":"Toss the chickpeas with olive oil, cumin and paprika and roast at 200°C for 15 minutes, or pan-fry until crunchy."},{"title":"Prepare your MAGO cup","body":"Make the Macaroon Bil Toum as directed on the cup."},{"title":"Top and serve","body":"Scatter the chickpeas and fresh mint over the pasta."}]',
