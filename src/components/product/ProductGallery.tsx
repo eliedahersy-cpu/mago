@@ -28,9 +28,9 @@ export function ProductGallery({ images, name, proteinG = null }: { images: Prod
   const staged = cutout !== null && cutout !== current?.url;
 
   return (
-    <div className="flex flex-col-reverse gap-3 lg:flex-row">
+    <div className="flex min-w-0 flex-col-reverse gap-3 lg:flex-row">
       {images.length > 1 ? (
-        <ul className="scrollbar-none flex gap-2 overflow-x-auto lg:max-h-[560px] lg:flex-col lg:overflow-y-auto">
+        <ul className="scrollbar-none flex max-w-full gap-2 overflow-x-auto lg:max-h-[560px] lg:flex-col lg:overflow-y-auto">
           {images.map((img, i) => (
             <li key={img.url}>
               <button

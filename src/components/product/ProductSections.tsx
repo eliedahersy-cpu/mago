@@ -128,8 +128,11 @@ export function preparationImage(product: Product): { url: string; alt: string }
 export function PreparationBanner({ product }: { product: Product }) {
   const photo = preparationImage(product);
   return (
-    <section id="prepare" aria-labelledby="prepare-title" className="relative isolate hidden scroll-mt-24 overflow-hidden rounded-3xl bg-cream-dark/50 md:block">
-      <Image src={photo.url} alt="" fill sizes="(min-width: 1280px) 1200px, 95vw" className="-z-10 object-cover object-[50%_30%]" />
+    <section id="prepare" aria-labelledby="prepare-title" className="relative isolate hidden scroll-mt-24 overflow-hidden rounded-3xl bg-[linear-gradient(100deg,#f9e9d1_0%,#f4dcbb_100%)] md:block">
+      <ArchDecor tone="peach" className="pointer-events-none absolute bottom-0 -left-6 -z-10 w-24 opacity-80" />
+      <div className="absolute inset-y-0 right-0 -z-10 w-[64%] [mask-image:linear-gradient(to_right,transparent,#000_22%)]">
+        <Image src={photo.url} alt="" fill sizes="(min-width: 1280px) 780px, 64vw" className="object-cover object-[50%_28%]" />
+      </div>
       <div className="grid min-h-72 md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
         <div className="m-5 rounded-2xl bg-cream-light/95 p-6 shadow-sm backdrop-blur-sm lg:m-8 lg:p-8">
           <h2 id="prepare-title" className="font-display text-2xl font-bold text-forest uppercase md:text-3xl">
