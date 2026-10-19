@@ -1,7 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Badge, ProteinBadge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/Badge';
 import { StarRating } from '@/components/ui/StarRating';
 import { toCartProduct } from '@/lib/cart/lines';
 import { isPurchasable } from '@/lib/catalog/stock';
@@ -11,8 +11,10 @@ import type { Product } from '@/lib/types';
 import { AddToCartButton } from './AddToCartButton';
 import { WishlistButton } from './WishlistButton';
 
-function Packshot({ product, sizes, className }: { product: Product; sizes: string; className?: string }) {
-  const image = product.images.find((i) => i.kind === 'packshot') ?? product.images[0];
+/** The cover image: the same first photo as the product page; cups without photos keep their packshot. */
+function CardImage({ product, sizes, className }: { product: Product; sizes: string; className?: string }) {
+  const photo = product.images[0]?.kind === 'lifestyle' ? product.images[0] : null;
+  const image = photo ?? product.images.find((i) => i.kind === 'packshot') ?? product.images[0];
   if (!image) return null;
   return (
     <Image
@@ -20,7 +22,11 @@ function Packshot({ product, sizes, className }: { product: Product; sizes: stri
       alt={image.alt || `${product.name} ${product.flavour ?? ''}`.trim()}
       fill
       sizes={sizes}
-      className={cn('object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105', className)}
+      className={cn(
+        photo ? 'object-cover' : 'object-contain mix-blend-multiply',
+        'transition-transform duration-300 group-hover:scale-105',
+        photo ? undefined : className,
+      )}
     />
   );
 }
@@ -36,11 +42,8 @@ export function ProductCard({ product, variant = 'shop' }: { product: Product; v
       className="group relative flex h-full flex-col rounded-2xl bg-cream-light p-3 shadow-sm ring-1 ring-forest/5 transition-shadow hover:shadow-md"
     >
       <Link href={href} tabIndex={-1} aria-hidden className="relative block aspect-[4/5] overflow-hidden rounded-xl bg-cream-dark/50">
-        <Packshot product={product} sizes={compact ? '200px' : '(min-width: 1280px) 18vw, (min-width: 768px) 30vw, 45vw'} className="p-3" />
+        <CardImage product={product} sizes={compact ? '200px' : '(min-width: 1280px) 18vw, (min-width: 768px) 30vw, 45vw'} className="p-3" />
         {product.isBestSeller ? <Badge className="absolute top-2 left-2">Best seller</Badge> : null}
-        {product.proteinG && !compact ? (
-          <ProteinBadge grams={product.proteinG} className="absolute right-2 bottom-2 size-12" />
-        ) : null}
       </Link>
       {!compact ? (
         <WishlistButton productId={product.id} label={`${product.name} ${product.flavour ?? ''}`.trim()} className="absolute top-5 right-5 z-10" />

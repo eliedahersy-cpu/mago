@@ -4,11 +4,11 @@ import { ArchDecor, LeafSprig, ScriptNote } from '@/components/brand/Decor';
 import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
-/** Home band inviting people to the quiz: copy on the left, a close-up of a full cup cropped by the band. */
+/** Home band inviting people to the quiz: copy on the left, a full cup on the right (a bigger close-up cropped by the band from 640px). */
 export function QuizBanner() {
   return (
     <section className="relative isolate overflow-hidden bg-[linear-gradient(100deg,#fbefdc_0%,#f6e3c6_55%,#f1dcc0_100%)]">
-      <div className="mx-auto grid h-[250px] max-w-7xl grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] sm:h-[300px] md:h-[340px] md:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
+      <div className="mx-auto grid min-h-[330px] max-w-7xl grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] sm:h-[300px] sm:min-h-0 md:h-[340px] md:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
         <div className="relative z-10 flex flex-col justify-center py-6 pl-5 md:pl-10 lg:pl-16">
           <h2 className="font-display leading-[0.9] font-bold uppercase">
             <span className="block text-2xl text-terracotta sm:text-3xl md:text-4xl">Find your</span>
@@ -25,7 +25,7 @@ export function QuizBanner() {
           <ArchDecor tone="terracotta" className="absolute bottom-0 left-[2%] hidden w-28 md:block lg:w-36" />
           <LeafSprig className="absolute bottom-0 left-[14%] hidden w-24 -rotate-[20deg] text-leaf md:block lg:w-28" />
           <LeafSprig className="absolute -top-4 right-2 w-12 rotate-[200deg] text-leaf/90 md:w-20" />
-          <div className="absolute -top-[22%] -right-[45%] aspect-[4/5] h-[118%] sm:-right-[28%] sm:h-[150%] md:right-auto md:left-[4%] lg:left-[8%]">
+          <div className="absolute top-[8%] -right-[6%] aspect-[4/5] h-[84%] sm:-top-[22%] sm:-right-[28%] sm:h-[150%] md:right-auto md:left-[4%] lg:left-[8%]">
             <Image
               src="/products/cutouts/fusilli-spicy-muhammara.webp"
               alt="A MAGO Fusilli Cup Spicy Muhammara, full of pasta"

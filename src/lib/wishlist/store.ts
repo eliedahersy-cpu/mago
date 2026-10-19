@@ -29,10 +29,11 @@ export const useWishlist = create<WishlistState>()(
     {
       name: 'mago-wishlist',
       // v2 records whose list is stored, so an account's list is never re-merged.
-      version: 2,
+      // v3: the shop moved to a new database, so hearted product ids from earlier visits no longer exist.
+      version: 3,
       storage: createJSONStorage(safeStorage),
       partialize: (s) => ({ ids: s.ids, owner: s.owner }),
-      migrate: (persisted) => ({ ids: sanitizeIds(persisted), owner: sanitizeOwner(persisted) }),
+      migrate: (persisted, version) => ({ ids: version < 3 ? [] : sanitizeIds(persisted), owner: sanitizeOwner(persisted) }),
       merge: (persisted, current) => ({ ...current, ids: sanitizeIds(persisted), owner: sanitizeOwner(persisted) }),
       skipHydration: true,
       onRehydrateStorage: () => () => useWishlist.setState({ hydrated: true }),

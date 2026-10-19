@@ -56,10 +56,14 @@ export const useCart = create<CartState>()(
     {
       name: 'mago-cart',
       // v2 adds Mix Box lines and order notes; v1 product lines are upgraded on read.
-      version: 2,
+      // v3: the shop moved to a new database, so product ids saved in earlier carts no longer exist; they are dropped once.
+      version: 3,
       storage: createJSONStorage(safeStorage),
       partialize: (s) => ({ lines: s.lines, orderNotes: s.orderNotes, discountCode: s.discountCode }),
-      migrate: (persisted) => sanitizePersistedCart(persisted),
+      migrate: (persisted, version) => {
+        const saved = sanitizePersistedCart(persisted);
+        return version < 3 ? { ...saved, lines: [] } : saved;
+      },
       merge: (persisted, current) => ({ ...current, ...sanitizePersistedCart(persisted) }),
       // Hydrate explicitly from CartDrawer's mount effect so server and first client render match.
       skipHydration: true,
