@@ -1,7 +1,9 @@
 'use server';
 
+import { after } from 'next/server';
 import { z } from 'zod';
 import { getUser } from '@/lib/auth/dal';
+import { sendOrderPlacedEmails } from '@/lib/email/send';
 import { withAccountEmail } from '@/lib/checkout/account';
 import { itemsPayloadSchema, toOrderPayload, type ItemsPayload } from '@/lib/checkout/payload';
 import { toQuote, type Quote } from '@/lib/checkout/quote';
@@ -85,5 +87,7 @@ export async function placeOrder(input: {
       console.error('saving the checkout address failed', e);
     }
   }
+  // Emails go out after the response, and can never stop or fail the order.
+  after(() => sendOrderPlacedEmails(result.access_token));
   return { ok: true, token: result.access_token, number: result.number };
 }

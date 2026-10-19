@@ -1,6 +1,7 @@
 'use server';
 
 import { refresh, updateTag } from 'next/cache';
+import { after } from 'next/server';
 import { z } from 'zod';
 import { requireStaff } from '@/lib/auth/dal';
 import { dbErrorMessage } from '@/lib/admin/db-error';
@@ -10,6 +11,7 @@ import { itemsPayloadSchema, toOrderPayload, type ItemsPayload } from '@/lib/che
 import { toQuote } from '@/lib/checkout/quote';
 import { checkoutSchema, fieldErrors as checkoutFieldErrors, type CheckoutInput } from '@/lib/checkout/schema';
 import { CACHE_TAGS } from '@/lib/data/cached';
+import { sendOrderStatusEmail } from '@/lib/email/send';
 import { createClient } from '@/lib/supabase/server';
 
 const UUID = z.uuid();
@@ -33,6 +35,10 @@ export async function changeOrderStatus(_prev: ActionResult | null, fd: FormData
   if (error) return { ok: false, error: dbErrorMessage(error) };
   // Cancelling puts cups back in stock, which the shop shows.
   if (status === 'cancelled') updateTag(CACHE_TAGS.catalog);
+  // Tell the customer (confirmed, on its way, delivered, cancelled). Never blocks the change.
+  const { data: row } = await supabase.from('orders').select('access_token').eq('id', id).maybeSingle();
+  const token = (row as { access_token: string } | null)?.access_token;
+  if (token) after(() => sendOrderStatusEmail(token, status));
   refresh();
   return { ok: true, message: `Marked as ${STATUS_LABEL[status as keyof typeof STATUS_LABEL].toLowerCase()}.` };
 }
