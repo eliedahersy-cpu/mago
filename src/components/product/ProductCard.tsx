@@ -12,8 +12,9 @@ import { AddToCartButton } from './AddToCartButton';
 import { WishlistButton } from './WishlistButton';
 
 /** The cover image: the same first photo as the product page; cups without photos keep their packshot. */
-function CardImage({ product, sizes, className }: { product: Product; sizes: string; className?: string }) {
-  const photo = product.images[0]?.kind === 'lifestyle' ? product.images[0] : null;
+function CardImage({ product, sizes, className, row = false }: { product: Product; sizes: string; className?: string; row?: boolean }) {
+  // Row cards show the cup itself (the packshot), like the design; other cards show the cover photo.
+  const photo = !row && product.images[0]?.kind === 'lifestyle' ? product.images[0] : null;
   const image = photo ?? product.images.find((i) => i.kind === 'packshot') ?? product.images[0];
   if (!image) return null;
   return (
@@ -31,9 +32,31 @@ function CardImage({ product, sizes, className }: { product: Product; sizes: str
   );
 }
 
-export function ProductCard({ product, variant = 'shop' }: { product: Product; variant?: 'shop' | 'compact' }) {
+export function ProductCard({ product, variant = 'shop' }: { product: Product; variant?: 'shop' | 'compact' | 'row' }) {
   const href = `/shop/${product.slug}`;
   const purchasable = isPurchasable(product);
+
+  if (variant === 'row') {
+    return (
+      <article data-testid="product-card" className="group relative flex h-full items-center gap-3 rounded-2xl bg-cream-light p-3 shadow-sm ring-1 ring-forest/5 transition-shadow hover:shadow-md">
+        <Link href={href} tabIndex={-1} aria-hidden className="relative block size-24 shrink-0">
+          <CardImage product={product} sizes="96px" className="p-0" row />
+        </Link>
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <h3 className="font-display text-sm leading-tight font-semibold text-forest">
+            <Link href={href} className="hover:text-terracotta">
+              {product.name}
+              {product.flavour ? <span className="block font-sans text-xs font-medium text-ink/75">{product.flavour}</span> : null}
+            </Link>
+          </h3>
+          <div className="flex items-center justify-between gap-2">
+            <p className="font-display text-base font-bold text-forest">{formatPrice(product.price)}</p>
+            <AddToCartButton product={toCartProduct(product)} disabled={!purchasable} size="sm" />
+          </div>
+        </div>
+      </article>
+    );
+  }
 
   const compact = variant === 'compact';
   return (

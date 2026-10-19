@@ -40,7 +40,7 @@ export function ProductGallery({ images, name, proteinG = null }: { images: Prod
                 onClick={() => setActive(i)}
                 className={cn(
                   'relative block size-20 shrink-0 overflow-hidden rounded-xl bg-cream-dark/50 ring-2 transition',
-                  i === active ? 'ring-forest' : 'ring-transparent hover:ring-forest/30',
+                  i === active ? 'ring-terracotta' : 'ring-transparent hover:ring-forest/30',
                 )}
               >
                 <Image

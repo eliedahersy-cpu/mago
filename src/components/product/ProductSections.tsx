@@ -81,10 +81,10 @@ export function IngredientsPanel({ product }: { product: Product }) {
         {product.ingredients.map((ing) => {
           const photo = ingredientPhoto(ing.name);
           return (
-            <li key={ing.name} className="flex w-full flex-col items-center gap-2 text-center md:w-24">
-              <span className="relative flex h-16 w-full items-end justify-center md:h-[4.5rem]">
+            <li key={ing.name} className="flex w-full flex-col items-center gap-2 text-center md:w-28">
+              <span className="relative flex h-16 w-full items-end justify-center md:h-24">
                 {photo ? (
-                  <Image src={photo} alt="" fill sizes="96px" className="object-contain object-bottom" />
+                  <Image src={photo} alt="" fill sizes="112px" className="object-contain object-bottom" />
                 ) : (
                   <span className="flex size-14 items-center justify-center rounded-full bg-cream-dark/70 text-forest">
                     <Leaf size={24} strokeWidth={1.6} aria-hidden />
@@ -296,40 +296,44 @@ export function ReviewList({ reviews }: { reviews: Review[] }) {
   );
 }
 
-export function CompleteTheExperience({ mixBox, booklet }: { mixBox: Product | null; booklet: Product | null }) {
+export function CompleteTheExperience({ mixBox, booklet, cupPrice }: { mixBox: Product | null; booklet: Product | null; cupPrice: number }) {
   if (!mixBox && !booklet) return null;
   return (
     <section aria-labelledby="complete-title">
       <h2 id="complete-title" className="font-display text-xl font-bold text-forest uppercase">
         Complete the experience
       </h2>
-      <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+      <ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {mixBox ? (
-          <li className="flex items-center gap-4 rounded-2xl bg-cream-light p-3 ring-1 ring-forest/5">
-            <div className="relative size-20 shrink-0">
-              <Image src={mixBox.images[0]?.url ?? '/products/mago-mix-box.webp'} alt="" fill sizes="80px" className="object-contain" />
+          <li className="flex flex-col gap-3 rounded-2xl bg-cream-light p-3 ring-1 ring-forest/5">
+            <div className="flex items-center gap-3">
+              <div className="relative size-20 shrink-0">
+                <Image src={mixBox.images[0]?.url ?? '/products/mago-mix-box.webp'} alt="" fill sizes="96px" className="object-contain" />
+              </div>
+              <div className="min-w-0">
+                <p className="font-display text-sm font-semibold text-forest">{mixBox.name}</p>
+                <p className="text-xs text-ink/75">5 cups. Your way.</p>
+                <p className="mt-1 font-display text-base font-bold text-forest">{formatPrice((mixBox.bundleSize ?? 5) * cupPrice)}</p>
+              </div>
             </div>
-            <div className="flex-1">
-              <p className="font-display font-semibold text-forest">{mixBox.name}</p>
-              <p className="text-sm text-ink/70">5 cups. Your way.</p>
-            </div>
-            <Link href="/mix-box" className="inline-flex items-center gap-1 font-display text-xs font-semibold text-forest uppercase hover:text-terracotta">
-              Build <ArrowRight size={14} aria-hidden />
+            <Link href="/mix-box" className="inline-flex h-9 items-center justify-center gap-1 rounded-full bg-forest px-4 font-display text-xs font-semibold text-cream-light uppercase hover:bg-forest-light">
+              Build your box
             </Link>
           </li>
         ) : null}
         {booklet ? (
-          <li className="flex items-center gap-4 rounded-2xl bg-cream-light p-3 ring-1 ring-forest/5">
-            <span className="flex size-20 shrink-0 items-center justify-center rounded-xl bg-cream text-forest">
-              <BookOpen size={32} aria-hidden />
-            </span>
-            <div className="flex-1">
-              <p className="font-display font-semibold text-forest">{booklet.name}</p>
-              <p className="text-sm text-ink/70">
-                {booklet.tagline} · {formatPrice(booklet.price)}
-              </p>
+          <li className="flex flex-col gap-3 rounded-2xl bg-cream-light p-3 ring-1 ring-forest/5">
+            <div className="flex items-center gap-3">
+              <span className="flex size-20 shrink-0 items-center justify-center rounded-xl bg-cream text-forest">
+                <BookOpen size={36} aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <p className="font-display text-sm font-semibold text-forest">{booklet.name}</p>
+                <p className="text-xs text-ink/75">{booklet.tagline}</p>
+                <p className="mt-1 font-display text-base font-bold text-forest">{formatPrice(booklet.price)}</p>
+              </div>
             </div>
-            <AddToCartButton product={toCartProduct(booklet)} disabled={!isPurchasable(booklet)} label="Add" />
+            <AddToCartButton product={toCartProduct(booklet)} disabled={!isPurchasable(booklet)} label="Add to cart" className="w-full" />
           </li>
         ) : null}
       </ul>

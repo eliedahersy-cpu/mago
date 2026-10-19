@@ -6,6 +6,7 @@ import { ArchDecor, LeafSprig } from '@/components/brand/Decor';
 import { BenefitIcons } from '@/components/product/BenefitIcons';
 import { ProductCard } from '@/components/product/ProductCard';
 import { ProductGallery } from '@/components/product/ProductGallery';
+import { leafThemeFor, SideLeaves } from '@/components/product/SideLeaves';
 import { ProductPurchase } from '@/components/product/ProductPurchase';
 import {
   CompleteTheExperience,
@@ -75,6 +76,7 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
   const booklet = extras.find((p) => p.slug === 'recipe-booklet') ?? null;
   const collection = product.collections.find((c) => c.slug !== 'best-sellers') ?? product.collections[0];
   const isCup = product.type === 'cup';
+  const leafTheme = leafThemeFor(product.slug);
 
   // Same order as the design: ingredients first; "How to prepare" scrolls to its band on wide screens.
   const tabs = [
@@ -95,11 +97,17 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
   ];
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative isolate overflow-hidden">
       <JsonLd data={productJsonLd(product, siteUrl())} />
-      <ArchDecor className="pointer-events-none absolute top-24 -left-12 hidden w-28 opacity-50 xl:block" />
-      <LeafSprig className="pointer-events-none absolute top-16 -right-4 hidden w-16 rotate-12 opacity-70 xl:block" />
-      <Container className="pt-6 pb-4">
+      {leafTheme ? (
+        <SideLeaves theme={leafTheme} />
+      ) : (
+        <>
+          <ArchDecor className="pointer-events-none absolute top-24 -left-12 hidden w-28 opacity-50 xl:block" />
+          <LeafSprig className="pointer-events-none absolute top-16 -right-4 hidden w-16 rotate-12 opacity-70 xl:block" />
+        </>
+      )}
+      <Container className="max-w-[1140px] pt-6 pb-4">
         <nav aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-1 text-sm text-ink/75">
             <li>
@@ -146,7 +154,7 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
         </div>
       </Container>
 
-      <Container className="py-8">
+      <Container className="max-w-[1140px] py-8">
         <ProductTabs tabs={tabs} />
         {product.preparation.length ? (
           <div className="mt-6">
@@ -155,20 +163,20 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
         ) : null}
       </Container>
 
-      <Container className="grid gap-8 pb-14 lg:grid-cols-[2.3fr_1fr]">
+      <Container className="grid max-w-[1140px] gap-8 pb-14 lg:grid-cols-[1.2fr_1fr]">
         {related.length > 0 ? (
           <section aria-labelledby="related-title" className="min-w-0">
             <h2 id="related-title" className="font-display text-xl font-bold text-forest uppercase">
               You may also like
             </h2>
-            <Carousel ariaLabel="You may also like" className="mt-4" itemClassName="w-44 md:w-48">
+            <Carousel ariaLabel="You may also like" className="mt-4" itemClassName="w-[17.5rem]">
               {related.map((p) => (
-                <ProductCard key={p.id} product={p} variant="compact" />
+                <ProductCard key={p.id} product={p} variant="row" />
               ))}
             </Carousel>
           </section>
         ) : null}
-        <CompleteTheExperience mixBox={mixBox} booklet={booklet} />
+        <CompleteTheExperience mixBox={mixBox} booklet={booklet} cupPrice={isCup ? product.price : 4.5} />
       </Container>
     </div>
   );
