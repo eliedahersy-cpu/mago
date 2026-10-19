@@ -30,7 +30,7 @@ export function ProductTabs({ tabs }: { tabs: { id: string; label: string; conte
   const toggle = (id: string) => setOpen((o) => (o.includes(id) ? o.filter((x) => x !== id) : [...o, id]));
 
   return (
-    <div className="overflow-hidden rounded-3xl bg-cream-light ring-1 ring-forest/5">
+    <div className="overflow-hidden rounded-3xl bg-cream-light ring-1 ring-forest/5 md:overflow-visible md:rounded-none md:bg-transparent md:ring-0">
       <div
         role="tablist"
         aria-label="Product information"

@@ -2,7 +2,7 @@ import { Ban, Dumbbell, Leaf, Timer, TreePine } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 const benefits = [
-  { icon: Dumbbell, title: 'High protein', detail: '30g per cup' },
+  { icon: Dumbbell, title: 'Protein per cup', detail: null, mark: '30G' },
   { icon: Leaf, title: 'Real ingredients', detail: null },
   { icon: Timer, title: 'Ready in minutes', detail: null },
   { icon: Ban, title: 'No artificial colours', detail: null },
@@ -18,10 +18,10 @@ export function BenefitIcons({ variant, className }: { variant: 'hero' | 'produc
         className,
       )}
     >
-      {benefits.map(({ icon: Icon, title, detail }) => (
+      {benefits.map(({ icon: Icon, title, detail, ...rest }) => (
         <li key={title} className="flex flex-col items-center gap-1.5 px-1 text-center">
           <span className="flex size-10 items-center justify-center rounded-full border-2 border-forest text-forest md:size-11">
-            <Icon size={20} aria-hidden />
+            {'mark' in rest ? <span className="font-display text-sm leading-none font-bold md:text-base">{rest.mark}</span> : <Icon size={20} aria-hidden />}
           </span>
           <span className="font-display text-[10px] leading-tight font-semibold text-forest uppercase md:text-[11px]">
             {title}

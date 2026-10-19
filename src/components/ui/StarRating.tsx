@@ -14,7 +14,17 @@ export function StarRating({
   className?: string;
 }) {
   if (count === 0 || avg === null) {
-    return <p className={cn('text-sm text-ink/70', className)}>No reviews yet</p>;
+    const px0 = size === 'sm' ? 14 : 18;
+    return (
+      <div className={cn('flex items-center gap-1.5', className)}>
+        <span className="flex text-saffron/35" aria-hidden>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Star key={i} size={px0} fill="currentColor" strokeWidth={0} />
+          ))}
+        </span>
+        <span className="text-sm text-ink/70">No reviews yet</span>
+      </div>
+    );
   }
   const px = size === 'sm' ? 14 : 18;
   return (
