@@ -77,21 +77,21 @@ export function IngredientsPanel({ product }: { product: Product }) {
           {product.sauce ? `${product.sauce}. ` : ''}A delicious blend of {blend}, made with real, simple ingredients.
         </p>
       </div>
-      <ul className="grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 md:flex md:flex-wrap md:justify-between md:gap-x-5">
+      <ul className="grid grid-cols-[repeat(auto-fit,minmax(3.1rem,1fr))] gap-x-1.5 gap-y-4 md:flex md:flex-wrap md:justify-between md:gap-x-5">
         {product.ingredients.map((ing) => {
           const photo = ingredientPhoto(ing.name);
           return (
             <li key={ing.name} className="flex w-full flex-col items-center gap-2 text-center md:w-28">
-              <span className="relative flex h-16 w-full items-end justify-center md:h-24">
+              <span className="relative flex h-10 w-full items-end justify-center md:h-24">
                 {photo ? (
                   <Image src={photo} alt="" fill sizes="112px" className="object-contain object-bottom" />
                 ) : (
-                  <span className="flex size-14 items-center justify-center rounded-full bg-cream-dark/70 text-forest">
+                  <span className="flex size-10 items-center justify-center rounded-full bg-cream-dark/70 text-forest md:size-14">
                     <Leaf size={24} strokeWidth={1.6} aria-hidden />
                   </span>
                 )}
               </span>
-              <span className="text-xs leading-tight font-semibold text-forest md:text-[13px]">{ing.name}</span>
+              <span className="text-[10px] leading-tight font-semibold text-forest md:text-[13px]">{ing.name}</span>
             </li>
           );
         })}

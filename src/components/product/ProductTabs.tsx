@@ -11,7 +11,8 @@ import { cn } from '@/lib/cn';
  */
 export function ProductTabs({ tabs }: { tabs: { id: string; label: string; content: ReactNode; scrollTo?: string }[] }) {
   const [active, setActive] = useState(tabs.find((t) => !t.scrollTo)?.id);
-  const [open, setOpen] = useState<string[]>([]);
+  // On phones the first section (Ingredients) starts open, as in the design.
+  const [open, setOpen] = useState<string[]>(() => (tabs[0] ? [tabs[0].id] : []));
   const base = useId();
 
   const onKeyDown = (e: React.KeyboardEvent, index: number) => {
