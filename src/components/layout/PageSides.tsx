@@ -1,5 +1,5 @@
 /** Leaf-and-arch artwork down both sides of every page (from the supplied pattern), behind the content. */
-const strip = 'pointer-events-none absolute inset-y-0 -z-10 hidden w-[clamp(0px,calc((100vw-1240px)/2+60px),460px)] min-[1240px]:block';
+const strip = 'pointer-events-none absolute inset-y-0 -z-10 hidden w-[clamp(0px,calc((100vw-1400px)/2+40px),460px)] min-[1320px]:block';
 const style = (name: string) => ({
   backgroundImage: `url(/images/decor/side-${name}.webp)`,
   backgroundRepeat: 'repeat-y',

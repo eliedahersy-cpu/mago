@@ -1,6 +1,9 @@
 import { getImageProps } from 'next/image';
 import { Gift, Leaf, Smile, Soup } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { SunMark } from '@/components/brand/Decor';
 import { Container } from '@/components/ui/Container';
+import { BoxStepper } from './BoxStepper';
 import { ScrollLink } from '@/components/ui/ScrollLink';
 import { cn } from '@/lib/cn';
 
@@ -42,17 +45,42 @@ const hit = 'absolute rounded-full focus-visible:outline-3 focus-visible:outline
 
 export function MixBoxHero({ size }: { size: number }) {
   return (
-    <section aria-label="Build your MAGO Mix Box" className="bg-[#f6e6cc]">
-      <ArtBanner
-        priority
-        wide={{ src: '/images/mixbox-hero-wide-2.webp', width: 1600, height: 533 }}
-        tall={{ src: '/images/mixbox-hero-square.webp', width: 1254, height: 1254 }}
-        alt={`Build your MAGO Mix Box. Pick ${size} cups. Your way. More flavours. More fun. An open Mix Box with five pasta cups.`}
-      >
-        <ScrollLink bare href="#cups" aria-label="Start mixing" className={cn(hit, 'top-[39.8%] left-[34.3%] h-[5.9%] w-[31.4%] md:top-[84.2%] md:left-[14%] md:h-[10.8%] md:w-[19.6%]')}>
-          <span className="sr-only">Start mixing</span>
-        </ScrollLink>
-      </ArtBanner>
+    <section
+      aria-label="Build your MAGO Mix Box"
+      className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_20%_30%,#fff6e6_0%,#fbecd5_55%,#f6e0c2_100%)]"
+    >
+      {/* Side artwork from the approved pattern; the text and button are real, selectable page content. */}
+      <div aria-hidden className="absolute inset-y-0 left-0 -z-10 hidden w-[min(11vw,220px)] bg-[url('/images/decor/side-left.webp')] bg-[length:100%_auto] bg-repeat-y md:block" />
+      <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(380px,32vw,760px)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+        <div className="relative z-10 px-5 pt-8 pb-4 text-center md:flex md:flex-col md:items-start md:justify-center md:py-10 md:pr-0 md:pl-[max(2.5rem,12vw)] md:text-left">
+          <SunMark className="mx-auto w-20 md:mx-0 md:w-[clamp(5rem,7vw,9rem)]" />
+          <h1 className="mt-1 font-display leading-[0.92] font-bold uppercase">
+            <span className="block text-[2.3rem] text-forest sm:text-5xl md:text-[clamp(2.6rem,4.6vw,6.2rem)]">Build your</span>
+            <span className="block text-[2.3rem] whitespace-nowrap text-terracotta sm:text-5xl md:text-[clamp(2.6rem,4.6vw,6.2rem)]">MAGO Mix Box</span>
+          </h1>
+          <p className="mt-3 text-base font-medium text-ink/85 md:text-[clamp(1rem,1.5vw,2rem)]">
+            Pick {size} cups. Your way. More flavours. More fun.
+          </p>
+          <BoxStepper size={size} className="mt-4 md:mt-5" />
+          <ScrollLink href="#cups" size="lg" className="mt-5 md:mt-6">
+            Start mixing <ArrowRight size={18} aria-hidden />
+          </ScrollLink>
+        </div>
+        <div className="relative md:min-h-0">
+          <picture>
+            <source media="(min-width: 768px)" srcSet="/images/mixbox-box-wide.webp" width={910} height={533} />
+            <img
+              src="/images/mixbox-box-square.webp"
+              width={1254}
+              height={664}
+              alt="An open MAGO Mix Box with five pasta cups"
+              loading="eager"
+              fetchPriority="high"
+              className="block h-auto w-full md:absolute md:inset-0 md:h-full md:object-cover md:object-left [mask-image:linear-gradient(to_bottom,transparent,#000_14%)] md:[mask-image:linear-gradient(to_right,transparent,#000_16%)]"
+            />
+          </picture>
+        </div>
+      </div>
     </section>
   );
 }

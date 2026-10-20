@@ -2,6 +2,7 @@
 
 import { RotateCcw, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
+import { cutoutImage } from '@/lib/catalog/cutout';
 import Link from 'next/link';
 import type { ReactNode, Ref } from 'react';
 import { ArchDecor, LeafSprig, ScriptNote, SunMark } from '@/components/brand/Decor';
@@ -26,10 +27,6 @@ const TONES: Tone[] = ['terracotta', 'saffron', 'forest'];
 
 export function packshot(product: Product): string | null {
   return (product.images.find((i) => i.kind === 'packshot') ?? product.images[0])?.url ?? null;
-}
-
-function lifestyle(product: Product): string | null {
-  return product.images.find((i) => i.kind === 'lifestyle')?.url ?? null;
 }
 
 const fullName = (p: Product) => [p.name, p.flavour].filter(Boolean).join(' ');
@@ -137,24 +134,31 @@ export function QuizResults({
   headingRef?: Ref<HTMLHeadingElement>;
 }) {
   const hero = phase === 'intro' ? sample[0] : picks[0]?.product;
-  const heroPhoto = hero ? (phase === 'intro' ? null : lifestyle(hero)) : null;
   const heroPack = hero ? packshot(hero) : null;
+  const heroCutout = heroPack ? cutoutImage(heroPack) : null;
+  // Elie's designed scene is the spicy Muhammara cup; it also leads the intro, before any answer.
+  const designedScene = !hero || hero.slug === 'fusilli-spicy-muhammara';
+  const [first, ...rest] = title.split(' ');
+  const titleHead = [first, rest[0]].filter(Boolean).join(' ');
+  const titleTail = rest.slice(1).join(' ');
 
   return (
     <section
       aria-labelledby="quiz-results-title"
-      className="relative isolate scroll-mt-24 overflow-hidden bg-[linear-gradient(180deg,#f4ecd5_0%,#efe6cb_100%)]"
+      className="relative isolate scroll-mt-24 overflow-hidden bg-[linear-gradient(100deg,#f8e8cd_0%,#fbf0dc_45%,#faeed8_100%)]"
     >
       <LeafSprig className="pointer-events-none absolute -top-6 -right-4 -z-10 hidden w-36 rotate-[30deg] text-leaf/80 md:block" />
       <ArchDecor tone="peach" className="pointer-events-none absolute -right-8 -bottom-16 -z-10 w-28 opacity-60 md:w-40" />
 
       <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)_minmax(0,2.1fr)] lg:grid-rows-[1fr_auto]">
         <figure className="relative hidden overflow-hidden lg:row-span-2 lg:block lg:min-h-[360px]">
-          {heroPhoto ? (
-            <Image src={heroPhoto} alt="" fill sizes="25vw" className="object-cover" />
-          ) : heroPack ? (
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_70%,#f7d9b0_0%,#efe6cb_70%)]">
-              <Image src={heroPack} alt="" fill sizes="25vw" className="object-contain object-bottom p-6 pt-20 mix-blend-multiply" />
+          {designedScene ? (
+            <Image src="/images/taste-scene.webp" alt="A MAGO Fusilli Cup Spicy Muhammara with roasted peppers and walnuts" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-cover object-left" />
+          ) : heroCutout ? (
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_70%,#f7d9b0_0%,#f6e3c6_70%)]">
+              <ArchDecor tone="terracotta" className="absolute bottom-0 left-[8%] w-[46%] opacity-90" />
+              <LeafSprig className="absolute top-4 left-2 w-[24%] -rotate-[25deg] text-leaf" />
+              <Image src={heroCutout} alt="" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-contain object-bottom p-8 drop-shadow-[0_16px_16px_rgba(55,39,23,0.2)]" />
             </div>
           ) : null}
           <ScriptNote arrow="down" className="absolute top-6 left-5 -rotate-6 text-xl text-forest drop-shadow-[0_1px_0_#fff]">
@@ -178,6 +182,7 @@ export function QuizResults({
           <p className="flex items-center gap-2 text-xs font-bold tracking-wide text-forest uppercase md:text-sm">
             {eyebrow}
             <SunMark className="w-7" />
+            <span aria-hidden className="hidden h-px w-16 bg-sun/70 md:block" />
           </p>
           <h2
             id="quiz-results-title"
@@ -185,7 +190,14 @@ export function QuizResults({
             tabIndex={-1}
             className="mt-1 font-display text-[1.9rem] leading-[0.95] font-bold text-forest uppercase outline-none md:text-[2.6rem]"
           >
-            {title}
+            {titleTail ? (
+              <>
+                {titleHead}
+                <span className="block text-terracotta">{titleTail}</span>
+              </>
+            ) : (
+              title
+            )}
           </h2>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/80 md:text-base">{body}</p>
         </div>

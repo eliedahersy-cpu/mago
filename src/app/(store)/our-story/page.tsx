@@ -27,7 +27,21 @@ const commitments = [
 export default function OurStoryPage() {
   return (
     <>
-      <section className="relative overflow-hidden">
+      {/* Phones: the designed layout, built from real text over the pattern, with the shelf photo below. */}
+      <section aria-label="A modern take on a timeless heritage" className="relative isolate overflow-hidden bg-[#faecd3] md:hidden">
+        <div aria-hidden className="absolute top-0 left-0 -z-10 h-[330px] w-[16%] bg-[url('/images/decor/side-left.webp')] bg-[length:100%_auto] bg-repeat-y" />
+        <div aria-hidden className="absolute top-0 right-0 -z-10 h-[330px] w-[16%] bg-[url('/images/decor/side-right.webp')] bg-[length:100%_auto] bg-right bg-repeat-y" />
+        <div className="px-9 pt-8 pb-10 text-center">
+          <SunMark className="mx-auto w-20" />
+          <h1 className="mt-3 font-display text-[2rem] leading-[1.02] font-bold text-forest uppercase">A modern take on a timeless heritage</h1>
+          <p className="mx-auto mt-4 max-w-xs text-base leading-relaxed text-ink/85">
+            Inspired by our Mediterranean roots, MAGO brings together tradition, bold flavours and modern nutrition — for a brighter, healthier tomorrow.
+          </p>
+        </div>
+        <Image src="/images/story-shelf-mobile.webp" alt="MAGO pasta boxes on a pantry shelf" width={1122} height={862} loading="eager" fetchPriority="high" sizes="100vw" className="block h-auto w-full" />
+      </section>
+
+      <section className="relative hidden overflow-hidden md:block">
         <LeafSprig className="pointer-events-none absolute top-6 left-4 hidden w-14 -rotate-12 opacity-70 md:block" />
         <Container className="grid items-center gap-8 py-12 md:grid-cols-2 md:py-16">
           <div className="text-center md:text-left">
