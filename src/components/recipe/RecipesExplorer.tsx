@@ -136,8 +136,25 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
         )}
       </section>
 
-      <section className="px-4 pb-6 md:px-10">
-        <div className="relative isolate mx-auto grid max-w-7xl items-center overflow-hidden rounded-3xl bg-[radial-gradient(ellipse_at_80%_50%,#f8d9ae_0%,#f6e3c6_60%)] md:grid-cols-[1.2fr_1fr]">
+      <section className="px-4 pb-6 md:px-10 md:pb-8" aria-label="Same pasta. More possibilities.">
+        {/* From 768px: the approved artwork with a real link over its drawn button. Phones keep the text version. */}
+        <div className="relative mx-auto hidden max-w-7xl overflow-hidden rounded-3xl md:block">
+          <Image
+            src="/images/recipes-banner.webp"
+            alt="Same pasta. More possibilities. Turn your favourite MAGO cup into something new. Quick, delicious and full of flavour. From cup to chef."
+            width={1600}
+            height={499}
+            sizes="(min-width: 1280px) 1280px, 95vw"
+            className="block h-auto w-full"
+          />
+          <Link
+            href="/shop"
+            className="absolute top-[74%] left-[9.2%] h-[13.6%] w-[21.8%] rounded-full focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-saffron"
+          >
+            <span className="sr-only">Explore our cups</span>
+          </Link>
+        </div>
+              <div className="relative isolate mx-auto grid md:hidden max-w-7xl items-center overflow-hidden rounded-3xl bg-[radial-gradient(ellipse_at_80%_50%,#f8d9ae_0%,#f6e3c6_60%)] md:grid-cols-[1.2fr_1fr]">
           <LeafSprig className="pointer-events-none absolute -bottom-6 left-[52%] -z-10 hidden w-24 rotate-[200deg] text-leaf md:block" />
           <div className="p-6 md:p-10">
             <h2 className="font-display text-3xl leading-[0.95] font-bold text-forest uppercase md:text-5xl">
