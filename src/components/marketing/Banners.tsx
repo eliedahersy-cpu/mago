@@ -1,44 +1,37 @@
-import { ArrowRight, Ban, Leaf, Salad, Sunrise, Timer } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
-import { ArchDecor, LeafSprig, ScriptNote } from '@/components/brand/Decor';
 import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
-/** Home band inviting people to the quiz: copy on the left, a full cup on the right (a bigger close-up cropped by the band from 640px). */
+/** Home band inviting people to the quiz: real text and button over the approved scene (phone: scene under the text; wide: scene on the right). */
 export function QuizBanner() {
   return (
-    <section className="relative isolate overflow-hidden bg-[linear-gradient(100deg,#fbefdc_0%,#f6e3c6_55%,#f1dcc0_100%)]">
-      <div className="mx-auto grid min-h-[330px] max-w-7xl grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] sm:h-[300px] sm:min-h-0 md:h-[340px] md:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
-        <div className="relative z-10 flex flex-col justify-center py-6 pl-5 md:pl-10 lg:pl-16">
-          <h2 className="font-display leading-[0.9] font-bold uppercase">
-            <span className="block text-2xl text-terracotta sm:text-3xl md:text-4xl">Find your</span>
-            <span className="block text-[2.6rem] text-forest sm:text-5xl md:text-7xl">Match</span>
+    <section className="relative isolate overflow-hidden bg-[linear-gradient(100deg,#fdebcd_0%,#f8e1c1_60%,#f3d7b4_100%)]">
+      <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(380px,34vw,820px)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+        <div className="relative z-10 px-6 pt-10 pb-2 text-center md:flex md:flex-col md:items-start md:justify-center md:py-12 md:pr-0 md:pl-[max(2.5rem,9vw)] md:text-left">
+          <h2 className="font-display leading-[0.95] font-bold uppercase">
+            <span className="block text-[2.4rem] text-terracotta md:text-[clamp(2.6rem,4.4vw,5.8rem)]">Find your</span>
+            <span className="block text-[3.6rem] text-forest md:text-[clamp(4rem,7.2vw,9.4rem)]">Match</span>
           </h2>
-          <p className="mt-2 max-w-md text-[13px] leading-snug text-ink/85 sm:text-base md:mt-3 md:text-lg">
+          <p className="mx-auto mt-3 max-w-sm text-base font-medium text-ink/85 md:mx-0 md:max-w-[34rem] md:text-[clamp(1rem,1.5vw,2rem)]">
             Not sure where to start? Answer a few quick questions and we&apos;ll find your perfect MAGO flavours.
           </p>
-          <ButtonLink href="/find-your-match" size="sm" className="mt-4 w-fit md:mt-6 md:h-11 md:px-6 md:text-sm">
-            Take the quiz <ArrowRight size={16} aria-hidden />
+          <ButtonLink href="/find-your-match" size="lg" className="mt-5 md:mt-6">
+            Take the quiz <ArrowRight size={18} aria-hidden />
           </ButtonLink>
         </div>
         <div className="relative">
-          <ArchDecor tone="terracotta" className="absolute bottom-0 left-[2%] hidden w-28 md:block lg:w-36" />
-          <LeafSprig className="absolute bottom-0 left-[14%] hidden w-24 -rotate-[20deg] text-leaf md:block lg:w-28" />
-          <LeafSprig className="absolute -top-4 right-2 w-12 rotate-[200deg] text-leaf/90 md:w-20" />
-          <div className="absolute top-[8%] -right-[6%] aspect-[4/5] h-[84%] sm:-top-[22%] sm:-right-[28%] sm:h-[150%] md:right-auto md:left-[4%] lg:left-[8%]">
-            <Image
-              src="/products/cutouts/fusilli-spicy-muhammara-v2.webp"
-              alt="A MAGO Fusilli Cup Spicy Muhammara, full of pasta"
-              fill
-              sizes="(min-width: 768px) 420px, 55vw"
-              className="object-contain drop-shadow-[0_18px_20px_rgba(55,39,23,0.18)]"
+          <picture>
+            <source media="(min-width: 768px)" srcSet="/images/fym-scene-wide-2.webp" width={900} height={900} />
+            <img
+              src="/images/fym-scene-tall.webp"
+              width={900}
+              height={880}
+              alt="A MAGO Fusilli Cup Spicy Muhammara with basil, walnuts and roasted pepper"
+              loading="lazy"
+              className="block h-auto w-full [mask-image:linear-gradient(to_bottom,transparent,#000_14%)] md:absolute md:inset-0 md:h-full md:object-cover md:object-left md:[mask-image:linear-gradient(to_right,transparent,#000_10%)]"
             />
-          </div>
-          <ScriptNote arrow="left" className="absolute top-[30%] right-0 hidden -rotate-6 text-2xl lg:inline-flex">
-            Same pasta.
-            <br />
-            More possibilities.
-          </ScriptNote>
+          </picture>
         </div>
       </div>
     </section>
@@ -46,27 +39,25 @@ export function QuizBanner() {
 }
 
 const features = [
-  { icon: Leaf, title: 'Real ingredients', detail: 'You can trust' },
-  { icon: Salad, title: 'Mediterranean', detail: 'Inspired flavours' },
-  { icon: Timer, title: 'Ready', detail: 'In minutes' },
-  { icon: Ban, title: 'No artificial', detail: 'Colours or flavours' },
-  { icon: Sunrise, title: 'A brighter', detail: 'Way to eat' },
+  { icon: '/images/features/ingredients.webp', title: 'Real ingredients', detail: 'You can trust' },
+  { icon: '/images/features/mediterranean.webp', title: 'Mediterranean', detail: 'Inspired flavours' },
+  { icon: '/images/features/ready.webp', title: 'Ready', detail: 'In minutes' },
+  { icon: '/images/features/natural.webp', title: 'No artificial', detail: 'Colours or flavours' },
+  { icon: '/images/features/brighter.webp', title: 'A brighter', detail: 'Way to eat' },
 ];
 
 export function FeatureStrip() {
   return (
-    <section className="relative overflow-hidden bg-cream-dark/50">
-      <LeafSprig className="pointer-events-none absolute -bottom-6 -left-2 hidden w-16 opacity-70 md:block" />
-      <LeafSprig className="pointer-events-none absolute -top-6 -right-2 hidden w-16 rotate-180 opacity-70 md:block" />
-      <Container className="py-8">
+    <section className="relative overflow-hidden bg-[#faecd3]">
+      <Container className="py-8 md:py-10">
         <ul
           tabIndex={0}
           aria-label="Why MAGO"
           className="scrollbar-none -mx-4 flex snap-x gap-6 overflow-x-auto px-4 focus-visible:outline-offset-4 md:mx-0 md:grid md:grid-cols-5 md:px-0"
         >
-          {features.map(({ icon: Icon, title, detail }) => (
+          {features.map(({ icon, title, detail }) => (
             <li key={title} className="flex min-w-36 shrink-0 snap-start flex-col items-center text-center">
-              <Icon size={34} strokeWidth={1.5} className="text-forest" aria-hidden />
+              <Image src={icon} alt="" width={120} height={100} className="h-20 w-auto object-contain md:h-24" />
               <p className="mt-2 font-display text-sm leading-tight font-bold text-forest uppercase">{title}</p>
               <p className="text-xs font-medium text-forest/80 uppercase">{detail}</p>
             </li>
