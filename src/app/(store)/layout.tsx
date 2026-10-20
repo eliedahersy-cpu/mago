@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { CartButton } from "@/components/cart/CartButton";
 import { WishlistSync } from "@/components/account/WishlistSync";
+import { MagoAssistant } from "@/components/assistant/MagoAssistant";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
@@ -27,6 +28,7 @@ export default async function StoreLayout({
       <Footer settings={settings} />
       <CartDrawer />
       <WishlistSync />
+      <MagoAssistant />
       <Suspense fallback={null}>
         <InstallAppFab />
       </Suspense>
