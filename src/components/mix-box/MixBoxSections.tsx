@@ -47,10 +47,8 @@ export function MixBoxHero({ size }: { size: number }) {
   return (
     <section
       aria-label="Build your MAGO Mix Box"
-      className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_20%_30%,#fff6e6_0%,#fbecd5_55%,#f6e0c2_100%)]"
+      className="relative isolate overflow-hidden"
     >
-      {/* Side artwork from the approved pattern; the text and button are real, selectable page content. */}
-      <div aria-hidden className="absolute inset-y-0 left-0 -z-10 hidden w-[min(11vw,220px)] bg-[url('/images/decor/side-left.webp')] bg-[length:100%_auto] bg-repeat-y md:block" />
       <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(380px,32vw,760px)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
         <div className="relative z-10 px-5 pt-8 pb-4 text-center md:flex md:flex-col md:items-start md:justify-center md:py-10 md:pr-0 md:pl-[max(2.5rem,12vw)] md:text-left">
           <SunMark className="mx-auto w-20 md:mx-0 md:w-[clamp(5rem,7vw,9rem)]" />

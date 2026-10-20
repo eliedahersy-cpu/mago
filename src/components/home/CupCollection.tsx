@@ -27,6 +27,9 @@ function packshot(p: Product) {
  */
 export function CupCollection({ products }: { products: Product[] }) {
   const length = products.length;
+  // A ring of at least ten slides, so the slide that wraps round does so far off-screen and the row looks like one endless wheel.
+  const ring = length === 0 ? [] : length >= 9 ? products : Array.from({ length: Math.ceil(10 / length) * length }, (_, i) => products[i % length]);
+  const ringLength = ring.length;
   const [active, setActive] = useState(Math.floor(length / 2));
   const [paused, setPaused] = useState(false);
   const [still, setStill] = useState(false);
@@ -43,13 +46,14 @@ export function CupCollection({ products }: { products: Product[] }) {
 
   useEffect(() => {
     if (paused || stopped || still || length < 2) return;
-    const timer = window.setInterval(() => setActive((a) => (a + 1) % length), AUTOPLAY_MS);
+    const timer = window.setInterval(() => setActive((a) => (a + 1) % ringLength), AUTOPLAY_MS);
     return () => window.clearInterval(timer);
-  }, [paused, stopped, still, length]);
+  }, [paused, stopped, still, length, ringLength]);
 
   if (length === 0) return null;
-  const move = (by: number) => setActive((a) => (a + by + length) % length);
-  const current = products[active];
+  const move = (by: number) => setActive((a) => (a + by + ringLength) % ringLength);
+  const activeProduct = active % length;
+  const current = products[activeProduct];
 
   return (
     <section aria-labelledby="cup-collection-title" className="relative isolate overflow-hidden bg-[#fcefd8] pt-32 pb-10 md:pt-40 md:pb-14">
@@ -93,8 +97,8 @@ export function CupCollection({ products }: { products: Product[] }) {
         <div className="relative h-[min(86vw,360px)] sm:h-[400px] md:h-[440px] lg:h-[480px]">
           {/* soft stage the cups stand on */}
           <div aria-hidden className="absolute inset-x-[8%] bottom-0 h-16 rounded-[50%] bg-[radial-gradient(ellipse_at_center,#f1d8b1_0%,transparent_70%)] md:bottom-24" />
-          {products.map((p, i) => {
-            const offset = offsetFrom(i, active, length);
+          {ring.map((p, i) => {
+            const offset = offsetFrom(i, active, ringLength);
             const distance = Math.abs(offset);
             const centre = offset === 0;
             const shot = packshot(p);
@@ -109,11 +113,11 @@ export function CupCollection({ products }: { products: Product[] }) {
             } as CSSProperties;
             return (
               <div
-                key={p.id}
+                key={`${p.id}-${i}`}
                 data-testid="showcase-card"
                 role="group"
                 aria-roledescription="slide"
-                aria-label={`${i + 1} of ${length}: ${label}`}
+                aria-label={`${(i % length) + 1} of ${length}: ${label}`}
                 aria-hidden={distance > 2 || undefined}
                 style={style}
                 className={cn(
@@ -204,8 +208,8 @@ export function CupCollection({ products }: { products: Product[] }) {
                 key={p.id}
                 onClick={() => setActive(i)}
                 aria-label={`Show ${p.name} ${p.flavour ?? ''}`.trim()}
-                aria-current={i === active ? 'true' : undefined}
-                className={cn('size-2.5 rounded-full transition-all', i === active ? 'scale-125 bg-forest' : 'bg-forest/25 hover:bg-forest/50')}
+                aria-current={i === activeProduct ? 'true' : undefined}
+                className={cn('size-2.5 rounded-full transition-all', i === activeProduct ? 'scale-125 bg-forest' : 'bg-forest/25 hover:bg-forest/50')}
               />
             ))}
           </div>

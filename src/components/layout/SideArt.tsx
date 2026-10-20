@@ -1,9 +1,9 @@
-/** Artwork down both sides of a page, behind its content (needs an `isolate` parent). Shown from 1240px wide. */
-const strip = 'pointer-events-none absolute inset-y-0 -z-10 hidden w-[clamp(0px,calc((100vw-1280px)/2+40px),420px)] min-[1320px]:block';
+/** Artwork down both sides of a page, behind its content (needs an `isolate` parent). Shown from 1000px wide, at one fixed size so it looks the same on every screen. */
+const strip = 'pointer-events-none absolute inset-y-0 -z-10 hidden w-[280px] min-[1000px]:block';
 const style = (name: string, side: 'left' | 'right') => ({
   backgroundImage: `url(/images/decor/${name}-${side}.webp)`,
   backgroundRepeat: 'repeat-y',
-  backgroundSize: '100% auto',
+  backgroundSize: '280px auto',
   backgroundPosition: `${side} top`,
 });
 

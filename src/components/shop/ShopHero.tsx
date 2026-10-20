@@ -1,12 +1,9 @@
-import { cn } from '@/lib/cn';
-
 /** "Our pasta cups" banner: real heading and line over the approved artwork (arch and leaves left, a cup right; phones put the cup under the text). */
 export function ShopHero() {
   return (
-    <section className="relative isolate overflow-hidden bg-[#fdefd6]">
-      <div aria-hidden className={cn('absolute inset-y-0 left-0 -z-10 hidden w-[14.7%] bg-[url(/images/shop-head-left.webp)] bg-cover bg-right md:block')} />
+    <section className="relative isolate overflow-hidden">
       <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(300px,33vw,760px)] md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-        <div className="relative z-10 px-6 pt-10 pb-2 text-center md:flex md:flex-col md:justify-center md:py-12 md:pr-0 md:pl-[max(7rem,16vw)] md:text-left">
+        <div className="relative z-10 px-6 pt-10 pb-2 text-center md:flex md:flex-col md:justify-center md:py-12 md:pr-0 md:pl-[max(4rem,12vw)] md:text-left">
           <h1 className="font-display text-[clamp(2.6rem,11vw,3.4rem)] leading-[0.95] font-bold text-forest uppercase md:text-[clamp(2.6rem,4.9vw,6.4rem)]">
             Our pasta
             <br className="md:hidden" /> cups

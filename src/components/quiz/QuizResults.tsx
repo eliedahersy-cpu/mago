@@ -138,9 +138,10 @@ export function QuizResults({
   const heroCutout = heroPack ? cutoutImage(heroPack) : null;
   // Elie's designed scene is the spicy Muhammara cup; it also leads the intro, before any answer.
   const designedScene = !hero || hero.slug === 'fusilli-spicy-muhammara';
+  const comma = title.indexOf(',');
   const [first, ...rest] = title.split(' ');
-  const titleHead = [first, rest[0]].filter(Boolean).join(' ');
-  const titleTail = rest.slice(1).join(' ');
+  const titleHead = comma > 0 ? title.slice(0, comma + 1) : [first, rest[0]].filter(Boolean).join(' ');
+  const titleTail = comma > 0 ? title.slice(comma + 1).trim() : rest.slice(1).join(' ');
 
   return (
     <section
@@ -152,7 +153,9 @@ export function QuizResults({
 
       <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)_minmax(0,2.1fr)] lg:grid-rows-[1fr_auto]">
         <figure className="relative hidden overflow-hidden lg:row-span-2 lg:block lg:min-h-[360px]">
-          {designedScene ? (
+          {phase === 'intro' ? (
+            <Image src="/images/quiz-intro-scene.webp" alt="A MAGO Fusilli Cup Spicy Muhammara with tomatoes, walnuts and parmesan" fill sizes="(min-width: 1024px) 24vw, 100vw" className="object-cover object-top" />
+          ) : designedScene ? (
             <Image src="/images/taste-scene.webp" alt="A MAGO Fusilli Cup Spicy Muhammara with roasted peppers and walnuts" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-cover object-left" />
           ) : heroCutout ? (
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_70%,#f7d9b0_0%,#f6e3c6_70%)]">
@@ -161,21 +164,13 @@ export function QuizResults({
               <Image src={heroCutout} alt="" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-contain object-bottom p-8 drop-shadow-[0_16px_16px_rgba(55,39,23,0.2)]" />
             </div>
           ) : null}
-          <ScriptNote arrow="down" className="absolute top-6 left-5 -rotate-6 text-xl text-forest drop-shadow-[0_1px_0_#fff]">
-            {phase === 'intro' ? (
-              <>
-                Your personalised
-                <br />
-                MAGO selection
-              </>
-            ) : (
-              <>
-                Same pasta.
-                <br />
-                More possibilities.
-              </>
-            )}
-          </ScriptNote>
+          {phase === 'intro' ? null : (
+            <ScriptNote arrow="down" className="absolute top-6 left-5 -rotate-6 text-xl text-forest drop-shadow-[0_1px_0_#fff]">
+              Same pasta.
+              <br />
+              More possibilities.
+            </ScriptNote>
+          )}
         </figure>
 
         <div className="px-5 pt-8 md:px-10 lg:col-start-2 lg:row-start-1 lg:self-end lg:pt-10 lg:pr-4 lg:pl-8">

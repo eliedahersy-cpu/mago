@@ -10,7 +10,7 @@ test('hero links to shop', async ({ page }) => {
 test('shows the cup collection in featured order', async ({ page }) => {
   await page.goto('/');
   const cards = page.getByTestId('showcase-card');
-  await expect(cards).toHaveCount(5);
+  await expect(cards).toHaveCount(10);
   await expect(cards.first()).toContainText('Pastina Cup');
 });
 
