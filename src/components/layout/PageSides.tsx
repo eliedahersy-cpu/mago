@@ -21,19 +21,45 @@ function Block({ flip }: { flip: boolean }) {
   );
 }
 
+/** The right-hand block, in the style of the right side of the approved design: tall nested arches with a leafy vine along the edge. */
+function Arch({ className, inner }: { className?: string; inner: string }) {
+  return (
+    <div className={cn('absolute rounded-t-full bg-[#d4502c] p-3', className)}>
+      <div className="h-full rounded-t-full bg-[#fbe7c4] p-3">
+        <div className={cn('h-full rounded-t-full', inner)} />
+      </div>
+    </div>
+  );
+}
+
+function RightBlock() {
+  return (
+    <div className="relative h-[640px] w-full shrink-0">
+      <div className="absolute top-[2%] right-10 h-36 w-36 rounded-full bg-[#fbd48a]/70" />
+      <Arch className="top-[10%] -right-6 h-[300px] w-36" inner="bg-[#7f8f3e]" />
+      <LeafSprig className="absolute top-[3%] right-2 w-28 rotate-[8deg] text-leaf" />
+      <div className="absolute top-[56%] right-16 h-32 w-32 rounded-full bg-[#f6a54b]/60" />
+      <Arch className="top-[58%] -right-8 h-[260px] w-40" inner="bg-[#f2a33a]" />
+      <LeafSprig className="absolute top-[48%] right-1 w-24 -rotate-[12deg] text-forest-light" />
+      <LeafSprig className="absolute top-[88%] right-3 w-28 rotate-[190deg] text-leaf" />
+    </div>
+  );
+}
+
 const strip = 'pointer-events-none absolute inset-y-0 -z-10 hidden w-[240px] overflow-hidden min-[900px]:block';
 const COUNT = 14;
 
 /** Artwork down both sides of every page, behind the content (the parent must be `relative isolate`). */
 export function PageSides({ children }: { children: React.ReactNode }) {
-  const blocks = Array.from({ length: COUNT }, (_, i) => <Block key={i} flip={false} />);
+  const left = Array.from({ length: COUNT }, (_, i) => <Block key={i} flip={false} />);
+  const right = Array.from({ length: COUNT }, (_, i) => <RightBlock key={i} />);
   return (
     <div className="relative isolate flex min-h-0 flex-1 flex-col">
       <div aria-hidden className={cn(strip, 'left-0')}>
-        {blocks}
+        {left}
       </div>
-      <div aria-hidden className={cn(strip, 'right-0 -scale-x-100')}>
-        {blocks}
+      <div aria-hidden className={cn(strip, 'right-0')}>
+        {right}
       </div>
       {children}
     </div>
