@@ -61,7 +61,7 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
   return (
     <div className="relative isolate overflow-hidden">
       <SideArt name="recipes" />
-      <section className="relative isolate overflow-hidden bg-[#fbeed8] bg-[url('/images/banner-pattern.webp')] bg-cover bg-center">
+      <section className="relative isolate overflow-hidden">
         <div className="mx-auto flex min-h-[340px] max-w-[720px] flex-col items-center justify-center px-6 py-12 text-center md:min-h-[440px]">
           <h1 className="font-display text-[3.4rem] leading-[0.9] font-bold text-forest uppercase md:text-7xl lg:text-8xl">Recipes</h1>
           <p className="mt-2 font-display text-xl font-bold text-forest md:text-3xl">Simple ideas. Big flavours.</p>
@@ -138,10 +138,9 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
 
       <section className="px-4 pb-6 md:px-10 md:pb-8" aria-label="Same pasta. More possibilities.">
         {/* From 768px: real text and button over the approved artwork (leaves left, the cup right). Phones keep the text version below. */}
-        <div className="relative isolate mx-auto hidden max-w-7xl overflow-hidden rounded-3xl bg-[#fdf0d8] md:block">
-          <div aria-hidden className="absolute inset-y-0 left-0 w-[8.5%] bg-[url('/images/recipes-banner-left.webp')] bg-cover bg-right" />
-          <div aria-hidden className="absolute inset-y-0 right-0 w-[46%] bg-[url('/images/recipes-banner-right.webp')] bg-cover bg-left [mask-image:linear-gradient(to_right,transparent,#000_10%)]" />
-          <div className="relative z-10 flex min-h-[320px] flex-col justify-center py-10 pl-[11%] lg:min-h-[400px]">
+        <div className="relative isolate mx-auto hidden max-w-7xl md:block">
+          <div aria-hidden className="absolute inset-y-0 right-0 w-[46%] bg-[url('/images/recipes-banner-right.webp')] bg-cover bg-left [mask-image:linear-gradient(to_right,transparent,#000_16%,#000_86%,transparent),linear-gradient(to_bottom,transparent,#000_8%,#000_92%,transparent)] [mask-composite:intersect]" />
+          <div className="relative z-10 flex min-h-[320px] flex-col justify-center py-10 pl-[6%] lg:min-h-[400px]">
             <h2 className="font-display text-4xl leading-[0.95] font-bold uppercase lg:text-5xl xl:text-6xl">
               <span className="block text-forest">Same pasta.</span>
               <span className="block text-terracotta">More possibilities.</span>
