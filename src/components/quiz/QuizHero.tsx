@@ -6,7 +6,7 @@ const ALT =
 
 /** "Find your MAGO match" banner from the approved artwork (wide from 768px, tall on phones). Once the quiz starts, phones hide it so the question sits higher. */
 export function QuizHero({ started }: { started: boolean }) {
-  const common = { alt: ALT, sizes: '(min-width: 1600px) 1600px, 100vw' };
+  const common = { alt: ALT, sizes: '100vw' };
   const {
     props: { srcSet: wide },
   } = getImageProps({ ...common, width: 1600, height: 800, src: '/images/quiz-art-wide.webp' });
@@ -16,7 +16,7 @@ export function QuizHero({ started }: { started: boolean }) {
   return (
     <section className={cn('bg-[#f6e6cc]', started && 'max-md:hidden')}>
       <h1 className="sr-only">Find your MAGO match</h1>
-      <div className="mx-auto max-w-[1600px]">
+      <div className="mx-auto max-w-[2560px]">
         <picture>
           <source media="(min-width: 768px)" srcSet={wide} width={1600} height={800} />
           <img {...img} srcSet={tall} alt={ALT} loading="eager" fetchPriority="high" className="block h-auto w-full" />

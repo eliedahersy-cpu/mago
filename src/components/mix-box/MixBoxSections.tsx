@@ -20,7 +20,7 @@ function ArtBanner({
   className?: string;
   children?: React.ReactNode;
 }) {
-  const common = { alt, sizes: '(min-width: 1600px) 1600px, 100vw' };
+  const common = { alt, sizes: '100vw' };
   const {
     props: { srcSet: wideSet },
   } = getImageProps({ ...common, ...wide });
@@ -28,7 +28,7 @@ function ArtBanner({
     props: { srcSet: tallSet, ...img },
   } = getImageProps({ ...common, ...tall });
   return (
-    <div className={cn('relative mx-auto w-full max-w-[1600px]', className)}>
+    <div className={cn('relative mx-auto w-full max-w-[2560px]', className)}>
       <picture>
         <source media="(min-width: 768px)" srcSet={wideSet} width={wide.width} height={wide.height} />
         <img {...img} srcSet={tallSet} alt={alt} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : undefined} className="block h-auto w-full" />

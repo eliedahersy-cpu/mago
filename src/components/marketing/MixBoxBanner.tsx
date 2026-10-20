@@ -18,7 +18,7 @@ const BANNER_ALT =
  * and a real "Start mixing" button sits exactly over the one drawn in the artwork.
  */
 function HomeMixBoxBanner() {
-  const common = { alt: BANNER_ALT, sizes: '(min-width: 1600px) 1600px, 100vw' };
+  const common = { alt: BANNER_ALT, sizes: '100vw' };
   const {
     props: { srcSet: wide },
   } = getImageProps({ ...common, width: 1600, height: 900, src: '/images/mix-box-banner-wide.webp' });
@@ -28,7 +28,7 @@ function HomeMixBoxBanner() {
 
   return (
     <section aria-label="Build your MAGO Mix Box" className="bg-[#f4e3c8]">
-      <Link href="/mix-box" className="group relative mx-auto block max-w-[1600px] focus-visible:outline-none">
+      <Link href="/mix-box" className="group relative mx-auto block max-w-[2560px] focus-visible:outline-none">
         <picture>
           <source media="(min-width: 768px)" srcSet={wide} width={1600} height={900} />
           <img {...img} srcSet={tall} alt={BANNER_ALT} loading="lazy" className="block h-auto w-full" />
