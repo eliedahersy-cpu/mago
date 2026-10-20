@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { ArchDecor, LeafSprig, SunMark } from '@/components/brand/Decor';
 import { ButtonLink } from '@/components/ui/Button';
 import { cutoutImage } from '@/lib/catalog/cutout';
 import { cn } from '@/lib/cn';
@@ -20,14 +19,6 @@ function offsetFrom(index: number, active: number, length: number): number {
 
 function packshot(p: Product) {
   return p.images.find((i) => i.kind === 'packshot') ?? p.images[0];
-}
-
-function Sparkle({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={cn('text-saffron', className)} aria-hidden fill="currentColor">
-      <path d="M12 0c.6 6.2 5.8 11.4 12 12-6.2.6-11.4 5.8-12 12C11.4 17.8 6.2 12.6 0 12 6.2 11.4 11.4 6.2 12 0Z" />
-    </svg>
-  );
 }
 
 /**
@@ -61,27 +52,11 @@ export function CupCollection({ products }: { products: Product[] }) {
   const current = products[active];
 
   return (
-    <section aria-labelledby="cup-collection-title" className="relative isolate overflow-hidden bg-[#fbf1e1] pt-9 pb-10 md:pt-14 md:pb-14">
-      {/* Mediterranean arches and leaves framing the section, as on the packaging. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <ArchDecor tone="peach" className="absolute top-4 -left-12 w-24 opacity-75 md:top-10 md:w-36" />
-        <ArchDecor tone="sage" className="absolute top-[44%] -left-14 w-24 opacity-60 md:w-32" />
-        <ArchDecor tone="terracotta" className="absolute -bottom-20 left-6 w-20 opacity-45 md:w-28" />
-        <ArchDecor tone="terracotta" className="absolute top-2 -right-12 w-24 opacity-55 md:top-8 md:w-36" />
-        <ArchDecor tone="sage" className="absolute top-[46%] -right-14 w-24 opacity-60 md:w-32" />
-        <ArchDecor tone="peach" className="absolute right-4 -bottom-20 w-20 opacity-70 md:w-28" />
-        <LeafSprig className="absolute -top-2 left-3 w-12 -rotate-[30deg] text-leaf md:w-20" />
-        <LeafSprig className="absolute -top-1 right-4 w-12 rotate-[28deg] text-forest-light md:w-20" />
-        <LeafSprig className="absolute -bottom-6 -left-4 w-14 rotate-[210deg] text-forest-light md:w-24" />
-        <LeafSprig className="absolute -right-4 -bottom-6 w-14 rotate-[150deg] text-leaf md:w-24" />
-      </div>
+    <section aria-labelledby="cup-collection-title" className="relative isolate overflow-hidden bg-[#fcefd8] pt-32 pb-10 md:pt-40 md:pb-14">
+      {/* The approved background: arches and leaves in the corners, the sun at the top (a pattern image, the content is real text). */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-[url('/images/cups-bg.webp')] bg-cover bg-[position:50%_0] md:bg-[length:100%_auto] md:bg-top md:bg-no-repeat" />
 
       <div className="relative px-4 text-center">
-        <div className="relative mx-auto w-fit">
-          <SunMark className="mx-auto w-16 md:w-20" />
-          <Sparkle className="absolute top-3 -left-10 size-4 md:-left-14 md:size-5" />
-          <Sparkle className="absolute top-6 -right-9 size-3 md:-right-12 md:size-4" />
-        </div>
         <h2
           id="cup-collection-title"
           className="mt-1 font-display text-[2.55rem] leading-[0.95] font-bold text-forest uppercase sm:text-5xl lg:text-6xl"
