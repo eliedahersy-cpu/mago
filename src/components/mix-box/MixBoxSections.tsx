@@ -53,7 +53,7 @@ export function MixBoxHero({ size }: { size: number }) {
       <div aria-hidden className="pointer-events-none absolute top-0 left-0 -z-10 h-[62%] w-[26%] bg-[url('/images/mixbox-deco-left.webp')] bg-cover bg-top [mask-image:linear-gradient(to_right,#000_55%,transparent),linear-gradient(to_bottom,#000_72%,transparent)] [mask-composite:intersect] md:hidden" />
       <div aria-hidden className="pointer-events-none absolute top-0 right-0 -z-10 h-[66%] w-[26%] bg-[url('/images/mixbox-deco-right.webp')] bg-cover bg-top [mask-image:linear-gradient(to_left,#000_55%,transparent),linear-gradient(to_bottom,#000_72%,transparent)] [mask-composite:intersect] md:hidden" />
       <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(380px,32vw,760px)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-        <div className="relative z-10 px-5 pt-8 pb-4 text-center md:flex md:flex-col md:items-start md:justify-center md:py-10 md:pr-0 md:pl-[max(2.5rem,6vw)] xl:pl-[16vw] md:text-left">
+        <div className="relative z-10 px-5 pt-8 pb-4 text-center md:flex md:flex-col md:items-start md:justify-center md:py-10 md:pr-0 md:pl-[max(2.5rem,6vw)] xl:pl-[max(6vw,calc((100vw-1400px)/2+3rem))] md:text-left">
           <SunMark className="mx-auto w-20 md:mx-0 md:w-[clamp(5rem,7vw,9rem)]" />
           <h1 className="mt-1 font-display leading-[0.92] font-bold uppercase">
             <span className="block text-[2.55rem] text-forest sm:text-5xl md:text-[clamp(2.6rem,4.6vw,6.2rem)]">Build your</span>

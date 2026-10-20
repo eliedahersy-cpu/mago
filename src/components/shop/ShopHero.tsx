@@ -6,7 +6,7 @@ export function ShopHero() {
       <div aria-hidden className="pointer-events-none absolute top-0 left-0 -z-10 h-[36%] w-[13%] bg-[url('/images/shop-deco-left.webp')] bg-cover bg-top [mask-image:linear-gradient(to_right,#000_55%,transparent),linear-gradient(to_bottom,#000_70%,transparent)] [mask-composite:intersect] md:hidden" />
       <div aria-hidden className="pointer-events-none absolute top-0 right-0 -z-10 h-[30%] w-[11%] bg-[url('/images/shop-deco-right.webp')] bg-cover bg-top [mask-image:linear-gradient(to_left,#000_55%,transparent),linear-gradient(to_bottom,#000_70%,transparent)] [mask-composite:intersect] md:hidden" />
       <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(300px,33vw,760px)] md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-        <div className="relative z-10 px-9 pt-10 pb-2 text-center md:flex md:flex-col md:justify-center md:py-12 md:pr-0 md:pl-[max(3rem,6vw)] xl:pl-[16vw] md:text-left">
+        <div className="relative z-10 px-9 pt-10 pb-2 text-center md:flex md:flex-col md:justify-center md:py-12 md:pr-0 md:pl-[max(3rem,6vw)] xl:pl-[max(6vw,calc((100vw-1400px)/2+3rem))] md:text-left">
           <h1 className="font-display text-[clamp(2.8rem,12.5vw,3.8rem)] leading-[0.95] font-bold text-forest uppercase md:text-[clamp(2.6rem,4.9vw,6.4rem)]">
             Our pasta
             <br className="md:hidden" /> cups
