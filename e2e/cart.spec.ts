@@ -16,7 +16,7 @@ test('cart page shows server totals, re-prices on change and rejects a bad code'
   await page.getByRole('button', { name: 'Apply' }).click();
   await expect(page.getByText('That code is not valid.')).toBeVisible();
 
-  // Four cups lose the Mix & Match discount: 4 × $4.50 + $3.00 delivery.
+  // Four cups lose the Mix & Match discount: 4 × $3.69 + $3.00 delivery.
   await page.getByRole('main').getByRole('button', { name: 'Decrease quantity' }).click();
   await expect(page.getByTestId('cart-total')).toHaveText('$21.00');
   await expect(summary.getByText(/Mix & Match/)).toHaveCount(0);

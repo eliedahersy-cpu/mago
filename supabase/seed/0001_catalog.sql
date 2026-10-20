@@ -58,7 +58,7 @@ insert into public.products (
 )
 select
   v.slug, v.name, v.flavour, v.sauce, 'cup', v.tagline, v.short_description, v.description, v.story,
-  4.50, 'active', v.sku, 200, true, 30, 4,
+  3.69, 'active', v.sku, 200, true, 30, 4,
   v.best_seller, v.featured, v.sort_order, v.ingredients::jsonb, shared.nutrition, shared.preparation,
   v.profiles::text[], v.spice, v.textures::text[], v.occasions::text[], v.style, v.short_description
 from shared
@@ -193,13 +193,13 @@ insert into public.products (
   ('recipe-booklet', 'Recipe Booklet', null, 'merch', '10 easy recipes', 'Ten easy recipes that start with a MAGO cup.',
    'Ten easy recipes that turn a MAGO cup into something new.', 5.00, 'active', 'MAGO-BOOKLET', 100, true, null, 40, null),
   ('fusilli-400g', 'Fusilli', '400g Pasta Box', 'retail', '400g', 'MAGO fusilli for your own kitchen.',
-   'Our fusilli in a 400g box for cooking at home.', 0, 'draft', 'MAGO-RET-FUS', 0, true, null, 50, null),
+   'Our fusilli in a 400g box for cooking at home.', 4.99, 'active', 'MAGO-RET-FUS', 100, true, null, 50, null),
   ('tagliolini-400g', 'Tagliolini', '400g Pasta Box', 'retail', '400g', 'MAGO tagliolini for your own kitchen.',
-   'Our tagliolini in a 400g box for cooking at home.', 0, 'draft', 'MAGO-RET-TAG', 0, true, null, 51, null),
+   'Our tagliolini in a 400g box for cooking at home.', 4.99, 'active', 'MAGO-RET-TAG', 100, true, null, 51, null),
   ('conchiglie-400g', 'Conchiglie', '400g Pasta Box', 'retail', '400g', 'MAGO conchiglie for your own kitchen.',
-   'Our conchiglie in a 400g box for cooking at home.', 0, 'draft', 'MAGO-RET-CON', 0, true, null, 52, null),
+   'Our conchiglie in a 400g box for cooking at home.', 4.99, 'active', 'MAGO-RET-CON', 100, true, null, 52, null),
   ('lasagna-400g', 'Lasagna', '400g Pasta Box', 'retail', '400g', 'MAGO lasagna sheets for your own kitchen.',
-   'Our lasagna in a 400g box for cooking at home.', 0, 'draft', 'MAGO-RET-LAS', 0, true, null, 53, null)
+   'Our lasagna in a 400g box for cooking at home.', 4.99, 'active', 'MAGO-RET-LAS', 100, true, null, 53, null)
 on conflict (slug) do update set
   name = excluded.name, flavour = excluded.flavour, type = excluded.type, tagline = excluded.tagline,
   short_description = excluded.short_description, description = excluded.description,
@@ -244,14 +244,18 @@ from (values
   ('lasagna-melanzane-ricotta', '/products/lasagna-melanzane-ricotta.webp', 'MAGO Lasagna Cup Melanzane & Ricotta', 0, 'packshot'),
   ('mago-mix-box', '/products/mago-mix-box.webp', 'The MAGO Mix Box', 0, 'packshot'),
   ('mago-mix-box', '/products/mago-mix-box-open.webp', 'An open MAGO Mix Box with five cups', 1, 'packshot'),
-  ('fusilli-400g', '/products/fusilli-400g.webp', 'MAGO Fusilli 400g box', 0, 'packshot'),
-  ('tagliolini-400g', '/products/tagliolini-400g.webp', 'MAGO Tagliolini 400g box', 0, 'packshot'),
-  ('conchiglie-400g', '/products/conchiglie-400g.webp', 'MAGO Conchiglie 400g box', 0, 'packshot'),
-  ('lasagna-400g', '/products/lasagna-400g.webp', 'MAGO Lasagna 400g box', 0, 'packshot'),
-  ('fusilli-400g', '/products/fusilli-400g-back.webp', 'Back of the MAGO Fusilli 400g box', 1, 'packshot'),
-  ('tagliolini-400g', '/products/tagliolini-400g-back.webp', 'Back of the MAGO Tagliolini 400g box', 1, 'packshot'),
-  ('conchiglie-400g', '/products/conchiglie-400g-back.webp', 'Back of the MAGO Conchiglie 400g box', 1, 'packshot'),
-  ('lasagna-400g', '/products/lasagna-400g-back.webp', 'Back of the MAGO Lasagna 400g box', 1, 'packshot')
+  ('fusilli-400g', '/products/fusilli-400g-pack.webp', 'MAGO Fusilli 400g box', 0, 'packshot'),
+  ('fusilli-400g', '/products/fusilli-400g.webp', 'MAGO Fusilli 400g box, front', 1, 'packshot'),
+  ('tagliolini-400g', '/products/tagliolini-400g-pack.webp', 'MAGO Tagliolini 400g box', 0, 'packshot'),
+  ('tagliolini-400g', '/products/tagliolini-400g.webp', 'MAGO Tagliolini 400g box, front', 1, 'packshot'),
+  ('conchiglie-400g', '/products/conchiglie-400g-pack.webp', 'MAGO Conchiglie 400g box', 0, 'packshot'),
+  ('conchiglie-400g', '/products/conchiglie-400g.webp', 'MAGO Conchiglie 400g box, front', 1, 'packshot'),
+  ('lasagna-400g', '/products/lasagna-400g-pack.webp', 'MAGO Lasagna 400g box', 0, 'packshot'),
+  ('lasagna-400g', '/products/lasagna-400g.webp', 'MAGO Lasagna 400g box, front', 1, 'packshot'),
+  ('fusilli-400g', '/products/fusilli-400g-back.webp', 'Back of the MAGO Fusilli 400g box', 2, 'packshot'),
+  ('tagliolini-400g', '/products/tagliolini-400g-back.webp', 'Back of the MAGO Tagliolini 400g box', 2, 'packshot'),
+  ('conchiglie-400g', '/products/conchiglie-400g-back.webp', 'Back of the MAGO Conchiglie 400g box', 2, 'packshot'),
+  ('lasagna-400g', '/products/lasagna-400g-back.webp', 'Back of the MAGO Lasagna 400g box', 2, 'packshot')
 ) as v (slug, url, alt, position, kind)
 join public.products p on p.slug = v.slug;
 

@@ -165,7 +165,7 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
             </Carousel>
           </section>
         ) : null}
-        <CompleteTheExperience mixBox={mixBox} booklet={booklet} cupPrice={isCup ? product.price : 4.5} />
+        <CompleteTheExperience mixBox={mixBox} booklet={booklet} cupPrice={isCup ? product.price : 3.69} />
       </Container>
     </div>
   );

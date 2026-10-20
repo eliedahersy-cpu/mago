@@ -17,7 +17,7 @@ export const NEW_PRODUCT: ProductDefaults = {
   shortDescription: '',
   description: '',
   story: '',
-  price: '4.50',
+  price: '3.69',
   compareAtPrice: '',
   sku: '',
   stock: '0',
