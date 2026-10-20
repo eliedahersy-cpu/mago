@@ -59,7 +59,7 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
   const showcase = recipes.slice(0, 4);
 
   return (
-    <div className="relative isolate overflow-hidden bg-cream-light">
+    <div className="relative isolate overflow-hidden">
       <SideArt name="recipes" />
       <section className="relative isolate overflow-hidden bg-[#fbeed8] bg-[url('/images/banner-pattern.webp')] bg-cover bg-center">
         <div className="mx-auto flex min-h-[340px] max-w-[720px] flex-col items-center justify-center px-6 py-12 text-center md:min-h-[440px]">
