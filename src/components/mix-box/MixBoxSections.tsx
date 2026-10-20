@@ -47,16 +47,19 @@ export function MixBoxHero({ size }: { size: number }) {
   return (
     <section
       aria-label="Build your MAGO Mix Box"
-      className="relative isolate overflow-hidden"
+      className="relative isolate overflow-hidden max-md:bg-[#fcedd2]"
     >
+      {/* Phones: the leaves and arches of the approved design around the text. */}
+      <div aria-hidden className="pointer-events-none absolute top-0 left-0 -z-10 h-[62%] w-[26%] bg-[url('/images/mixbox-deco-left.webp')] bg-cover bg-top [mask-image:linear-gradient(to_right,#000_55%,transparent),linear-gradient(to_bottom,#000_72%,transparent)] [mask-composite:intersect] md:hidden" />
+      <div aria-hidden className="pointer-events-none absolute top-0 right-0 -z-10 h-[66%] w-[26%] bg-[url('/images/mixbox-deco-right.webp')] bg-cover bg-top [mask-image:linear-gradient(to_left,#000_55%,transparent),linear-gradient(to_bottom,#000_72%,transparent)] [mask-composite:intersect] md:hidden" />
       <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(380px,32vw,760px)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
         <div className="relative z-10 px-5 pt-8 pb-4 text-center md:flex md:flex-col md:items-start md:justify-center md:py-10 md:pr-0 md:pl-[max(2.5rem,6vw)] xl:pl-[16vw] md:text-left">
           <SunMark className="mx-auto w-20 md:mx-0 md:w-[clamp(5rem,7vw,9rem)]" />
           <h1 className="mt-1 font-display leading-[0.92] font-bold uppercase">
-            <span className="block text-[2.3rem] text-forest sm:text-5xl md:text-[clamp(2.6rem,4.6vw,6.2rem)]">Build your</span>
-            <span className="block text-[2.3rem] whitespace-nowrap text-terracotta sm:text-5xl md:text-[clamp(2.6rem,4.6vw,6.2rem)]">MAGO Mix Box</span>
+            <span className="block text-[2.55rem] text-forest sm:text-5xl md:text-[clamp(2.6rem,4.6vw,6.2rem)]">Build your</span>
+            <span className="block text-[2.55rem] whitespace-nowrap text-terracotta sm:text-5xl md:text-[clamp(2.6rem,4.6vw,6.2rem)]">MAGO Mix Box</span>
           </h1>
-          <p className="mt-3 text-base font-medium text-ink/85 md:text-[clamp(1rem,1.5vw,2rem)]">
+          <p className="mx-auto mt-3 max-w-[18rem] text-base font-medium text-ink/85 md:mx-0 md:max-w-none md:text-[clamp(1rem,1.5vw,2rem)]">
             Pick {size} cups. Your way. More flavours. More fun.
           </p>
           <BoxStepper size={size} className="mt-4 md:mt-5" />
