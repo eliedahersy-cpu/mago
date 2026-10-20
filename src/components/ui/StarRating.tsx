@@ -22,7 +22,7 @@ export function StarRating({
             <Star key={i} size={px0} fill="currentColor" strokeWidth={0} />
           ))}
         </span>
-        <span className="text-sm text-ink/70">No reviews yet</span>
+        <span className={cn('text-sm text-ink/70', size === 'sm' && 'max-sm:sr-only')}>No reviews yet</span>
       </div>
     );
   }
