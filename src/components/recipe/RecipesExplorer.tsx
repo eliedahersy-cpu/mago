@@ -4,7 +4,6 @@ import { ArrowRight, Clock3, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { SideArt } from '@/components/layout/SideArt';
 import { ArchDecor, LeafSprig, ScriptNote } from '@/components/brand/Decor';
 import { cn } from '@/lib/cn';
 import type { RecipeSummary } from '@/lib/types';
@@ -60,7 +59,6 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
 
   return (
     <div className="relative isolate overflow-hidden">
-      <SideArt name="recipes" />
       <section className="relative isolate overflow-hidden">
         <div className="mx-auto flex min-h-[340px] max-w-[720px] flex-col items-center justify-center px-6 py-12 text-center md:min-h-[440px]">
           <h1 className="font-display text-[3.4rem] leading-[0.9] font-bold text-forest uppercase md:text-7xl lg:text-8xl">Recipes</h1>
