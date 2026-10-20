@@ -56,9 +56,9 @@ export function CupCollection({ products }: { products: Product[] }) {
   const current = products[activeProduct];
 
   return (
-    <section aria-labelledby="cup-collection-title" className="relative isolate overflow-hidden bg-[#fcefd8] pt-32 pb-10 md:pt-40 md:pb-14">
+    <section aria-labelledby="cup-collection-title" className="relative isolate overflow-hidden bg-[#fcf0dc] pt-32 pb-10 md:pt-40 md:pb-14">
       {/* The approved background: arches and leaves in the corners, the sun at the top (a pattern image, the content is real text). */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-[url('/images/cups-bg.webp')] bg-cover bg-[position:50%_0] md:bg-[length:100%_auto] md:bg-top md:bg-no-repeat" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-[url('/images/cups-bg-tall.webp')] bg-[length:100%_auto] bg-top bg-no-repeat md:bg-[url('/images/cups-bg-2.webp')] md:bg-cover md:bg-top" />
 
       <div className="relative px-4 text-center">
         <h2

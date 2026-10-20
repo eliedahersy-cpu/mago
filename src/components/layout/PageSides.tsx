@@ -1,23 +1,31 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 
 /**
- * The painted leaf-and-arch sides from the approved artwork, repeated down every page behind the content.
- * Each tile fades to the page cream at its top and bottom, and the strip fades out towards the content,
- * so there are no hard joins. Shown from 900px wide, starting below the header.
+ * The painted sides from the approved designs, in front of the page blocks at both edges (as in the
+ * mockups), with the content kept between them. Recipes pages use the recipes pattern; every other page
+ * uses the leaf-and-arch pattern. Each tile fades into the page cream at its joins, so the strips run on
+ * from below the header to the footer without hard edges. Shown from 900px wide.
  */
 const strip =
-  'pointer-events-none absolute top-[118px] bottom-0 -z-10 hidden w-[260px] bg-[length:260px_auto] bg-repeat-y min-[900px]:block';
+  'pointer-events-none absolute top-[118px] bottom-0 z-30 hidden w-[160px] bg-[length:160px_auto] bg-repeat-y min-[900px]:block';
 
 export function PageSides({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname() ?? '';
+  const set = pathname.startsWith('/recipes') ? 'recipes-' : '';
   return (
     <div className="relative isolate flex min-h-0 flex-1 flex-col">
       <div
         aria-hidden
-        className={cn(strip, "left-0 bg-[url('/images/sides/left.webp')] bg-left-top [mask-image:linear-gradient(to_right,#000_70%,transparent)]")}
+        style={{ backgroundImage: `url(/images/sides/${set}left.webp)` }}
+        className={cn(strip, 'left-0 bg-left-top [mask-image:linear-gradient(to_right,#000_88%,transparent)]')}
       />
       <div
         aria-hidden
-        className={cn(strip, "right-0 bg-[url('/images/sides/right.webp')] bg-right-top [mask-image:linear-gradient(to_left,#000_70%,transparent)]")}
+        style={{ backgroundImage: `url(/images/sides/${set}right.webp)` }}
+        className={cn(strip, 'right-0 bg-right-top [mask-image:linear-gradient(to_left,#000_88%,transparent)]')}
       />
       {children}
     </div>

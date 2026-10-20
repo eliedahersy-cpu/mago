@@ -6,7 +6,7 @@ import { Container } from '@/components/ui/Container';
 /** Home band inviting people to the quiz: real text and button over the approved scene (phone: scene under the text; wide: scene on the right). */
 export function QuizBanner() {
   return (
-    <section className="relative isolate overflow-hidden bg-[linear-gradient(100deg,#fdebcd_0%,#f8e1c1_60%,#f3d7b4_100%)]">
+    <section className="relative isolate overflow-hidden">
       <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(380px,34vw,820px)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         <div className="relative z-10 px-6 pt-10 pb-2 text-center md:flex md:flex-col md:items-start md:justify-center md:py-12 md:pr-0 md:pl-[max(2.5rem,9vw)] md:text-left">
           <h2 className="font-display leading-[0.95] font-bold uppercase">
@@ -48,7 +48,7 @@ const features = [
 
 export function FeatureStrip() {
   return (
-    <section className="relative overflow-hidden bg-[#faecd3]">
+    <section className="relative overflow-hidden">
       <Container className="py-8 md:py-10">
         <ul
           tabIndex={0}

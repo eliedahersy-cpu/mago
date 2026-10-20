@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function StoresPage() {
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_30%_30%,#fff5e4_0%,#f9e6ca_60%,#f3d9b6_100%)]">
+      <section className="relative isolate overflow-hidden">
         <LeafSprig className="pointer-events-none absolute -top-4 -left-6 -z-10 w-20 -rotate-[30deg] text-leaf md:w-32" />
         <ArchDecor tone="terracotta" className="pointer-events-none absolute -bottom-10 -left-8 -z-10 hidden w-32 opacity-80 md:block" />
         <LeafSprig className="pointer-events-none absolute -top-3 -right-4 -z-10 w-16 rotate-[30deg] text-forest-light md:w-28" />

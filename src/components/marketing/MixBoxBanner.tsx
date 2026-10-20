@@ -27,7 +27,7 @@ function HomeMixBoxBanner() {
   } = getImageProps({ ...common, width: 900, height: 1600, src: '/images/mix-box-banner-tall.webp' });
 
   return (
-    <section aria-label="Build your MAGO Mix Box" className="bg-[#f4e3c8]">
+    <section aria-label="Build your MAGO Mix Box">
       <Link href="/mix-box" className="group relative mx-auto block max-w-[2560px] focus-visible:outline-none">
         <picture>
           <source media="(min-width: 768px)" srcSet={wide} width={1600} height={900} />

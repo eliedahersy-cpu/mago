@@ -70,7 +70,7 @@ export default function OurStoryPage() {
         </Container>
       </section>
 
-      <section className="bg-cream-dark/50">
+      <section>
         <Container className="py-8">
           <ul className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {values.map(({ icon: Icon, label }) => (

@@ -23,7 +23,7 @@ const steps = [
 export default function SubscribePage() {
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_30%_30%,#fff5e4_0%,#f9e6ca_60%,#f3d9b6_100%)]">
+      <section className="relative isolate overflow-hidden">
         <LeafSprig className="pointer-events-none absolute -top-4 -left-6 -z-10 w-20 -rotate-[30deg] text-leaf md:w-32" />
         <LeafSprig className="pointer-events-none absolute -top-3 -right-4 -z-10 w-16 rotate-[30deg] text-forest-light md:w-28" />
         <ArchDecor tone="terracotta" className="pointer-events-none absolute -bottom-10 -left-8 -z-10 hidden w-32 opacity-80 md:block" />
@@ -80,7 +80,7 @@ export default function SubscribePage() {
         </div>
       </section>
 
-      <section className="bg-cream-dark/40 px-4 py-12 md:py-16" aria-labelledby="plans-title">
+      <section className="px-4 py-12 md:py-16" aria-labelledby="plans-title">
         <div className="mx-auto max-w-5xl text-center">
           <h2 id="plans-title" className="font-display text-4xl font-bold text-forest uppercase md:text-5xl">
             Choose your plan
