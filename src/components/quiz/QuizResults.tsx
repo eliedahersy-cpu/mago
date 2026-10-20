@@ -146,9 +146,8 @@ export function QuizResults({
   return (
     <section
       aria-labelledby="quiz-results-title"
-      className="relative isolate scroll-mt-24 overflow-hidden bg-[linear-gradient(100deg,#f8e8cd_0%,#fbf0dc_45%,#faeed8_100%)]"
+      className="relative isolate scroll-mt-24 overflow-hidden"
     >
-      <LeafSprig className="pointer-events-none absolute -top-6 -right-4 -z-10 hidden w-36 rotate-[30deg] text-leaf/80 md:block" />
       <ArchDecor tone="peach" className="pointer-events-none absolute -right-8 -bottom-16 -z-10 w-28 opacity-60 md:w-40" />
 
       <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)_minmax(0,2.1fr)] lg:grid-rows-[1fr_auto]">

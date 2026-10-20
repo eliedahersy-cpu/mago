@@ -3,7 +3,6 @@
 import { ArrowLeft, ArrowRight, Check, Clock, Info } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArchDecor, LeafSprig } from '@/components/brand/Decor';
 import { Button } from '@/components/ui/Button';
 import { useCart } from '@/lib/cart/store';
 import { cn } from '@/lib/cn';
@@ -118,17 +117,13 @@ export function QuizExperience({ cups, bundle, boxSize }: { cups: Product[]; bun
         };
 
   return (
-    <div className="bg-cream-light">
+    <div>
       <QuizHero started={step !== null} />
 
       <section
         aria-label="Find your match quiz"
-        className="relative isolate overflow-hidden border-t border-forest/5 bg-[radial-gradient(ellipse_at_50%_0%,#fffaf1_0%,#fbf0de_70%)] px-4 pt-7 pb-9 md:pt-10 md:pb-12"
+        className="relative isolate overflow-hidden border-t border-forest/5 px-4 pt-7 pb-9 md:pt-10 md:pb-12"
       >
-        <LeafSprig className="pointer-events-none absolute top-10 -left-7 -z-10 hidden w-28 -rotate-[30deg] text-forest-light md:block lg:w-36" />
-        <LeafSprig className="pointer-events-none absolute -right-6 bottom-10 -z-10 hidden w-28 rotate-[20deg] text-leaf md:block lg:w-36" />
-        <ArchDecor tone="peach" className="pointer-events-none absolute -bottom-12 -left-8 -z-10 w-24 opacity-60 md:w-32" />
-        <ArchDecor tone="sage" className="pointer-events-none absolute top-24 -right-10 -z-10 hidden w-28 opacity-60 lg:block" />
 
         <QuizStepper
           questions={QUIZ_QUESTIONS}
