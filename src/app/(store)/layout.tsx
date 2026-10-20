@@ -12,20 +12,18 @@ import { getSettings } from '@/lib/data/cached';
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSettings();
   return (
-    <>
+    <PageSides>
       <AnnouncementBar message={settings.announcementBar} />
       <Header cart={<CartButton />} />
-      <PageSides>
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-      </PageSides>
+      <main id="main" className="flex-1">
+        {children}
+      </main>
       <Footer settings={settings} />
       <CartDrawer />
       <WishlistSync />
       <Suspense fallback={null}>
         <InstallAppFab />
       </Suspense>
-    </>
+    </PageSides>
   );
 }

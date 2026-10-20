@@ -29,8 +29,10 @@ export default function OurStoryPage() {
     <>
       {/* Phones: the designed layout, built from real text over the pattern, with the shelf photo below. */}
       <section aria-label="A modern take on a timeless heritage" className="relative isolate overflow-hidden bg-[#faecd3] md:hidden">
-        <div aria-hidden className="absolute top-0 left-0 -z-10 h-[330px] w-[16%] bg-[url('/images/decor/side-left.webp')] bg-[length:100%_auto] bg-repeat-y" />
-        <div aria-hidden className="absolute top-0 right-0 -z-10 h-[330px] w-[16%] bg-[url('/images/decor/side-right.webp')] bg-[length:100%_auto] bg-right bg-repeat-y" />
+        <ArchDecor tone="terracotta" className="pointer-events-none absolute top-6 -left-14 -z-10 w-36 opacity-90" />
+        <LeafSprig className="pointer-events-none absolute top-2 left-6 -z-10 w-16 -rotate-[25deg] text-leaf" />
+        <ArchDecor tone="peach" className="pointer-events-none absolute top-8 -right-14 -z-10 w-36 opacity-90" />
+        <LeafSprig className="pointer-events-none absolute top-2 right-6 -z-10 w-16 rotate-[25deg] text-forest-light" />
         <div className="px-9 pt-8 pb-10 text-center">
           <SunMark className="mx-auto w-20" />
           <h1 className="mt-3 font-display text-[2rem] leading-[1.02] font-bold text-forest uppercase">A modern take on a timeless heritage</h1>

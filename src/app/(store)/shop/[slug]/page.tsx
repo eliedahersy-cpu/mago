@@ -2,11 +2,9 @@ import { ChevronRight } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { ArchDecor, LeafSprig } from '@/components/brand/Decor';
 import { BenefitIcons } from '@/components/product/BenefitIcons';
 import { ProductCard } from '@/components/product/ProductCard';
 import { ProductGallery } from '@/components/product/ProductGallery';
-import { leafThemeFor, SideLeaves } from '@/components/product/SideLeaves';
 import { ProductPurchase } from '@/components/product/ProductPurchase';
 import {
   CompleteTheExperience,
@@ -76,7 +74,6 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
   const booklet = extras.find((p) => p.slug === 'recipe-booklet') ?? null;
   const collection = product.collections.find((c) => c.slug !== 'best-sellers') ?? product.collections[0];
   const isCup = product.type === 'cup';
-  const leafTheme = leafThemeFor(product.slug);
 
   // Same order as the design: ingredients first; "How to prepare" scrolls to its band on wide screens.
   const tabs = [
@@ -99,14 +96,6 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
   return (
     <div className="relative isolate overflow-hidden">
       <JsonLd data={productJsonLd(product, siteUrl())} />
-      {leafTheme ? (
-        <SideLeaves theme={leafTheme} />
-      ) : (
-        <>
-          <ArchDecor className="pointer-events-none absolute top-24 -left-12 hidden w-28 opacity-50 xl:block" />
-          <LeafSprig className="pointer-events-none absolute top-16 -right-4 hidden w-16 rotate-12 opacity-70 xl:block" />
-        </>
-      )}
       <Container className="max-w-[1140px] pt-6 pb-4">
         <nav aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-1 text-sm text-ink/75">
