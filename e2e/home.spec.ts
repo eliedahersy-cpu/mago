@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('hero links to shop', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1, name: 'Good food, brighter days.' })).toBeAttached();
-  await page.getByRole('link', { name: 'Explore our cups', exact: true }).click();
+  await page.getByRole('link', { name: 'Shop now', exact: true }).first().click();
   await expect(page).toHaveURL(/\/shop$/, { timeout: 30_000 });
 });
 

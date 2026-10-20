@@ -35,7 +35,7 @@ export function Hero() {
             href="/shop"
             className="h-[9.5vw] w-[48vw] px-0 text-[3.6vw] shadow-lg md:h-[clamp(34px,2.9vw,58px)] md:w-[min(17.7vw,340px)] md:text-[clamp(11px,1.05vw,20px)]"
           >
-            Explore our cups <ArrowRight className="size-[1.2em]" aria-hidden />
+            Shop now <ArrowRight className="size-[1.2em]" aria-hidden />
           </ButtonLink>
         </div>
       </div>

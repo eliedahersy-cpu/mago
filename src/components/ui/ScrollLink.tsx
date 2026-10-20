@@ -12,14 +12,15 @@ export function ScrollLink({
   href,
   variant,
   size,
+  bare = false,
   className,
   onClick,
   ...props
-}: Omit<ComponentProps<'a'>, 'href'> & { href: `#${string}`; variant?: 'primary' | 'outline' | 'light' | 'ghost'; size?: 'sm' | 'md' | 'lg' }) {
+}: Omit<ComponentProps<'a'>, 'href'> & { href: `#${string}`; variant?: 'primary' | 'outline' | 'light' | 'ghost'; size?: 'sm' | 'md' | 'lg'; bare?: boolean }) {
   return (
     <a
       href={href}
-      className={cn(buttonVariants({ variant, size }), className)}
+      className={bare ? className : cn(buttonVariants({ variant, size }), className)}
       onClick={(e) => {
         onClick?.(e);
         if (e.defaultPrevented) return;

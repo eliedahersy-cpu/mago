@@ -21,7 +21,7 @@ export default function manifest(): MetadataRoute.Manifest {
     // Lets Chrome report the installed app (navigator.getInstalledRelatedApps) so the install buttons hide.
     related_applications: [{ platform: 'webapp', url: `${siteUrl()}/manifest.webmanifest` }],
     shortcuts: [
-      { name: 'Our cups', url: '/shop' },
+      { name: 'Our shop', url: '/shop' },
       { name: 'Build a Mix Box', url: '/mix-box' },
       { name: 'Subscribe & save', url: '/subscribe' },
       { name: 'Cart', url: '/cart' },

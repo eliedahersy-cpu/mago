@@ -115,7 +115,7 @@ export default async function ProductPage({ params }: PageProps<'/shop/[slug]'>)
             </li>
             <ChevronRight size={14} aria-hidden />
             <li>
-              <Link href="/shop" className="hover:text-forest">Our Cups</Link>
+              <Link href="/shop" className="hover:text-forest">Our Shop</Link>
             </li>
             {collection ? (
               <>
