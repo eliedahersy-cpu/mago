@@ -42,7 +42,7 @@ test('reviews the box, blocks an incomplete box and adds it to the cart', async 
   const rows = page.getByTestId('box-row');
   await expect(rows).toHaveCount(4);
   await expect(page.getByTestId('summary-count')).toHaveText('5 cups selected');
-  await expect(page.getByTestId('summary-total')).toHaveText('$23.25');
+  await expect(page.getByTestId('summary-total')).toHaveText('$19.60');
   await expect(page.getByRole('heading', { name: 'Why this mix works' })).toBeVisible();
 
   const proceed = page.getByRole('button', { name: 'Proceed to checkout' });
@@ -63,6 +63,6 @@ test('reviews the box, blocks an incomplete box and adds it to the cart', async 
   const boxRow = drawer.getByTestId('cart-box');
   await expect(boxRow.getByRole('listitem')).toHaveCount(4);
   await expect(boxRow).toContainText('2 ×');
-  await expect(drawer.getByTestId('cart-subtotal')).toHaveText('$22.50');
+  await expect(drawer.getByTestId('cart-subtotal')).toHaveText('$18.45');
   await expect(drawer.getByText('Gift note added')).toBeVisible();
 });

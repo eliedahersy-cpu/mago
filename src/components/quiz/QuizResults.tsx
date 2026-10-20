@@ -151,7 +151,7 @@ export function QuizResults({
       <ArchDecor tone="peach" className="pointer-events-none absolute -right-8 -bottom-16 -z-10 w-28 opacity-60 md:w-40" />
 
       <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)_minmax(0,2.1fr)] lg:grid-rows-[1fr_auto]">
-        <figure className="relative hidden overflow-hidden lg:row-span-2 lg:block lg:min-h-[360px]">
+        <figure className="relative hidden overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_14%,#000_86%,transparent),linear-gradient(to_bottom,transparent,#000_10%,#000_90%,transparent)] [mask-composite:intersect] lg:row-span-2 lg:block lg:min-h-[360px]">
           {phase === 'intro' ? (
             <Image src="/images/quiz-intro-scene.webp" alt="A MAGO Fusilli Cup Spicy Muhammara with tomatoes, walnuts and parmesan" fill sizes="(min-width: 1024px) 24vw, 100vw" className="object-cover object-top" />
           ) : designedScene ? (

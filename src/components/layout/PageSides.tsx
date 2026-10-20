@@ -46,7 +46,7 @@ function RightBlock() {
   );
 }
 
-const strip = 'pointer-events-none absolute inset-y-0 -z-10 hidden w-[240px] overflow-hidden min-[900px]:block';
+const strip = 'pointer-events-none absolute top-[118px] bottom-0 -z-10 hidden w-[240px] overflow-hidden min-[900px]:block';
 const COUNT = 14;
 
 /** Artwork down both sides of every page, behind the content (the parent must be `relative isolate`). */

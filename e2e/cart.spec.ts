@@ -10,7 +10,7 @@ test('cart page shows server totals, re-prices on change and rejects a bad code'
 
   const summary = page.getByTestId('cart-summary');
   await expect(summary.getByText(/Mix & Match/)).toBeVisible();
-  await expect(page.getByTestId('cart-total')).toHaveText('$23.25');
+  await expect(page.getByTestId('cart-total')).toHaveText('$19.60');
 
   await page.getByLabel('Discount code').fill('NOPE');
   await page.getByRole('button', { name: 'Apply' }).click();
@@ -18,12 +18,12 @@ test('cart page shows server totals, re-prices on change and rejects a bad code'
 
   // Four cups lose the Mix & Match discount: 4 × $3.69 + $3.00 delivery.
   await page.getByRole('main').getByRole('button', { name: 'Decrease quantity' }).click();
-  await expect(page.getByTestId('cart-total')).toHaveText('$21.00');
+  await expect(page.getByTestId('cart-total')).toHaveText('$17.76');
   await expect(summary.getByText(/Mix & Match/)).toHaveCount(0);
 
   await page.getByRole('main').getByRole('link', { name: 'Checkout' }).click();
   await expect(page).toHaveURL(/\/checkout$/, { timeout: 30_000 });
-  await expect(page.getByTestId('checkout-total')).toHaveText('$21.00');
+  await expect(page.getByTestId('checkout-total')).toHaveText('$17.76');
 });
 
 test('an empty cart page points back to the shop', async ({ page }) => {
@@ -45,5 +45,5 @@ test('a failed price check says so in plain words and can be retried', async ({ 
 
   failing = false;
   await page.getByRole('button', { name: 'Try again' }).click();
-  await expect(page.getByTestId('cart-total')).toHaveText('$7.50');
+  await expect(page.getByTestId('cart-total')).toHaveText('$6.69');
 });

@@ -2,10 +2,11 @@ import { expect, test } from '@playwright/test';
 
 const cards = '[data-testid="product-card"]';
 
-test('lists the 12 active cups and hides drafts', async ({ page }) => {
+test('lists the cups first and the 400g boxes under their own filter', async ({ page }) => {
   await page.goto('/shop');
   await expect(page.locator(cards)).toHaveCount(12);
-  await expect(page.getByText('400g')).toHaveCount(0);
+  await page.goto('/shop?collection=pasta-boxes');
+  await expect(page.locator(cards)).toHaveCount(4);
 });
 
 test('filters by collection', async ({ page }) => {

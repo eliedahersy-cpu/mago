@@ -9,7 +9,7 @@ test('the sitemap lists public pages only', async ({ request }) => {
   expect(xml).toContain('/stores/spinneys-hamra</loc>');
   expect(xml).not.toContain('/admin');
   expect(xml).not.toContain('/account');
-  expect(xml).not.toContain('/shop/fusilli-400g<'); // a draft product
+  expect(xml).toContain('/shop/fusilli-400g</loc>'); // the 400g boxes are on sale
   expect(xml).not.toContain('/shop/mago-mix-box<'); // bundles live at /mix-box
 });
 
@@ -24,7 +24,7 @@ test('product, recipe, store and home pages carry structured data and a social i
 
   await page.goto('/shop/fusilli-spicy-muhammara');
   const product = (await ld()).find((d) => d['@type'] === 'Product');
-  expect(product).toMatchObject({ name: 'Fusilli Cup Spicy Muhammara', offers: { priceCurrency: 'USD', price: '4.50' } });
+  expect(product).toMatchObject({ name: 'Fusilli Cup Spicy Muhammara', offers: { priceCurrency: 'USD', price: '3.69' } });
   await expect(page.locator('meta[property="og:image"]').first()).toHaveAttribute('content', /fusilli-spicy-muhammara/);
 
   await page.goto('/recipes/rishta-soup-lemon-herbs');

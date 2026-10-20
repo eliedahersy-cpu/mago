@@ -23,7 +23,7 @@ test('guest checkout with one cup reaches the confirmation', async ({ page }) =>
   await page.getByRole('dialog', { name: /Your cart/ }).getByRole('link', { name: 'Checkout' }).click();
   await expect(page).toHaveURL(/\/checkout$/, { timeout: 30_000 });
 
-  await expect(page.getByTestId('checkout-total')).toHaveText('$7.50');
+  await expect(page.getByTestId('checkout-total')).toHaveText('$6.69');
   await fillCheckout(page);
   await page.getByRole('button', { name: 'Place order' }).click();
 
@@ -31,7 +31,7 @@ test('guest checkout with one cup reaches the confirmation', async ({ page }) =>
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Thank you');
   await expect(page.getByText(/#MAGO-\d+/)).toBeVisible();
   await expect(page.getByTestId('order-lines').getByText('Fusilli Cup')).toBeVisible();
-  await expect(page.getByTestId('order-total')).toHaveText('$7.50');
+  await expect(page.getByTestId('order-total')).toHaveText('$6.69');
 
   // The cart is empty after ordering.
   await expect(page.getByRole('button', { name: 'Open cart, 0 items' })).toBeVisible();
@@ -53,7 +53,7 @@ test('a Mix Box goes through checkout with its discount and gift note', async ({
   const summary = page.getByTestId('checkout-summary');
   await expect(summary.getByText('The MAGO Mix Box')).toBeVisible();
   await expect(summary.getByText(/Mix & Match/)).toBeVisible();
-  await expect(page.getByTestId('checkout-total')).toHaveText('$23.25');
+  await expect(page.getByTestId('checkout-total')).toHaveText('$19.60');
   await expect(page.locator('#checkout-form').getByLabel('Gift note')).toHaveValue('Happy birthday!');
 
   await fillCheckout(page);
@@ -61,7 +61,7 @@ test('a Mix Box goes through checkout with its discount and gift note', async ({
   await expect(page).toHaveURL(/\/order\/[0-9a-f-]{36}$/, { timeout: 30_000 });
   await expect(page.getByTestId('order-lines').getByText('The MAGO Mix Box')).toBeVisible();
   await expect(page.getByRole('main').getByText('Happy birthday!')).toBeVisible();
-  await expect(page.getByTestId('order-total')).toHaveText('$23.25');
+  await expect(page.getByTestId('order-total')).toHaveText('$19.60');
 });
 
 test('checkout explains an empty cart and a bad code', async ({ page }) => {
@@ -74,7 +74,7 @@ test('checkout explains an empty cart and a bad code', async ({ page }) => {
   await page.getByLabel('Discount code').fill('NOPE');
   await page.getByRole('button', { name: 'Apply' }).click();
   await expect(page.getByText('That code is not valid.')).toBeVisible();
-  await expect(page.getByTestId('checkout-total')).toHaveText('$7.50');
+  await expect(page.getByTestId('checkout-total')).toHaveText('$6.69');
 });
 
 test('an unknown order link is a 404', async ({ page }) => {
@@ -86,7 +86,7 @@ test('a lost response after the order is placed can be retried without a second 
   await page.goto('/shop/fusilli-spicy-muhammara');
   await page.getByTestId('product-purchase').getByRole('button', { name: 'Add to cart' }).click();
   await page.goto('/checkout');
-  await expect(page.getByTestId('checkout-total')).toHaveText('$7.50');
+  await expect(page.getByTestId('checkout-total')).toHaveText('$6.69');
   await fillCheckout(page);
 
   // Let the first place-order request reach the server, then drop its response.
