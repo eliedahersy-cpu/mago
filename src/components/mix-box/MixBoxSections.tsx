@@ -45,11 +45,11 @@ export function MixBoxHero({ size }: { size: number }) {
     <section aria-label="Build your MAGO Mix Box" className="bg-[#f6e6cc]">
       <ArtBanner
         priority
-        wide={{ src: '/images/mixbox-hero-wide.webp', width: 1600, height: 727 }}
-        tall={{ src: '/images/mixbox-hero-tall.webp', width: 1122, height: 1402 }}
+        wide={{ src: '/images/mixbox-hero-wide-2.webp', width: 1600, height: 533 }}
+        tall={{ src: '/images/mixbox-hero-square.webp', width: 1254, height: 1254 }}
         alt={`Build your MAGO Mix Box. Pick ${size} cups. Your way. More flavours. More fun. An open Mix Box with five pasta cups.`}
       >
-        <ScrollLink bare href="#cups" aria-label="Start mixing" className={cn(hit, 'top-[43.5%] left-[26.5%] h-[7%] w-[47%] md:top-[78.8%] md:left-[11.5%] md:h-[9.5%] md:w-[21%]')}>
+        <ScrollLink bare href="#cups" aria-label="Start mixing" className={cn(hit, 'top-[39.8%] left-[34.3%] h-[5.9%] w-[31.4%] md:top-[84.2%] md:left-[14%] md:h-[10.8%] md:w-[19.6%]')}>
           <span className="sr-only">Start mixing</span>
         </ScrollLink>
       </ArtBanner>

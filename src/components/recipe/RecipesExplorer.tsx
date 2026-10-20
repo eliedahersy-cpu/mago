@@ -59,39 +59,14 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
 
   return (
     <div className="overflow-hidden bg-cream-light">
-      <section className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_30%_30%,#fff5e4_0%,#f9e6ca_60%,#f3d9b6_100%)]">
-        <LeafSprig className="pointer-events-none absolute -top-4 -left-6 -z-10 w-20 -rotate-[30deg] text-leaf md:w-32" />
-        <ArchDecor tone="terracotta" className="pointer-events-none absolute -bottom-10 -left-8 -z-10 w-24 opacity-80 md:w-32" />
-        <LeafSprig className="pointer-events-none absolute -top-3 -right-4 -z-10 w-16 rotate-[30deg] text-forest-light md:hidden" />
-        <div className="mx-auto grid max-w-7xl items-center md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-          <div className="px-5 pt-9 pb-8 text-center md:py-14 md:pr-4 md:pl-10 md:text-left lg:pl-16">
-            <h1 className="font-display text-[3.2rem] leading-[0.9] font-bold text-forest uppercase md:text-7xl lg:text-8xl">Recipes</h1>
-            <p className="mt-2 font-display text-xl font-bold text-forest md:text-3xl">Simple ideas. Big flavours.</p>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-ink/80 md:mx-0 md:text-base">
-              Get creative with your MAGO cups. From quick meals to elevated dishes, discover recipes for every mood.
-            </p>
-            <SearchBox value={search} onChange={setSearch} className="mx-auto mt-6 max-w-md md:mx-0" />
-          </div>
-          <div className="relative hidden h-full min-h-[380px] md:block">
-            <ArchDecor tone="terracotta" className="absolute bottom-0 left-[8%] w-40 lg:w-48" />
-            <LeafSprig className="absolute -right-4 bottom-4 w-24 rotate-[160deg] text-leaf" />
-            <div className="absolute inset-y-6 right-[6%] left-[24%]">
-              <Image
-                src="/products/cutouts/fusilli-spicy-muhammara.webp"
-                alt="A MAGO Fusilli Cup Spicy Muhammara, full of pasta"
-                fill
-                loading="eager"
-                fetchPriority="high"
-                sizes="40vw"
-                className="object-contain drop-shadow-[0_18px_20px_rgba(55,39,23,0.2)]"
-              />
-            </div>
-            <ScriptNote arrow="down" className="absolute top-8 left-[6%] -rotate-6 text-2xl text-forest">
-              Same pasta.
-              <br />
-              More possibilities.
-            </ScriptNote>
-          </div>
+      <section className="relative isolate overflow-hidden bg-[#fbeed8] bg-[url('/images/banner-pattern.webp')] bg-cover bg-center">
+        <div className="mx-auto flex min-h-[340px] max-w-[720px] flex-col items-center justify-center px-6 py-12 text-center md:min-h-[440px]">
+          <h1 className="font-display text-[3.4rem] leading-[0.9] font-bold text-forest uppercase md:text-7xl lg:text-8xl">Recipes</h1>
+          <p className="mt-2 font-display text-xl font-bold text-forest md:text-3xl">Simple ideas. Big flavours.</p>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-ink/80 md:text-base">
+            Get creative with your MAGO cups. From quick meals to elevated dishes, discover recipes for every mood.
+          </p>
+          <SearchBox value={search} onChange={setSearch} className="mx-auto mt-6 w-full max-w-md" />
         </div>
       </section>
 
