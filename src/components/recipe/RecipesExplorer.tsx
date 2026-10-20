@@ -137,24 +137,22 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
       </section>
 
       <section className="px-4 pb-6 md:px-10 md:pb-8" aria-label="Same pasta. More possibilities.">
-        {/* From 768px: the approved artwork with a real link over its drawn button. Phones keep the text version. */}
-        <div className="relative mx-auto hidden max-w-7xl overflow-hidden rounded-3xl md:block">
-          <Image
-            src="/images/recipes-banner.webp"
-            alt="Same pasta. More possibilities. Turn your favourite MAGO cup into something new. Quick, delicious and full of flavour. From cup to chef."
-            width={1600}
-            height={499}
-            sizes="(min-width: 1280px) 1280px, 95vw"
-            className="block h-auto w-full"
-          />
-          <Link
-            href="/shop"
-            className="absolute top-[74%] left-[9.2%] h-[13.6%] w-[21.8%] rounded-full focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-saffron"
-          >
-            <span className="sr-only">Explore our cups</span>
-          </Link>
+        {/* From 768px: real text and button over the approved artwork (leaves left, the cup right). Phones keep the text version below. */}
+        <div className="relative isolate mx-auto hidden max-w-7xl overflow-hidden rounded-3xl bg-[#fdf0d8] md:block">
+          <div aria-hidden className="absolute inset-y-0 left-0 w-[8.5%] bg-[url('/images/recipes-banner-left.webp')] bg-cover bg-right" />
+          <div aria-hidden className="absolute inset-y-0 right-0 w-[46%] bg-[url('/images/recipes-banner-right.webp')] bg-cover bg-left [mask-image:linear-gradient(to_right,transparent,#000_10%)]" />
+          <div className="relative z-10 flex min-h-[320px] flex-col justify-center py-10 pl-[11%] lg:min-h-[400px]">
+            <h2 className="font-display text-4xl leading-[0.95] font-bold uppercase lg:text-5xl xl:text-6xl">
+              <span className="block text-forest">Same pasta.</span>
+              <span className="block text-terracotta">More possibilities.</span>
+            </h2>
+            <p className="mt-3 max-w-md text-lg text-ink/85">Turn your favourite MAGO cup into something new. Quick, delicious and full of flavour.</p>
+            <Link href="/shop" className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-forest px-8 py-4 font-display text-base font-bold tracking-wide text-cream-light uppercase hover:bg-forest-light">
+              Explore our cups <ArrowRight size={18} aria-hidden />
+            </Link>
+          </div>
         </div>
-              <div className="relative isolate mx-auto grid md:hidden max-w-7xl items-center overflow-hidden rounded-3xl bg-[radial-gradient(ellipse_at_80%_50%,#f8d9ae_0%,#f6e3c6_60%)] md:grid-cols-[1.2fr_1fr]">
+        <div className="relative isolate mx-auto grid md:hidden max-w-7xl items-center overflow-hidden rounded-3xl bg-[radial-gradient(ellipse_at_80%_50%,#f8d9ae_0%,#f6e3c6_60%)] md:grid-cols-[1.2fr_1fr]">
           <LeafSprig className="pointer-events-none absolute -bottom-6 left-[52%] -z-10 hidden w-24 rotate-[200deg] text-leaf md:block" />
           <div className="p-6 md:p-10">
             <h2 className="font-display text-3xl leading-[0.95] font-bold text-forest uppercase md:text-5xl">

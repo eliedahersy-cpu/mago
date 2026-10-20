@@ -1,40 +1,33 @@
-import Image from 'next/image';
-import { ArchDecor, LeafSprig } from '@/components/brand/Decor';
-import { BenefitIcons } from '@/components/product/BenefitIcons';
+import { cn } from '@/lib/cn';
 
-/** "Our pasta cups" banner: copy and benefits on the left, a cup-and-ingredients photo on the right (wide screens). */
+/** "Our pasta cups" banner: real heading and line over the approved artwork (arch and leaves left, a cup right; phones put the cup under the text). */
 export function ShopHero() {
   return (
-    <section className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_20%_30%,#fff5e4_0%,#f9e7cc_60%,#f4dcbc_100%)]">
-      <LeafSprig className="pointer-events-none absolute -top-3 -left-5 -z-10 w-16 -rotate-[35deg] text-leaf md:w-28" />
-      <LeafSprig className="pointer-events-none absolute bottom-2 -left-6 -z-10 hidden w-24 rotate-[210deg] text-forest-light md:block" />
-      <LeafSprig className="pointer-events-none absolute -top-2 -right-4 -z-10 w-16 rotate-[30deg] text-forest-light md:hidden" />
-      <ArchDecor tone="peach" className="pointer-events-none absolute top-[40%] -left-12 -z-10 w-24 opacity-70 md:hidden" />
-      <ArchDecor tone="terracotta" className="pointer-events-none absolute top-[38%] -right-12 -z-10 w-24 opacity-50 md:hidden" />
-
-      <div className="grid items-stretch md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-        <div className="px-5 pt-8 pb-7 text-center md:py-12 md:pr-4 md:pl-10 md:text-left lg:pl-[max(4rem,calc((100vw-80rem)/2+4rem))]">
-          <h1 className="font-display text-[clamp(2.25rem,9.6vw,2.9rem)] leading-none font-bold whitespace-nowrap text-forest uppercase md:text-[clamp(2.6rem,5vw,4.75rem)]">
-            Our pasta cups
+    <section className="relative isolate overflow-hidden bg-[#fdefd6]">
+      <div aria-hidden className={cn('absolute inset-y-0 left-0 -z-10 hidden w-[14.7%] bg-[url(/images/shop-head-left.webp)] bg-cover bg-right md:block')} />
+      <div className="mx-auto grid max-w-[2560px] md:min-h-[clamp(300px,33vw,760px)] md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+        <div className="relative z-10 px-6 pt-10 pb-2 text-center md:flex md:flex-col md:justify-center md:py-12 md:pr-0 md:pl-[max(7rem,16vw)] md:text-left">
+          <h1 className="font-display text-[clamp(2.6rem,11vw,3.4rem)] leading-[0.95] font-bold text-forest uppercase md:text-[clamp(2.6rem,4.9vw,6.4rem)]">
+            Our pasta
+            <br className="md:hidden" /> cups
           </h1>
-          <p className="mx-auto mt-3 max-w-xs text-base text-ink/85 sm:max-w-md md:mx-0 md:text-xl">
-            Mediterranean flavours. Real ingredients. Big protein per cup.
+          <p className="mx-auto mt-3 max-w-xs text-lg leading-snug font-medium text-ink/85 md:mx-0 md:max-w-[28rem] md:text-[clamp(1.1rem,1.6vw,2.2rem)]">
+            Life&rsquo;s easier, tastier and healthier with a <strong className="font-bold text-forest">MAGO</strong> cup.
           </p>
-          <div className="mx-auto mt-6 max-w-xl rounded-2xl bg-cream-light/90 p-3 shadow-sm ring-1 ring-forest/10 md:mx-0 md:bg-transparent md:p-0 md:shadow-none md:ring-0">
-            <BenefitIcons variant="hero" />
-          </div>
         </div>
-        <div className="relative hidden min-h-[340px] md:block">
-          <ArchDecor tone="terracotta" className="absolute -top-10 left-[6%] w-40 lg:w-52" />
-          <Image
-            src="/images/shop-hero.webp"
-            alt="A MAGO Fusilli Cup Spicy Muhammara with roasted peppers, walnuts and fresh ingredients"
-            fill
-            loading="eager"
-            fetchPriority="high"
-            sizes="50vw"
-            className="object-cover object-[35%_100%] [mask-image:linear-gradient(to_right,transparent,#000_20%)]"
-          />
+        <div className="relative">
+          <picture>
+            <source media="(min-width: 768px)" srcSet="/images/shop-head-right.webp" width={700} height={533} />
+            <img
+              src="/images/shop-head-mobile.webp"
+              width={1254}
+              height={694}
+              alt="A MAGO pasta cup full of spicy fusilli"
+              loading="eager"
+              fetchPriority="high"
+              className="block h-auto w-full [mask-image:linear-gradient(to_bottom,transparent,#000_6%)] md:absolute md:inset-0 md:h-full md:object-cover md:object-left md:[mask-image:linear-gradient(to_right,transparent,#000_8%)]"
+            />
+          </picture>
         </div>
       </div>
     </section>
