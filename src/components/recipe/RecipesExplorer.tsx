@@ -175,7 +175,7 @@ export function RecipesExplorer({ recipes }: { recipes: RecipeSummary[] }) {
           <div className="relative h-56 md:h-full md:min-h-[300px]">
             <ArchDecor tone="terracotta" className="absolute bottom-0 left-[10%] w-32 opacity-90 md:w-40" />
             <Image
-              src="/products/cutouts/tagliolini-al-tartufo-bianco.webp"
+              src="/products/cutouts/tagliolini-al-tartufo-bianco-v2.webp"
               alt=""
               fill
               sizes="(min-width: 768px) 35vw, 80vw"

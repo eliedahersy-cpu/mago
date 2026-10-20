@@ -20,5 +20,5 @@ const CUTOUTS = new Set([
  */
 export function cutoutImage(url: string): string {
   const match = /^\/products\/([a-z0-9-]+)\.webp$/.exec(url);
-  return match && CUTOUTS.has(match[1]) ? `/products/cutouts/${match[1]}.webp` : url;
+  return match && CUTOUTS.has(match[1]) ? `/products/cutouts/${match[1]}-v2.webp` : url;
 }

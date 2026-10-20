@@ -27,7 +27,7 @@ export function QuizBanner() {
           <LeafSprig className="absolute -top-4 right-2 w-12 rotate-[200deg] text-leaf/90 md:w-20" />
           <div className="absolute top-[8%] -right-[6%] aspect-[4/5] h-[84%] sm:-top-[22%] sm:-right-[28%] sm:h-[150%] md:right-auto md:left-[4%] lg:left-[8%]">
             <Image
-              src="/products/cutouts/fusilli-spicy-muhammara.webp"
+              src="/products/cutouts/fusilli-spicy-muhammara-v2.webp"
               alt="A MAGO Fusilli Cup Spicy Muhammara, full of pasta"
               fill
               sizes="(min-width: 768px) 420px, 55vw"

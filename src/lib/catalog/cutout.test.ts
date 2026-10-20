@@ -1,7 +1,7 @@
 import { cutoutImage } from '@/lib/catalog/cutout';
 
 test('uses the transparent cutout for a seeded cup packshot', () => {
-  expect(cutoutImage('/products/fusilli-spicy-muhammara.webp')).toBe('/products/cutouts/fusilli-spicy-muhammara.webp');
+  expect(cutoutImage('/products/fusilli-spicy-muhammara.webp')).toBe('/products/cutouts/fusilli-spicy-muhammara-v2.webp');
 });
 
 test('keeps any other image as it is', () => {
